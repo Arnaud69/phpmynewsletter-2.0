@@ -35,7 +35,7 @@ switch($op){
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
         echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" value=\"".translate("COMPOSE_BACK")."\" />";
-        echo "<br><br><input type='submit' value='".translate("COMPOSE_SEND")."  (Mode PREVIEW)' />";
+        echo "<br><br><input type='submit' value='".translate("COMPOSE_SEND")."  (Mode PREVIEW)' /></div>";
         echo '<header></header>';
         echo '<header><h3>Pièces jointes</h3></header>';
         echo "<div id='pjs'></div>";
