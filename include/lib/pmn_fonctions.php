@@ -326,7 +326,12 @@ function get_id_send($cnx,$list_id,$table_send){
 }
 function get_message($cnx, $table_archive, $msg_id) {
     $cnx->query("SET NAMES UTF8");
-    return $cnx->query("SELECT type, subject, message FROM $table_archive WHERE id='$msg_id'")->fetch();
+    $x = $cnx->query("SELECT type, subject, message FROM $table_archive WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
+	if(!$x){
+        return -1;
+    } else {
+        return $x;
+    }	
 }
 function get_newsletter_name($cnx, $lists_table, $list_id) {
     $cnx->query("SET NAMES UTF8");

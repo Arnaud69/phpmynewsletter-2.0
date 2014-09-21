@@ -1,8 +1,9 @@
 <?php
+session_start();
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Content-type: application/json'); 
+header('Content-type: application/json');
 if(!file_exists("include/config.php")) {
     header("Location:install.php");
     exit;
@@ -33,9 +34,9 @@ if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
 }
 require 'include/lib/PHPMailerAutoload.php';
 $step    = (empty($_GET['step']) ? "" : $_GET['step']);
-$subject = (!empty($_POST['subject'])) ? $_POST['subject'] : '';
-$message = (!empty($_POST['message'])) ? $_POST['message'] : '';
-$format  = (!empty($_POST['format'])) ? $_POST['format'] : '';
+$subject = (!empty($_SESSION['subject'])) ? $_SESSION['subject'] : '';
+$message = (!empty($_SESSION['message'])) ? $_SESSION['message'] : '';
+$format  = (!empty($_SESSION['format'])) ? $_SESSION['format'] : '';
 $list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
 $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
 $begin   = (!empty($_POST['begin'])) ? $_POST['begin'] : '';

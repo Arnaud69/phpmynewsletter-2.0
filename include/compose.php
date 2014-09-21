@@ -96,7 +96,7 @@ switch($op){
                 $('.button').hide('slow');
                 $('html,body').animate({scrollTop:'0px'},500);
                 $('#msg').show();
-		$('#smail').html('Envoi du mail à la liste');
+				$('#smail').html('Envoi du mail à la liste');
                 $(function(){
                     var begin   = 0;
                     var sn      = 0;
@@ -133,7 +133,7 @@ switch($op){
                                 }
                             }
                         });
-                        setTimeout(progresspump,5000); // 10000
+                        setTimeout(progresspump,5000);
                     }progresspump();
                 });
             });
