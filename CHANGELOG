@@ -1,0 +1,152 @@
+v2.0.2
+                          * Correction des bugs de la version 2.0.1
+                          * Gestion du Timezone, liste des fuseaux horaires à l'installation, modification possible en administration.
+                          * Test de la force du mot de passe à l'installation
+                          * Pas de gestion des bounce si la configuration n'a pas été générée
+                          * Souscription avec validation par captcha
+                          * Envoi des souscriptions (ou désinscriptions) en format html
+                          * Rechargement automatique du traitement des mails en erreurs (page tracking)
+                          * Test des paramètres pour traitement des mails bounce dans la configuration globale
+                          * Génération du code HTML de souscription aux lettres d'information (page configuration de la lettre d'information)
+                          * TinyMCE 4.0.26
+                          * PHPMailer 5.2.8
+                          * Ajout du List-Unsubscribe dans le header d'un mail
+                          * Vue du mail on-line
+                          * Ajout de pièces jointes (possibilités d'ajout et de suppression à tous les niveaux de création et d'envoi d'une campagne de mailing)
+                          * Contrôle de la version courante et information si nouvelle version disponible
+                          * Réécriture plus claire du portail de gestion
+
+01/05/2014  v2.0.1
+                          * Correction des bugs de la version beta
+                          * auto-suggestion dans la recherche d'un mail pour les listes > 500 mails
+                          
+12/02/2014  v2.0beta1     PHP :
+                          * Reprise complète du code php
+                          * réécriture complète en UTF-8
+                          * Réduction du nombre de fichiers de fonction et de classes
+                          * Mise en place de tokens
+                          HTML :
+                          * Reprise complète du style (http://html5up.net), ergonomie, disposition des fonctionnalités
+                          SQL :
+                          * Ajout des "IF NOT EXIST" sur la création des tables : install.php
+                          * reprise de la classe de connexion
+                          * Optimisation automatique des tables (mysql)
+                          * Passage des tables en UTF8
+                          * Possibilité de choisir le moteur de base de données MySql à l'installation : InnoDB ou MyIsam
+                          PHPMAILER :
+                          * Mise à jour de PhpMailer V.5.2.7 (https://github.com/Synchro/PHPMailer/releases)
+                          * Suppression de la version de phpmailer dans les headers
+                          REDACTION DES MAILS :
+                          * Ajout de tinymce (V.4.0.16 : http://www.tinymce.com/) pour :
+                                - la composition des messages
+                                - en-têtes et pieds de message 
+                                * Avec plugins :
+                                    - responsive filemanger 9 pour gestion des images ajoutées dans les messages
+                                    - colorpicker
+                          * Suppression des espaces dans les noms de fichiers uploadés sur le serveur via responsive filemanager 9
+                          * Sauvegarde automatique des messages en cours de composition
+                          * Limitation à 78 caractères dans le sujet (norme RFC 2822 section 2.1.1) avec décompte du nombre de caractères restants possible
+                          * Choix de composition d'un mail : TinyMCE ou code HTML (généré par une autre appli par exemple)
+                          * Bouton d'enregistrement d'un mail en cours de composition
+                          ENVOI DES MAILS :
+                          * ajout de la possibilité d'usage du SMTP gmail (NB : avoir un compte gmail !)
+                          * Suppression de la fonction email() de on-line
+                          * Ajout de l'envoi d'un mail de prévisualisation avant envoi de masse
+                          * Envoi des mails en ajax avec barre de progression et indication du pourcentage de la progression
+                          * Traitement des mails non distribués (le "bounce handler") : mise à jour de la base pour traitement dans la page de gestion des e-mails
+                          * Mise en place de la reprise d'un envoi si un envoi n'a pas été terminé. Cette fonctionnalité permet également d'adresser une lettre d'information aux inscrits postérieurs à l'envoi 
+                            d'une lettre d'information.
+                          GESTION DES EMAILS :
+                          * Gestion des e-mails en erreur : modification ou suppression manuelle
+                          * Horodatage des listes d'abonnés exportées via la console administration
+                          STATISTIQUES :
+                          * Mise en place de statistiques issues du tracking 
+                            (mails envoyés, mails ouverts, lectures de mails, désinscription, échec de distribution)
+                          * Graphiques de stats JpGraph v3.5.0b1 (http://jpgraph.net/)
+                          * Tracking des liens cliqués inclus dans les mails, avec rendu graphique
+
+29/05/2005  v0.8beta4     * Mail charset is now configurable
+                          * News subscription form
+                          * Bugfix tickets #61,#64,#53
+
+19/03/2005  v0.8beta3     * Some work on xhtml code validity (not perfect).
+                          * the usual Charset joke again and again.
+                          * Preliminary online.net spectific email() php function support.
+
+13/02/2005  v0.8beta2     * Mainly a 'PHP config' oriented beta :
+                                - register_global = Off support
+                                - error_reporting  =  E_ALL, 
+                                - open_basedir restriction handling ...
+                          * HTML preview in message composing
+                          * Bugfix, Bugfix, Bugfix
+                          * New translations.
+
+19/01/2005  v0.8beta1     New admin interface
+                          UTF-8 support
+                          Archives interface
+                          Preliminary log support
+                          Much more ... :)
+
+03/09/2002  v0.7beta1     Brand new version
+                          Multiple newsletter support
+                          SMTP support
+                          DB Layer
+
+01/06/2002  v0.6.10       ????
+
+27/05/2002  v0.6.9        Fixing a bug in text file importation.
+
+22/05/2002  v0.6.8b       0.6.8 was broken. Fixing a bug in sending process.
+
+21/05/2002  v0.6.8        "Security" fix, using hash to identify users
+                          Now using php extension
+
+11/05/2002  v0.6.7        Security Fix in admin area 
+                          Security hole causes by cookie.                 
+
+26/01/2002  v0.6.6        New Year Release
+                          New installation process.
+                          Sending log file.
+                          Bugfixes (again and again)
+
+            v0.6.53       Bugfix + Slovak lang-file (thanks to Fedor "fi0dor" Tirsel)
+
+08/11/2001  v0.6.52       BugFix Release + New lang-file
+22/04/2001  v0.6.51       Bugfix dans le fichier admin.php et dans la config
+13/02/2001  v0.6.5        Nouvelle config
+                          Export
+                          Bugfixes
+                          Envoi fragmenté
+
+??/??/??    v0.6.0
+
+14/11/2000  v0.59         Passage aux classes.
+    (=(v0.6beta)          Correction de bugs pour l'envoi en html.
+                          Interface de configuration.
+                          Importation d'email à partir d'un fichier texte.
+                          Des bugfixes par milliers...
+                          De belles icones
+                          Support de l'anglais et du francais.
+         
+13/10/2000  v0.5.2        Ajout de la protection mot de passe de l'administration.
+                          (merci à logon pour le code)         
+08/10/2000  v0.5.1        Correction d'un bug dans l'envoi de message en format texte.
+24/09/2000  v0.5          Changement dans la numérotation.
+                          Correction de très (trop) nombreux bugs.
+                          L'envoi en html doit fonctionner maintenant.
+                          Apercu avant envoi des messages.
+                          Logs des messages envoyés.
+                          Nouveaux messages dans la zone d'administration. 
+                          Le flush de la table temp se fait automatiquement.
+                          Nouveau logo (cool :-)
+                
+27/07/2000  v0.0.4        version unifiée pour online, nexen et les autres FAI.
+                          Fonctionne maintenant comme les vraies newsletter : mail de validation d'abonnement.
+                          Fonction send_mail
+                          Verification du format des adresses rentrées dans le formulaire.
+
+19/07/2000  v0.0.3 nx     version adaptée à la fonction mail de nexen.
+19/07/2000  v0.03         correction de bugs: ajout de stripslashes.
+            v0.0.2a       correction de bug / message d'erreur
+            v0.0.2        console d'administration permet la suppression des utilisateurs.        
+05/06/2000  v0.0.1        premiere release publique.

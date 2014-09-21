@@ -1,0 +1,122 @@
+<?php
+/*$array_url = parse_url($_SERVER['HTTP_REFERER']);
+$serveur_ok = array('www.bdfci.info','www.bdfci.com','www.bdfci.fr');
+//$serveur   = $_SERVER['SERVER_ADDR'];
+if (!in_array($array_url['host'],$serveur_ok)) {
+    exit;
+}*/
+
+
+header('Access-Control-Allow-Origin: *');
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Content-type: application/json'); 
+if(!file_exists("config.php")) {
+    header("Location:install.php");
+    exit;
+} else {
+    include("../_loader.php");
+    $token=(empty($_POST['token'])?"":$_POST['token']);
+    if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
+    if(!tok_val($token)){
+        header("Location:login.php?error=2");
+        exit;
+    }
+}
+$row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
+(count($row_config_globale)>0)?$r='SUCCESS':$r='';
+if($r != 'SUCCESS') {
+    include("lang/english.php");
+    echo "<div class='error'>".translate($r)."<br>";
+    echo "</div>";
+    exit;
+}
+if(empty($row_config_globale['language'])){
+    $row_config_globale['language']="english";
+}else{
+    include("lang/".$row_config_globale['language'].".php");
+}
+$form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
+if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
+    header("Location:index.php");
+    exit();
+}
+
+$list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
+$list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
+
+
+if(file_exists("config_bounce.php")){
+    include('config_bounce.php');
+    include('lib/class.cws.mbh.php');
+    $cwsMailBounceHandler = new CwsMailBounceHandler();
+    $cwsMailBounceHandler->test_mode            = ($type_env=='prod'?false:true);                               // false : mode prod, true : mode dev et debug
+    $cwsMailBounceHandler->debug_verbose        = ($type_env=='prod'?CWSMBH_VERBOSE_QUIET:CWSMBH_VERBOSE_DEBUG);// default CWSMBH_VERBOSE_QUIET (silenceux) mode VERBOSE : CWSMBH_VERBOSE_DEBUG
+    $cwsMailBounceHandler->open_mode            = CWSMBH_OPEN_MODE_IMAP;                                        // ouverture générique du bounce
+    switch($row_config_globale['sending_method']){
+        case 'smtp_gmail':
+            $cwsMailBounceHandler->disable_delete       = true;                                                 //pour supprimer un mail chez Google il faut faire un move dans Trash...
+            $cwsMailBounceHandler->move_hard            = true;
+            $cwsMailBounceHandler->folder_hard          = 'INBOX.Trash';
+            $cwsMailBounceHandler->host                 = 'imap.gmail.com';                                     // Mail host pop|imap server ; default 'localhost'
+            $cwsMailBounceHandler->username             = $row_config_globale['smtp_login'];                    // Mailbox username
+            $cwsMailBounceHandler->password             = $row_config_globale['smtp_pass'];                     // Mailbox password
+            $cwsMailBounceHandler->port                 = 993;                                                  // the port to access your mailbox ; default 143, other common choices are 110 (pop3), 995 (gmail)
+            $cwsMailBounceHandler->service              = 'imap';                                               // the service to use (imap or pop3) ; default 'imap'
+            $cwsMailBounceHandler->service_option       = 'ssl';                                                // the service options (none, tls, notls, ssl) ; default 'notls'
+            $cwsMailBounceHandler->boxname               = 'bounce';
+            break;
+        default:
+            $cwsMailBounceHandler->disable_delete       = ($type_env=='prod'?false:true);                       // on supprime les messages en erreur du serveur:false, on supprime rien : true. !!! Si test_mode=true alors disable_delete=true
+            $cwsMailBounceHandler->host                 = (trim($bounce_host)==''?'localhost':$bounce_host);    // Mail host pop|imap server ; default 'localhost'
+            $cwsMailBounceHandler->username             = $bounce_user;                                         // Mailbox username
+            $cwsMailBounceHandler->password             = $bounce_pass;                                         // Mailbox password
+            $cwsMailBounceHandler->port                 = $bounce_port;                                         // the port to access your mailbox ; default 143, other common choices are 110 (pop3), 995 (gmail)
+            $cwsMailBounceHandler->service              = $bounce_service;                                      // the service to use (imap or pop3) ; default 'imap'
+            $cwsMailBounceHandler->service_option       = $bounce_option;                                       // the service options (none, tls, notls, ssl) ; default 'notls'
+            break;
+    }
+    $cwsMailBounceHandler->cert                 = CWSMBH_CERT_NOVALIDATE;                                       // certificates validation (CWSMBH_CERT_VALIDATE or CWSMBH_CERT_NOVALIDATE) if service_option is 'tls' or 'ssl' ;
+    if ($cwsMailBounceHandler->openImapRemote()) {
+        $result = $cwsMailBounceHandler->processMails();
+    }
+    echo 'Nombre de mails : '.$result['counter']['total'].'<br>
+          Nombre de traitements : '.$result['counter']['fetched'].'<br>
+          Emails traités en erreur : '.$result['counter']['processed'].'<br>
+          Emails traités corrects : '.$result['counter']['unprocessed'].'<br>
+          Emails supprimés : '.$result['counter']['deleted'].'<br>
+          Emails déplacés : '.$result['counter']['moved'];
+    if(count($result)>0){
+        foreach($result['msgs'] as $item){
+            $expl = $cwsMailBounceHandler->findStatusExplanationsByCode($item['recipients'][0]['status']);
+            if($item['processed']&&$item['recipients'][0]['action']=='failed'&&$type_env=='prod'){
+                UpdateEmailError($cnx,$row_config_globale['table_email'],$list_id,$item['recipients'][0]['email'],
+                                 $item['recipients'][0]['status'],$item['recipients'][0]['bounce_type'],$item['recipients'][0]['bounce_cat'],
+                                 $expl['third_subcode']['title'],$expl['third_subcode']['desc']);
+                UpdateEmailSendError($cnx,$row_config_globale['table_send'],$list_id);
+            }
+        }
+    }
+} else {
+    echo '<h4 class="alert_error">Traitement des mails en retour non configuré</h4>';
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
