@@ -14,3 +14,5 @@ Official support on the forum, please go to http://www.phpmynewsletter.com/forum
 
 # LICENSE
 GNU GPL
+
+Please, star if you like ;-)
