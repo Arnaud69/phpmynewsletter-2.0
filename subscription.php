@@ -29,6 +29,8 @@ $i          = (!empty($_POST['i']) ? $_POST['i'] : "");
 $i          = (empty($i) && !empty($_GET['i']) ? $_GET['i'] : "");
 $h          = (!empty($_POST['h']) ? $_POST['h'] : "");
 $h          = (empty($h) && !empty($_GET['h']) ? $_GET['h'] : "");
+$ccaptcha   = (empty($ccaptcha) && !empty($_SESSION['c']) ? $_SESSION['c'] : "");
+$c          = ($_POST['c']!='' ? intval($_POST['c']): "");
 if ($op == "leave" && !$row_config_globale['unsub_validation']) {
     $op = "leave_direct";
 } else if ($op == "leave_direct" && $row_config_globale['unsub_validation']) {
@@ -64,9 +66,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                 switch ($op) {
                     case "join":
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
-                        $c = (empty($c) && !empty($_POST['c']) ? $_POST['c'] : "");
-                        if (empty($c)||($_POST['c']!=$_SESSION['c'])) {
-							$_SESSION['new_sub']=$email_addr;
+						if (empty($c)||($c!=$ccaptcha)) {
                             echo '<form method="post" action="">
                                     <div class="module_content">
                                         <fieldset>
@@ -84,7 +84,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
 				                        </div>
 			                        </footer>
                                 </form>';
-                        } elseif ($_POST['c']==$_SESSION['c']) {
+                        } elseif ($c==$ccaptcha) {
                             if ($row_config_globale['mod_sub']=="0") {
                                 $add  = addSubscriberTemp($cnx, $row_config_globale['table_email'], $row_config_globale['table_temp'], $list_id, $email_addr);
                                 $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
@@ -112,6 +112,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
                             echo '<div class="spacer"></div>';
                         }
+						
                     break;
                     case "leave":
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
