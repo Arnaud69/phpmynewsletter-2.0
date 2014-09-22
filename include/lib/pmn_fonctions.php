@@ -43,17 +43,17 @@ function add_subscriber($cnx, $table_email, $list_id, $add_addr) {
 }
 function addSubscriber($cnx, $table_email, $table_temp, $list_id, $addr, $hash) {
     $cnx->query("SET NAMES UTF8");
-    $addr = trim(strtolower($addr));
+    $addr = trim(strtolower(urldecode($addr)));
     $email = @current($cnx->query("SELECT email FROM $table_temp WHERE list_id='$list_id' AND email='$addr' AND hash='$hash'")->fetch());
     if ($email!='') {
         $sql = "INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')";
         $this_insert = $cnx->query($sql);
         $sql = "DELETE FROM $table_temp WHERE email='$addr' AND list_id='$list_id' AND hash='$hash'";
         $this_delete = $cnx->query($sql);
+        return true;
     } else {
-        return -1;
+        return false;
     }
-    return true;
 }
 function addSubscriberMod($cnx, $table_email, $ref_sub_table, $list_id, $addr) {
     $cnx->query("SET NAMES UTF8");
@@ -92,7 +92,7 @@ function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
     $addr = trim(strtolower($addr));
     $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
        if (count($x)>0) {
-        return false;
+       return false;
     }
     $x = $cnx->query("SELECT email FROM $table_temp WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
     if (count($x)>0) {
@@ -327,11 +327,11 @@ function get_id_send($cnx,$list_id,$table_send){
 function get_message($cnx, $table_archive, $msg_id) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT type, subject, message FROM $table_archive WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
-	if(!$x){
+    if(!$x){
         return -1;
     } else {
         return $x;
-    }	
+    }    
 }
 function get_newsletter_name($cnx, $lists_table, $list_id) {
     $cnx->query("SET NAMES UTF8");
@@ -974,7 +974,7 @@ function tok_val($token){
                     $_SESSION['_token_time'] = time();
                 } else {
                     $tok = false;
-					header("Content-type: text/html; charset=utf-8");
+                    header("Content-type: text/html; charset=utf-8");
                     die('votre configuration présente une anomalie, impossible de se connecter ! <a href="http://www.phpmynewsletter.com/forum/">contacter Arnaud sur le forum pour études du problème</a>');
                 }
             } else {

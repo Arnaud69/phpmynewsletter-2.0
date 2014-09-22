@@ -66,12 +66,16 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
                         $c = (empty($c) && !empty($_POST['c']) ? $_POST['c'] : "");
                         if (empty($c)||($_POST['c']!=$_SESSION['c'])) {
+							$_SESSION['new_sub']=$email_addr;
                             echo '<form method="post" action="">
                                     <div class="module_content">
                                         <fieldset>
                                             <label>Confirmer votre inscription en saisissant le code ci-dessous :</label>
                                             <label><img src="c.php" /></label>
-                                            <input type="text" name="c" size="3" value="" />
+                                            <input type="text" name="c" value="" />
+											<input type="hidden" name="email_addr" value="'.$email_addr.'" />
+											<input type="hidden" name="list_id" value="'.$list_id.'" />
+											<input type="hidden" name="op" value="join" />
                                         </fieldset>
                                     </div>
                                     <footer>
@@ -81,7 +85,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
 			                        </footer>
                                 </form>';
                         } elseif ($_POST['c']==$_SESSION['c']) {
-                            if (!$row_config_globale['mod_sub']) {
+                            if ($row_config_globale['mod_sub']=="0") {
                                 $add  = addSubscriberTemp($cnx, $row_config_globale['table_email'], $row_config_globale['table_temp'], $list_id, $email_addr);
                                 $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 if (strlen($add) > 3) {
@@ -92,11 +96,11 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                     $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                     $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                                     echo "<h4 class='alert_success'>" . translate("SUBSCRIPTION_SEND_CONFIRM_MESSAGE") . "</h4>";
-                                } else if ($add == 0)
+                                } elseif ($add ==0)
                                     echo "<h4 class='alert_error'>" . translate("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
                                 else
                                     echo "<h4 class='alert_error'>" . translate("ERROR_SQL2") . "</h4>";
-                            } else {
+                            } elseif ($row_config_globale['mod_sub']=="1") {
                                 $add = addSubscriberMod($cnx, $row_config_globale['table_email'], $row_config_globale['table_sub'], $list_id, $email_addr);
                                 if ($add)
                                     echo "<h4 class='alert_success'>" . translate("Subscription requested recorded, waiting for moderation") . "</h4>";
@@ -137,9 +141,9 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                     case "confirm_join":
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
                         $add = addSubscriber($cnx, $row_config_globale['table_email'], $row_config_globale['table_temp'], $list_id, $email_addr, $hash);
-                        if ($add == -1) {
+                        if ($add==false) {
                             echo "<h4 class='alert_error'>" . translate("SUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS") . "! </h4>";
-                        } elseif ($add) {
+                        } elseif ($add==true) {
                             $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             $body = $news['welcome_body'];
                             $body .= "\n\n" . translate("SUBSCRIPTION_UNSUBSCRIBE_LINK") . ":\n";
