@@ -192,7 +192,7 @@ switch($t){
             var hideItem='#'+$(this).closest("form").attr('id');
             $.ajax({type: "POST",
                 url: "include/manager_mails.php",
-                data: $(this).parents('form').serialize()+ '&'+ encodeURI($(this).attr('name'))+'='+ encodeURI($(this).attr('id')),
+                data: $(this).parents('form').serialize()+'&'+ encodeURI($(this).attr('name'))+'='+ encodeURI($(this).attr('id')),
                 success: function(data){
                     $(hideItem).html(data).addClass('success');
                 }

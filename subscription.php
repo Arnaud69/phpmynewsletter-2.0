@@ -29,8 +29,6 @@ $i          = (!empty($_POST['i']) ? $_POST['i'] : "");
 $i          = (empty($i) && !empty($_GET['i']) ? $_GET['i'] : "");
 $h          = (!empty($_POST['h']) ? $_POST['h'] : "");
 $h          = (empty($h) && !empty($_GET['h']) ? $_GET['h'] : "");
-$ccaptcha   = (empty($ccaptcha) && !empty($_SESSION['c']) ? $_SESSION['c'] : "");
-$c          = ($_POST['c']!='' ? intval($_POST['c']): "");
 if ($op == "leave" && !$row_config_globale['unsub_validation']) {
     $op = "leave_direct";
 } else if ($op == "leave_direct" && $row_config_globale['unsub_validation']) {
@@ -66,7 +64,9 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                 switch ($op) {
                     case "join":
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
-						if (empty($c)||($c!=$ccaptcha)) {
+                        $c = (empty($c) && !empty($_POST['c']) ? $_POST['c'] : "");
+                        if (empty($c)||($_POST['c']!=$_SESSION['c'])) {
+							$_SESSION['new_sub']=$email_addr;
                             echo '<form method="post" action="">
                                     <div class="module_content">
                                         <fieldset>
@@ -84,14 +84,14 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
 				                        </div>
 			                        </footer>
                                 </form>';
-                        } elseif ($c==$ccaptcha) {
+                        } elseif ($_POST['c']==$_SESSION['c']) {
                             if ($row_config_globale['mod_sub']=="0") {
                                 $add  = addSubscriberTemp($cnx, $row_config_globale['table_email'], $row_config_globale['table_temp'], $list_id, $email_addr);
                                 $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 if (strlen($add) > 3) {
                                     $body = $news['subscription_body'];
                                     $body .= "\n\n" . translate("SUBSCRIPTION_MAIL_BODY") . ":\n";
-                                    $body .= $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_join&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id";
+                                    $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_join&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>Je m\'abonne</a>";
                                     $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['subscription_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['subscription_subject']));
                                     $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                     $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
@@ -112,7 +112,6 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
                             echo '<div class="spacer"></div>';
                         }
-						
                     break;
                     case "leave":
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
@@ -121,9 +120,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         if ($hash==$h&&!empty($hash)&&strlen($hash)==32) {
                             $body = $news['quit_body'];
                             $body .= "\n\n" . translate("UNSUBSCRIPTION_MAIL_BODY") . " :\n";
-                            $body .= $row_config_globale['base_url'] . $row_config_globale['path'] 
-                                    . "subscription.php?op=confirm_leave&email_addr=" 
-                                    . urlencode($email_addr) . "&hash=$hash&list_id=$list_id&i=$i";
+                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id&i=$i'>Je me désabonne</a>";
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['quit_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['quit_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                             if (sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'],$news['from_name'],$subj,
@@ -148,7 +145,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             $body = $news['welcome_body'];
                             $body .= "\n\n" . translate("SUBSCRIPTION_UNSUBSCRIBE_LINK") . ":\n";
-                            $body .= $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id";
+                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id'>Je confirme mon abonnement</a>";
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                             $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
@@ -180,7 +177,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 $body = $news['welcome_body'];
                                 $body .= "\n\n" . translate("UNSUBSCRIPTION_MAIL_BODY") . ":\n";
-                                $body .= $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id";
+                                $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>Je me désabonne</a>";
                                 $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                                 $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                 $mail = sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
