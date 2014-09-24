@@ -66,23 +66,23 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         echo '<header><h3>'.translate("SUBSCRIPTION_TITLE").'</h3></header>';
                         $c = (empty($c) && !empty($_POST['c']) ? $_POST['c'] : "");
                         if (empty($c)||($_POST['c']!=$_SESSION['c'])) {
-							$_SESSION['new_sub']=$email_addr;
+                            $_SESSION['new_sub']=$email_addr;
                             echo '<form method="post" action="">
                                     <div class="module_content">
                                         <fieldset>
                                             <label>Confirmer votre inscription en saisissant le code ci-dessous :</label>
                                             <label><img src="c.php" /></label>
                                             <input type="text" name="c" value="" />
-											<input type="hidden" name="email_addr" value="'.$email_addr.'" />
-											<input type="hidden" name="list_id" value="'.$list_id.'" />
-											<input type="hidden" name="op" value="join" />
+                                            <input type="hidden" name="email_addr" value="'.$email_addr.'" />
+                                            <input type="hidden" name="list_id" value="'.$list_id.'" />
+                                            <input type="hidden" name="op" value="join" />
                                         </fieldset>
                                     </div>
                                     <footer>
-				                        <div class="submit_link">
-					                        <input type="submit" value="OK">
-				                        </div>
-			                        </footer>
+                                        <div class="submit_link">
+                                            <input type="submit" value="OK">
+                                        </div>
+                                    </footer>
                                 </form>';
                         } elseif ($_POST['c']==$_SESSION['c']) {
                             if ($row_config_globale['mod_sub']=="0") {
@@ -193,7 +193,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         echo '<header><h3>'.translate("UNSUBSCRIPTION_TITLE").'</h3></header>';
                         if (!$row_config_globale['unsub_validation']) {
                             $rm = removeSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr);
-                            if ($rm == 1) {
+                            if ($rm) {
                                 echo "<h4 class='alert_success'>" . translate("UNSUBSCRIPTION_FINISHED") . ".</h4>";
                             } else if ($rm == -1) {
                                 echo "<h4 class='alert_error'>" . translate("UNSUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS") . "</h4>";

@@ -500,8 +500,8 @@ function getWaitingMsg($hostname, $login, $pass, $database, $table_mod, $msg_id)
     $cnx->query("SET NAMES UTF8");
     $sql = "SELECT date, type, email_from, subject,  message, list_id FROM $table_mod WHERE id='$msg_id'";
     $cnx->SqlRow($sql);
-    if ($db->DbNumRows())
-        return $db->DbNextRow();
+    if ($cnx->DbNumRows())
+        return $cnx->DbNextRow();
     else
         return false;
 }
@@ -509,11 +509,11 @@ function getWaitingMsgList($hostname, $login, $pass, $database, $table_mod, $lis
     $cnx->query("SET NAMES UTF8");
     $sql = "SELECT id, date, email_from, subject FROM $table_mod WHERE list_id='$list_id'";
     $cnx->SqlRow($sql);
-    if ($db->DbNumRows()) {
-        while ($r = $db->DbNextRow()) {
-            $form .= "<OPTION VALUE=\"" . $r[0] . "\"";
+    if ($cnx->DbNumRows()) {
+        while ($r = $cnx->DbNextRow()) {
+            $form .= "<option value=\"" . $r[0] . "\"";
             if ($msg_id == $r[0])
-                $form .= " SELECTED ";
+                $form .= " selected ";
             $form .= ">$r[1] | $r[2] | $r[3] </option> ";
         }
         return $form;
@@ -587,15 +587,15 @@ function list_newsletter($cnx, $lists_table, $email_table) {
 function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr) {
     $cnx->query("SET NAMES UTF8");
     $cnx->SqlRow("DELETE from $table_moderation WHERE list_id = '$list_id' AND email='$mod_addr'");
-    if ($db->DbError()) {
-        echo $db->DbError();
+    if ($cnx->DbError()) {
+        echo $cnx->DbError();
         return false;
     }
     $hash = unique_id();
     $sql  = "INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$mod_addr', '$list_id','$hash')";
     $cnx->SqlRow($sql);
-    if ($db->DbError()) {
-        echo $db->DbError();
+    if ($cnx->DbError()) {
+        echo $cnx->DbError();
         return false;
     } else
         return $hash;
@@ -662,22 +662,12 @@ function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $has
 function removeSubscriberDirect($cnx, $table_email, $list_id, $addr) {
     $cnx->query("SET NAMES UTF8");
     $addr = strtolower($addr);
-    $sql = "SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'";
-    $cnx->SqlRow($sql);
-    if ($db->DbError()) {
-        echo $db->DbError();
-        return -1;
-    }
-    $rm = $db->DbNumRows();
+    $rm=$cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetch(PDO::FETCH_ASSOC);
     if ($rm == 0)
         return -1;
-    $sql = "DELETE FROM $table_email WHERE email='$addr' AND list_id='$list_id'";
-    $cnx->SqlRow($sql);
-    if ($db->DbError()) {
-        echo $db->DbError();
-        return -2;
-    }
-    return true;
+    if($cnx->query("DELETE FROM $table_email WHERE email='$addr' AND list_id='$list_id'")){
+        return true;
+    } else return -2;
 }
 function sanitize_output($buffer) {
     $search = array(
