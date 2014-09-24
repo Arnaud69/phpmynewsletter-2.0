@@ -3,6 +3,8 @@ phpmynewsletter-2.0
 
 the new version of phpmynewsletter
 
+# CURRENT VERSION : 2.0.2 beta
+
 # SYNOPSIS
 Send mails, add attachment, manage bounce and track clicked links.
 
