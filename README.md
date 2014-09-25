@@ -24,6 +24,14 @@ Download zip, unzip in a folder, go to install.php in your browser, complete fie
 # SUPPORT
 Official support on the forum, please go to http://www.phpmynewsletter.com/forum/ or tickets for bugs and support.
 
+# Roadmap for next version, TODO 2.0.3
+- Complete translations
+- Crontab to send mails
+- Email overlay report
+- Perform a better control on registration
+- Templates for composition
+- ... What else ? Ask me !
+
 # LICENSE
 GNU GPL
 
