@@ -100,11 +100,9 @@ switch ($step) {
         $subject    = stripslashes($msg['subject']);
         if ($format == "html"){
             $message .= "<br />";
+			$mail->IsHTML(true);
         }
         $mail->WordWrap = 70;    
-        if ($format == "html"){
-            $mail->IsHTML(true);
-        }
         if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
             include("DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
@@ -132,7 +130,7 @@ switch ($step) {
 				$body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h='.$addr[$i]['hash'].'&l='.$list_id.'&r=';
                 $message = preg_replace_callback(
-                    '/href="(http:\/\/)?([^"]+)"/',
+                    '/href="(http:\/\/)([^"]+)"/',
                     function($matches) {
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
