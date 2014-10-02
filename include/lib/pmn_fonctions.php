@@ -129,7 +129,6 @@ function checkAdminAccess($conf_pass, $admin_pass) {
     }
 }
 function checkVersion(){
-    // version locale :
     $VL=file_get_contents('VERSION');
     if($VL===FALSE) {
         echo '<span class="error">fichier version non détecté</span>';
@@ -202,6 +201,16 @@ function createNewsletter($cnx,$table_listsconfig,$newsletter_name,$from,$from_n
         return false;
     } else
         return $cnx->lastInsertId();
+}
+function CronID() {
+    $len = 5;
+    $base='ABCDEFGHKLMNOPQRSTWXYZabcdefghjkmnpqrstwxyz';
+    $max=strlen($base)-1;
+    $activatecode='';
+    mt_srand((double)microtime()*1000000);
+    while (strlen($activatecode)<$len+1)
+        $activatecode.=$base{mt_rand(0,$max)};
+    return 'pmnl2_'.$activatecode;
 }
 function delete_subscriber($cnx, $table_email, $list_id, $del_addr) {
     $sql = "DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'";
