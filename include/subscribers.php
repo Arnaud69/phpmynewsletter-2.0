@@ -47,6 +47,7 @@ switch($t){
             <input type='hidden' name='list_id' value='$list_id' />
         </form>
         </div>";
+		echo @$subscriber_op_msg;
         echo "</div>";
     break;
     case 's':
