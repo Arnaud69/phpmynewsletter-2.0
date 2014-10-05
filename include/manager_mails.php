@@ -19,7 +19,7 @@ if($r != 'SUCCESS') {
     die();
 }
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
-include("include/lang/".$row_config_globale['language'].".php");
+include("lang/".$row_config_globale['language'].".php");
 $actions_possibles=array('update','delete');
 if(isset($_POST['action'])&&in_array($_POST['action'],$actions_possibles)) {
     $action=$_POST['action'];
