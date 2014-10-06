@@ -176,7 +176,7 @@ switch ($step) {
                         'TTS'    => $tts
                        );
             echo json_encode($arr);
-            $sql_suivi = "UPDATE ".$row_config_globale['table_send_suivi']." SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." WHERE list_id='".$list_id."' AND '".$msg_id."'";
+            $sql_suivi = "UPDATE ".$row_config_globale['table_send_suivi']." SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'";
             $cnx->query($sql_suivi);
         } else {
             $errstr = "------------------------------------------------------------\r\n";
@@ -208,7 +208,7 @@ switch ($step) {
         $format  = $_SESSION['format'];
         $date    = date("Y-m-d H:i:s");
         $msg_id  = save_message($cnx, $row_config_globale['table_archives'], addslashes($subject), $format, addslashes($message), $date, $list_id);
-        $cnx->query("UPDATE ".$row_config_globale['table_upload']." SET msg_id=$msg_id WHERE list_id=$list_id AND msg_id=0");
+        $cnx->query("UPDATE ".$row_config_globale['table_upload']." SET msg_id=".$msg_id." WHERE list_id=".$list_id." AND msg_id=0");
         $dontlog = 0;
         if (!$handler = @fopen('logs/list' . $list_id . '-msg' . $msg_id . '.txt', 'a+')){
             $dontlog = 1;
