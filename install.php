@@ -53,6 +53,13 @@ if (empty($langfile)) {
     });
     $(function(){ $('.column').equalHeight(); });
     </script>
+    <style>.strength_meter{}
+    .strength_meter div{width:100%;height:45px;text-align:center;color:black;font-weight:bold;line-height:45px;}
+    .veryweak{background-color: #FFA0A0;border-color: #F04040!important}
+    .weak{background-color: #FFB78C;border-color: #FF853C!important;}
+    .medium{background-color: #FFEC8B;border-color: #FC0!important;}
+    .strong{background-color: #C3FF88;border-color: #8DFF1C!important;}
+    </style>
 </head>
 <body>
     <header id="header">
@@ -115,9 +122,14 @@ if (empty($langfile)) {
                 echo "<h4 class='alert_error'>PHP : ".phpversion()." obsolète</h4>";
             }
             if(extension_loaded('imap')) {
-                echo "<h4 class='alert_success'>extension imap OK</h4>";
+                echo "<h4 class='alert_success'>Extension imap OK</h4>";
             } else {
-                echo "<h4 class='alert_error'>extension imap manquante</h4>";
+                echo "<h4 class='alert_error'>Extension imap manquante</h4>";
+            }
+            if(extension_loaded('curl')) {
+                echo "<h4 class='alert_success'>Extension curl OK</h4>";
+            } else {
+                echo "<h4 class='alert_error'>Extension curl manquante</h4>";
             }
             echo '</div>';
             echo '</article>';
@@ -717,32 +729,6 @@ if (empty($langfile)) {
             echo '<label>'.translate("INSTALL_ADMIN_PASS").'</label>';
             echo "<input type='password' id='admin_pass' name='admin_pass' value=''>";
             echo '</fieldset>';
-            echo '<style>.strength_meter{
-                    }
-                    .strength_meter div{
-	                    width:100%;
-	                    height:45px;
-	                    text-align:center;
-	                    color:black;
-	                    font-weight:bold;
-	                    line-height:45px;
-                    }
-                    .veryweak{
-	                    background-color: #FFA0A0;
-                        border-color: #F04040!important
-                    }
-                    .weak{
-                        background-color: #FFB78C;
-                        border-color: #FF853C!important;
-                    }
-                    .medium{
-                        background-color: #FFEC8B;
-                        border-color: #FC0!important;
-                    }
-                    .strong{
-                        background-color: #C3FF88;
-                        border-color: #8DFF1C!important;
-                    }</style>';
             echo '<script>$(document).ready(function ($) { $("#admin_pass").strength({strengthButtonText: \' (Show password)\'}); });</script>';
             echo '<fieldset>';
             echo '<label>'.translate("INSTALL_ADMIN_BASEURL").'</label>';
@@ -821,7 +807,8 @@ if (empty($langfile)) {
             echo "<input type='hidden' name='db_type' value='$db_type'><br>";
             echo "<input type='hidden' name='mod_sub' value='0'><br>";
             echo "<input type='hidden' name='step' value=" . ($step + 1) . " />";
-            echo "<div align='center'><input type='submit' value='Go Go Go !!!'></div>";
+            echo "<div align='center'><input id='submit' type='submit' value='Go Go Go !!!'></div>";
+			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('Merci de saisir un mot de passe');}})</script>";
             echo '</div>';
             echo '</article>';
             echo '</form>';
@@ -948,7 +935,8 @@ if (empty($langfile)) {
                                 `table_sauvegarde`  VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_send_suivi`  VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_track_links` VARCHAR(255) NOT NULL DEFAULT "",
-                                `table_upload`      VARCHAR(255) NOT NULL DEFAULT ""
+                                `table_upload`      VARCHAR(255) NOT NULL DEFAULT "",
+                                `table_crontab`     VARCHAR(255) NOT NULL DEFAULT ""
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "config") .' '.translate("DONE").'</h4>';
@@ -1080,7 +1068,7 @@ if (empty($langfile)) {
                               `list_id` int(5) unsigned NOT NULL DEFAULT 0,
                               `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `name` varchar(20000) DEFAULT NULL,
-                              `date` datetime NOT NULL,
+                              `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
                               PRIMARY KEY (`id`),
                               KEY `list_id` (`list_id`),
                               KEY `msg_id` (`msg_id`),
@@ -1099,6 +1087,33 @@ if (empty($langfile)) {
                     }else{
                         die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
                     }
+                    $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'crontab (
+                              `id` int(7) NOT NULL AUTO_INCREMENT,
+                              `job_id` varchar(12) NOT NULL,
+                              `list_id` int(5) unsigned NOT NULL DEFAULT 0,
+                              `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
+                              `min` tinyint(2) NOT NULL DEFAULT 0,
+                              `hour` tinyint(2) NOT NULL DEFAULT 0,
+                              `day` tinyint(2) NOT NULL DEFAULT 1,
+                              `month` tinyint(2) NOT NULL DEFAULT 1,
+                              `etat` enum("scheduled","done","deleted") NOT NULL DEFAULT "scheduled",
+                              `command` varchar(255) NOT NULL,
+                              `mail_body` text NOT NULL,
+                              `mail_subject` text NOT NULL,
+                              `type` text NOT NULL,
+                              `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                              PRIMARY KEY (`id`),
+                              KEY `job_id` (`job_id`(10)),
+                              KEY `list_id` (`list_id`),
+                              KEY `msg_id` (`msg_id`),
+                              KEY `date` (`date`)
+                            ) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
+                    if($cnx->Sql($sql)){
+                        echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "crontab") .' '.translate("DONE").'</h4>';
+                    }else{
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                    }
+                    
                 }
             } elseif ($db_type == "pgsql") {
                 die('PGSQL Not yet available');
@@ -1134,7 +1149,7 @@ if (empty($langfile)) {
                         '$admin_name','$mod_sub',  '" . $table_prefix . "sub',
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
-                        '" . $table_prefix . "track_links', '" . $table_prefix . "upload')";
+                        '" . $table_prefix . "track_links', '" . $table_prefix . "upload','" . $table_prefix . "crontab')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . translate("INSTALL_SAVE_CONFIG") . ' ' .translate("DONE").'</h4>';
             }else{
@@ -1165,8 +1180,8 @@ if (empty($langfile)) {
             echo '</article>';
             echo '<article class="module width_full">
                     <header><h3>All this was possible with :</h3></header>
-			        <div class="module_content">
-				        <ul>
+                    <div class="module_content">
+                        <ul>
                             <li><a href="http://gregory.kokanosky.free.fr/v4/phpmynewsletter/" target="_blank">Gregory (Développement initial du projet et auteur légitime de PhpMyNewsLetter</a></li>
                             <li><a href="https://github.com/Synchro/PHPMailer">PhpMailer (Classe de gestion des envois des mails)</a></li>
                             <li><a href="http://www.tinymce.com/" target="_blank">TinyMce (Editeur HTML de type WYSIWYG, écrit en JavaScript, utilisé pour la rédaction des mails)</a></li>
@@ -1176,28 +1191,28 @@ if (empty($langfile)) {
                             <li><a href="http://www.jacklmoore.com/colorbox" targe="_blank">Plugin jQuery de fenêtre modal et type lightbox</a></li>
                             <li><a href="http://www.dropzonejs.com/" targe="_blank">Librairie JavaScript indépendante (ne dépend d\'aucune autre librairie) de gestion des "drag\'n\'drop file uploads"</a></li>
                         </ul> 
-				    <div>
-				  </article>
-				  <article class="module width_full">
+                    <div>
+                  </article>
+                  <article class="module width_full">
                     <header><h3>Licence :</h3></header>
-			        <div class="module_content">
-				        <p>phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">Licence Publique Générale</a> du projet <a href="http://www.gnu.org" target="_blank" class="lien">GNU</a> (Gnu GPL)</p>
-				    <div>
-				  </article>
-				  <article class="module width_full">
+                    <div class="module_content">
+                        <p>phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">Licence Publique Générale</a> du projet <a href="http://www.gnu.org" target="_blank" class="lien">GNU</a> (Gnu GPL)</p>
+                    <div>
+                  </article>
+                  <article class="module width_full">
                     <header><h3>Contribuer :</h3></header>
-			        <div class="module_content">
-				        <p>PhpMyNewsLetter est un projet libre qui nécessite d\'être encore amélioré. Vos idées et suggestions sont les bienvenues, vos qualités de développeur aussi. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
-				    <div>
-				  </article>
-				  <article class="module width_full">
+                    <div class="module_content">
+                        <p>PhpMyNewsLetter est un projet libre qui nécessite d\'être encore amélioré. Vos idées et suggestions sont les bienvenues, vos qualités de développeur aussi. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
+                    <div>
+                  </article>
+                  <article class="module width_full">
                     <header><h3>Support :</h3></header>
-			        <div class="module_content">
-				        <p>Je ne réponds pas aux demandes individuelles, merci de passer par le foum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
-				    <div>
-				  </article>';
-				
-				    
+                    <div class="module_content">
+                        <p>Je ne réponds pas aux demandes individuelles, merci de passer par le foum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
+                    <div>
+                  </article>';
+                
+                    
         }
         ?>
         <div class="spacer"></div>
