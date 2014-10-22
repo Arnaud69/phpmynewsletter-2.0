@@ -1,5 +1,5 @@
 <?php
-$PMNL_VERSION = "2.0.2b";
+$PMNL_VERSION = "2.0.3";
 if (!function_exists('iconv') && function_exists('libiconv')) {
     function iconv($input_encoding, $output_encoding, $string) {
         return libiconv($input_encoding, $output_encoding, $string);
@@ -952,7 +952,20 @@ function table_footer() {
 }
 function tok_gen($name = ''){
     @session_start();
-    $token = uniqid(rand(), true);
+    if (function_exists("hash_algos") and in_array("sha512",hash_algos())){
+        $token=hash("sha512",mt_rand(0,mt_getrandmax()));
+    }else{
+        $token=' ';
+        for ($i=0;$i<128;++$i){
+            $r=mt_rand(0,35);
+            if ($r<26){
+                $c=chr(ord('a')+$r);
+            }else{ 
+                $c=chr(ord('0')+$r-26);
+            } 
+            $token.=$c;
+        }
+    }
     $_SESSION['_token'] = $token;
     $_SESSION['_token_time'] = time();
     return $token;
@@ -960,22 +973,11 @@ function tok_gen($name = ''){
 function tok_val($token){
     $temps_de_connexion = 9999;
     @session_start();
-    if(isset($_SESSION['_token']) && isset($_SESSION['_token_time']) && isset($token)){
+    if(isset($_SESSION['_token'])&&isset($_SESSION['_token_time'])&&isset($token)){
         if($_SESSION['_token'] == $token){
             if($_SESSION['_token_time'] >= (time() - $temps_de_connexion)){
-                if(!isset($_SERVER['HTTPS'])||$_SERVER['HTTPS']==''){
-                    $pos = 7;
-                }elseif(isset($_SERVER['HTTPS'])&&(!empty($_SERVER['HTTPS']))){
-                    $pos = 8;
-                }
-                if(isset($_SERVER['HTTP_REFERER'])&&($_SERVER['HTTP_REFERER']!='')&&(substr($_SERVER['HTTP_REFERER'],$pos,strlen($_SERVER['SERVER_NAME']))==$_SERVER['SERVER_NAME'])){
-                    $tok = true;
-                    $_SESSION['_token_time'] = time();
-                } else {
-                    $tok = false;
-                    header("Content-type: text/html; charset=utf-8");
-                    die('votre configuration présente une anomalie, impossible de se connecter ! <a href="http://www.phpmynewsletter.com/forum/">contacter Arnaud sur le forum pour études du problème</a>');
-                }
+                $_SESSION['_token_time'] = time();
+                $tok = true;
             } else {
                 $tok = false;
             }
