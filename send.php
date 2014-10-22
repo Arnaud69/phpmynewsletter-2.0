@@ -96,11 +96,9 @@ switch ($step) {
                 $mail->AddAttachment('upload/'.$item['name']);
             }
         }
-        $message    = stripslashes($msg['message']);
         $subject    = stripslashes($msg['subject']);
         if ($format == "html"){
-            $message .= "<br />";
-			$mail->IsHTML(true);
+            $mail->IsHTML(true);
         }
         $mail->WordWrap = 70;    
         if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
@@ -117,17 +115,21 @@ switch ($step) {
             $begintimesend = microtime(true);
             $unsubLink = "";
             $mail->ClearAllRecipients();
-			$mail->ClearCustomHeaders();
+            $mail->ClearCustomHeaders();
             $mail->AddAddress(trim($addr[$i]['email']));
-			$mail->XMailer = ' ';
+            $mail->XMailer = ' ';
+            $message    = stripslashes($msg['message']);
+            if ($format == "html"){
+                $message .= "<br />";
+            }
             $body = "";
             $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
-				$body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-				$body .= "Si cet e-mail ne s'affiche pas correctement, veuillez <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=$msg_id&list_id=$list_id&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>cliquer-ici</a>.<br />";
-				$body .= "Ajoutez ".$newsletter['from_addr']." &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !<br />";
-				$body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
+                $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
+                $body .= "Si cet e-mail ne s'affiche pas correctement, veuillez <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=$msg_id&list_id=$list_id&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>cliquer-ici</a>.<br />";
+                $body .= "Ajoutez ".$newsletter['from_addr']." &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !<br />";
+                $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h='.$addr[$i]['hash'].'&l='.$list_id.'&r=';
                 $message = preg_replace_callback(
                     '/href="(http:\/\/)([^"]+)"/',
@@ -142,7 +144,7 @@ switch ($step) {
             $body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-			$mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
+            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
@@ -208,7 +210,7 @@ switch ($step) {
         $format  = $_SESSION['format'];
         $date    = date("Y-m-d H:i:s");
         $msg_id  = save_message($cnx, $row_config_globale['table_archives'], addslashes($subject), $format, addslashes($message), $date, $list_id);
-        $cnx->query("UPDATE ".$row_config_globale['table_upload']." SET msg_id=".$msg_id." WHERE list_id=".$list_id." AND msg_id=0");
+        $cnx->query("UPDATE ".$row_config_globale['table_upload']." SET msg_id=$msg_id WHERE list_id=$list_id AND msg_id=0");
         $dontlog = 0;
         if (!$handler = @fopen('logs/list' . $list_id . '-msg' . $msg_id . '.txt', 'a+')){
             $dontlog = 1;
