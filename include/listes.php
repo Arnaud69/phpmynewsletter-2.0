@@ -2,10 +2,10 @@
 if(!sizeof($list)){
     $l='c';
 }
-echo '<article class="module width_full">';
 switch($l){
     case 'l':
         if($page != "config"){
+			echo '<article class="module width_full">';
             echo '<header><h3>Liste des listes existantes</h3></header>';
             echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
@@ -38,11 +38,12 @@ switch($l){
         } else{
             // dummy !
         }
+		echo '</article>';
     break;
     case 'c':
-        echo "<header><h3>".translate("NEWSLETTER_CREATE")."</h3></header>
+        echo "<form action='' method='post'>
+		<article class='module width_3_quarter'><header><h3>".translate("NEWSLETTER_CREATE")."</h3></header>
         <div class='module_content'>
-        <form action='' method='post'>
         <input type='hidden' name='op' value='createConfig' /><input type='hidden' name='token' value='$token' />
         <fieldset><label>".translate("NEWSLETTER_NAME")." : </label>
         <input type='text' name='newsletter_name' value='' /></fieldset>
@@ -70,9 +71,6 @@ switch($l){
         <input type='text' name=' quit_subject' value='".htmlspecialchars(translate("NEWSLETTER_UNSUB_DEFAULT_SUBJECT"))."' /></fieldset>
         <fieldset><label>".translate("NEWSLETTER_UNSUB_MSG_BODY")." : </label>
         <br><textarea class='editme' name='quit_body' rows='15' id='NEWSLETTER_UNSUB_DEFAULT_BODY'>".translate("NEWSLETTER_UNSUB_DEFAULT_BODY")."</textarea></fieldset>
-        <div align='center'><input type='submit' value=\"".translate("NEWSLETTER_SAVE_NEW")."\" /></div>
-        <input type='hidden' name='page' value='listes' />
-        </form>
         </div>
         <script src='/".$row_config_globale['path']."js/tinymce/tinymce.min.js'></script>
         <script>tinymce.init({
@@ -105,6 +103,15 @@ switch($l){
             filemanager_title:'Responsive Filemanager' ,
             external_plugins:{ 'filemanager' : '/".$row_config_globale['path']."js/tinymce/plugins/filemanager/plugin.min.js'}});
         </script>";
+		echo '</article>';
+		echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
+		echo '<header><h3>Actions :</h3></header><div align="center">';
+		echo "<br>
+			<input type='submit' value=\"".translate("NEWSLETTER_SAVE_NEW")."\" />
+			<input type='hidden' name='page' value='listes' />
+			<input type='hidden' name='token' value='$token' />
+			<div class='spacer'></div>";
+		echo '</div></article></div></form>';
     break;
 }
 echo '</article>';

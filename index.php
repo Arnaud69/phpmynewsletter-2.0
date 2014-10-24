@@ -37,6 +37,7 @@ $action    =(empty($_POST['action'])?$action:$_POST['action']);
 $page      =(empty($_GET['page'])?"listes":$_GET['page']);
 $page      =(empty($_POST['page'])?$page:$_POST['page']);
 $data      =(empty($_GET['data'])?"ch":$_GET['data']);
+$id_mailq  =(empty($_GET['id_mailq'])?"":$_GET['id_mailq']);
 $l         =(empty($_GET['l'])?"l":$_GET['l']);
 $t         =(empty($_GET['t'])?"":$_GET['t']);
 $t         =(empty($_POST['t'])?$t:$_POST['t']);
@@ -49,6 +50,14 @@ if($action=='purge_mailq'&&$page=='manager_mailq'){
     $path_postsuper=exec('locate postsuper | grep bin');
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
         $result = exec('sudo '.$path_postsuper.' -d ALL');
+    } else {
+        $alerte_purge_mailq = "<h4 class='alert_error'>Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.</h4>";
+    }
+}
+if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)){
+    $path_postsuper=exec('locate postsuper | grep bin');
+    if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
+        $result = exec('sudo '.$path_postsuper.' -d '.$id_mailq);
     } else {
         $alerte_purge_mailq = "<h4 class='alert_error'>Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.</h4>";
     }
@@ -264,7 +273,9 @@ if(!$list&&$page!="config"){
     })(jQuery);
     $(document).ready(function(){$(".iframe").colorbox({iframe:true,width:"80%",height:"80%"});});
     <?php
-    if($page=='undisturbed'||$page=='config'||$page=='compose'){ ?>
+	$sticky_pages=array('undisturbed','config','compose','listes','newsletterconf','manager_mailq');
+	if(in_array($page,$sticky_pages)){
+    ?>
     $(document).ready(function(){  
         var top=$('.sticky-scroll-box').offset().top;
         $(window).scroll(function(event) {
@@ -360,6 +371,7 @@ if(!$list&&$page!="config"){
             if($page == "archives") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des archives</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_ARCHIVES").'</a>';
             if($page == "task") echo '<div class="breadcrumb_divider"></div>  <a class="current">Tâches planifiées</a><div class="breadcrumb_divider"></div> <a class="current">Gestion des tâches planifiées</a>';
             if($page == "config") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_CONFIG").'</a>';
+			if($page == "manager_mailq") echo '<div class="breadcrumb_divider"></div> <a class="current">Mails en cours d\'envoi</a><div class="breadcrumb_divider"></div> <a class="current">Gestion des mails en cours d\'envoi</a>';
             ?>
             </article>
         </div>

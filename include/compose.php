@@ -140,7 +140,7 @@ switch($op){
                                 }
                             }
                         });
-                        setTimeout(progresspump,5000);
+                        setTimeout(progresspump,10000);
                     }progresspump();
                 });
             });
@@ -194,7 +194,7 @@ switch($op){
                 $subject = @htmlspecialchars($newsletter_autosave['subject']);
             } else {
                 $textarea = addslashes($newsletter['header']."\n\n\n".$newsletter['footer']);
-                $subject = @htmlspecialchars($newsletter['subject']);
+                $subject = @addslashes(htmlspecialchars($newsletter['subject']));
                 $type    = 'html';
                 $cnx->query("INSERT INTO ".$row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
             }

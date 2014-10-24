@@ -27,14 +27,14 @@ while($pipe) {
         $line = trim($line);
         $res = preg_match('/(\w+)\*{0,1}\s+(\d+)\s+(\w+\s+\w+\s+\d+\s+\d+:\d+:\d+)\s+([^ ]+)/', $line, $matches);
         if ($res) {
-            $current_object[] = array(
-                    'id' => $matches[1],
-                    'size' => intval($matches[2]),
-                    'date' => strftime($matches[3]),
-                    'sender' => $matches[4],
-                    'failed' => false,
-                    'recipients' => ''
-            );
+			$current_object[] = array(
+					'id' => $matches[1],
+					'size' => intval($matches[2]),
+					'date' => strftime($matches[3]),
+					'sender' => $matches[4],
+					'failed' => false,
+					'recipients' => ''
+			);
         }
     }
 }
@@ -42,7 +42,7 @@ pclose($pipe);
 setlocale(LC_ALL, $old_locale);
 $mails_en_cours = count($current_object);
 if($mails_en_cours>0){
-    echo '<a href="?page=manager_mailq&list_id='.$list_id.'&token='.$_SESSION['_token'].'">'.$mails_en_cours.' mail(s) en cours d\'envoi</a>';
+    echo '<a href="?page=manager_mailq&list_id='.$list_id.'&token='.$_SESSION['_token'].'" title="Visualiser et gérer les mails en cours d\'envoi" class="tooltip">'.$mails_en_cours.' mail(s) en cours d\'envoi</a>';
 } else {
     echo '<a>pas de mail en cours d\'envoi</a>';
 }
