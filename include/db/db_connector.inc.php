@@ -1,7 +1,6 @@
 <?php
 $db_ok = array('mysql','pgsql','mssql','oracle');
 if(isset($db_type)&&(in_array($db_type,$db_ok))){
-    // inclusion alors de la classe de PDOExtended :
     require_once 'PDOExtended/PDOExtended.php';  
     switch($db_type){
         case 'mysql':
@@ -41,10 +40,6 @@ if(isset($db_type)&&(in_array($db_type,$db_ok))){
             $cnx = new PDOExtended(PDO_DSN,PDO,USERNAME,PDO_PASSWORD);
         break;
     }
-
-
 } else {
-
     die('une erreur a probablement eu lieu lors de l\'installation...');
-
 }

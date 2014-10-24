@@ -283,9 +283,6 @@ function DelMsgTemp($cnx, $list_id, $table){
         return false;
     }
 }
-function error_msg($msg) {
-    pmnl_msg($msg, "error");
-}
 function escape_string($cnx, $string) {
     if (get_magic_quotes_gpc()) {
         $string = stripslashes($string);
@@ -461,6 +458,9 @@ function getLanguageList($selected) {
     }
     return $ret;
 }
+function getlocale($category) {
+    return setlocale($category, NULL);
+}
 function getMsgById($cnx,$id,$table) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT * FROM $table WHERE id='$id'")->fetch(PDO::FETCH_ASSOC);
@@ -528,21 +528,6 @@ function getWaitingMsgList($hostname, $login, $pass, $database, $table_mod, $lis
         return $form;
     } else
         return false;
-}
-function html_header($title = '') {
-    header("Content-type: text/html; charset=utf-8");
-    echo '<!DOCTYPE html>
-    <html>
-        <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <link rel="stylesheet" href="css/pmn_style.css" type="text/css" />
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-            <title>'.$title.'</title>
-        </head>
-        <body>';
-}
-function info_msg($msg) {
-    pmnl_msg($msg, "info");
 }
 function isValidNewsletter($cnx, $table_list, $list_id) {
     $cnx->query("SET NAMES UTF8");
@@ -617,24 +602,6 @@ function optimize_tables($cnx){
             $cnx->query('OPTIMIZE TABLE ' . $row['Name']);
         }
     }
-}
-function page_footer() {
-    echo '<br />&nbsp;
-        </td>
-        <td bgcolor="black" width="1"><img src="img/clear.gif" width="1" height="1" alt=""></td>
-        </tr>
-        <tr>
-        <td colspan="3" bgcolor="black"><img src="img/clear.gif" width="1" height="1" alt=""></td>
-        </tr>
-        </tbody>
-        </table>
-        </td>
-        </tr>
-        </tbody>
-        </table><br />';
-}
-function pmnl_msg($msg, $class, $align = 'center') {
-    echo '<div align="'.$align.'" class="'.$class.'">'.$msg.'</div>';
 }
 function quick_Exit(){
     @session_start();

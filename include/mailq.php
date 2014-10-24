@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
@@ -16,7 +17,7 @@ $pipe = popen($mailq_path, 'r');
 while($pipe) {
     $line = fgets($pipe);
     if(trim($line)=='Mail queue is empty'){
-        echo 'Pas de mail en cours d\'envoi';
+        echo '<a>pas de mail en cours d\'envoi</a>';
         pclose($pipe);
         setlocale(LC_ALL, $old_locale);
         exit(1);
@@ -39,4 +40,9 @@ while($pipe) {
 }
 pclose($pipe);
 setlocale(LC_ALL, $old_locale);
-echo count($current_object). ' mail(s) en cours d\'envoi';
+$mails_en_cours = count($current_object);
+if($mails_en_cours>0){
+    echo '<a href="?page=manager_mailq&list_id='.$list_id.'&token='.$_SESSION['_token'].'">'.$mails_en_cours.' mail(s) en cours d\'envoi</a>';
+} else {
+    echo '<a>pas de mail en cours d\'envoi</a>';
+}

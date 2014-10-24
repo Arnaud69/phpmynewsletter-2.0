@@ -80,6 +80,13 @@ switch($op){
         } else {
             echo "<h4 class='alert_error'>Preview en erreur, vous ne pouvez pas envoyer cette lettre à votre mailing-list !</h4>";
         }
+        if($type_serveur=='dedicated'){
+        echo "<br><br><form method='post' action=''>
+            <input type='submit' value='Planifier cet envoi' />
+            <input type='hidden' name='NEWTASK' value='SCHEDULE_NEW_TASK' />
+            <input type='hidden' name='list_id' value='$list_id' />
+            <input type='hidden' name='page' value='task' />";
+        }
         echo '</div>';
         echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});
         </script>";
@@ -96,7 +103,7 @@ switch($op){
                 $('.button').hide('slow');
                 $('html,body').animate({scrollTop:'0px'},500);
                 $('#msg').show();
-				$('#smail').html('Envoi du mail à la liste');
+                $('#smail').html('Envoi du mail à la liste');
                 $(function(){
                     var begin   = 0;
                     var sn      = 0;
@@ -224,7 +231,7 @@ switch($op){
             <input type='hidden' id='token' name='token' value='$token' />
             </form>";
             if($ft==""){
-                echo "<script type=\"text/javascript\" src=\"/".$row_config_globale['path']."js/tinymce/tinymce.min.js\"></script>
+                echo "<script type=\"text/javascript\" src=\"js/tinymce/tinymce.min.js\"></script>
                     <script>
                     tinymce.init({
                         selector: \"textarea#redac\", theme: \"modern\",

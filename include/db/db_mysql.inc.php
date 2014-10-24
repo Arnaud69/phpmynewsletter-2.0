@@ -7,40 +7,33 @@ if (!defined( "_DB_MYSQL_LAYER" )){
 		var $Result;
 		var $Row;
 		function DbConnect($host, $user, $passwd, $database=''){
-			$this->ConnectionID = @mysql_connect($host, $user, $passwd);
-			if (!$this->ConnectionID)
-				return( false );
-			if ($database)
-				return( $this->DbSelectDatabase($database) );
-			return( true );    
-		}
-		function DbSelectDatabase($database){
-			$this->DatabaseName = $database;
-			if ($this->ConnectionID)
-				return @mysql_select_db($database, $this->ConnectionID);        
-			else
-				return false;    
+			$this->ConnectionID = @mysqli_connect($host, $user, $passwd,$database);
+			if (!$this->ConnectionID){
+				return false ;
+			} else {
+				return true;
+			}
 		}
 		function DbQuery($query, $start = '', $limit = ''){
 			if ($start != '' || $limit != ''){
 				$query .= ' LIMIT '.$start.','.$limit;
 			}
-			$this->Result = @mysql_query($query, $this->ConnectionID);
+			$this->Result = @mysqli_query($query, $this->ConnectionID);
 			return( $this->Result );
 		}
 		function DbNumRows(){
-			$count = @mysql_num_rows($this->Result);
+			$count = @mysqli_num_rows($this->Result);
 			return( $count );
 		}
 		function DbNextRow(){
-			$this->Row = @mysql_fetch_array($this->Result);
+			$this->Row = @mysqli_fetch_array($this->Result);
 			return( $this->Row );
 		}
 		function DbError(){
-			return mysql_error();
+			return mysqli_error();
 		}
 		function DbCreate($db_name){
-			if(mysql_query("CREATE DATABASE $db_name")) 
+			if(mysqli_query("CREATE DATABASE $db_name")) 
 				return 1;
 			else 
 				return 0;
@@ -50,7 +43,7 @@ if (!defined( "_DB_MYSQL_LAYER" )){
 		}
 	}
     function DbError(){
-        return mysql_error();
+        return mysqli_error();
     }
 }
 ?>

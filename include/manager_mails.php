@@ -34,20 +34,20 @@ if ($continue) {
     switch($action){
         case 'delete':
             if(    $cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email=$email AND list_id=$list_id AND hash=$hash")){
-                echo 'Adresse e-mail '.htmlentities($_POST['this_mail']).' supprimée de la base correctement';
+                echo '<h4 class="alert_success">Adresse e-mail '.htmlentities($_POST['this_mail']).' supprimée de la base correctement</h4>';
             } else {
-                echo 'Une erreur a été rencontrée...';
+                echo '<h4 class="alert_error">Une erreur a été rencontrée...</h4>';
             }
         break;
         case 'update':
             if($cnx->query("UPDATE ".$row_config_globale['table_email']." SET email=$email,status=NULL,error='N' WHERE list_id=$list_id AND hash=$hash")){
-                echo 'Adresse e-mail '.htmlentities($_POST['this_mail']).' en correction correcte';
+                echo '<h4 class="alert_success">Adresse e-mail '.htmlentities($_POST['this_mail']).' en correction correcte</h4>';
             } else {
-                echo 'Une erreur a été rencontrée...';
+                echo '<h4 class="alert_error">Une erreur a été rencontrée..</h4>.';
             }
         break;
         default:
-            echo 'Une erreur est survenue';
+            echo '<h4 class="alert_error">Une erreur est survenue</h4>';
         break;
     }
 }

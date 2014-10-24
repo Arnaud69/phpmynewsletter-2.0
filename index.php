@@ -41,9 +41,17 @@ $l         =(empty($_GET['l'])?"l":$_GET['l']);
 $t         =(empty($_GET['t'])?"":$_GET['t']);
 $t         =(empty($_POST['t'])?$t:$_POST['t']);
 $error_list=false;
-$subscriber_op_msg = "";
-if($action=="delete"&&$page=="listes"){
+$subscriber_op_msg = '';
+if($action=='delete'&&$page=='listes'){
     $deleted=deleteNewsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_globale['table_archives'],$row_config_globale['table_email'],$row_config_globale['table_temp'],$row_config_globale['table_send'],$row_config_globale['table_tracking'],$row_config_globale['table_sauvegarde'],$list_id);
+}
+if($action=='purge_mailq'&&$page=='manager_mailq'){
+    $path_postsuper=exec('locate postsuper | grep bin');
+    if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
+        $result = exec('sudo '.$path_postsuper.' -d ALL');
+    } else {
+        $alerte_purge_mailq = "<h4 class='alert_error'>Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.</h4>";
+    }
 }
 $op_true = array(
     'SaveConfig','createConfig','saveGlobalconfig',
@@ -120,10 +128,10 @@ if(in_array($op,$op_true)){
                     } else{
                         $local_filename = $tmp_subdir.basename($import_file['tmp_name']);
                         move_uploaded_file($import_file['tmp_name'], $local_filename);
-                        $liste = fopen($local_filename, "r");
+                        $liste = fopen($local_filename, 'r');
                     }
                 } else{
-                    $liste = fopen($import_file['tmp_name'], "r");
+                    $liste = fopen($import_file['tmp_name'], 'r');
                 }
                 if($tmp_subdir_writable){
                     $tx_import = 0;
@@ -140,12 +148,12 @@ if(in_array($op,$op_true)){
                                 if($added==-1){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".translate("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
                                 }elseif($added==2){
-                                    //$subscriber_op_msg .= "<h4 class='alert_success'>".translate("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
+                                    $subscriber_op_msg .= "<h4 class='alert_success'>".translate("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
                                     $tx_import++;
                                 }elseif($added==0){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".translate("ERROR_SQL", DbError())."</h4>";
                                 }
-                            } else{
+                            } else {
                                 $subscriber_op_msg .= "<h4 class='alert_error'>Adresse mail invalide : ".$mail_importe."</h4>";
                             }
                         }
@@ -162,7 +170,7 @@ if(in_array($op,$op_true)){
         break;
     }
 } else{
-    $op = "";
+    $op = '';
 }
 if(file_exists('include/config_bounce.php')){
     include('include/config_bounce.php');
@@ -179,7 +187,7 @@ $list=list_newsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_
 
 if(!$list&&$page!="config"){
     $page  ="listes";
-	$l = 'c';
+    $l = 'c';
 }
 ?>
 <!DOCTYPE HTML>
@@ -191,24 +199,21 @@ if(!$list&&$page!="config"){
     <!--[if lte IE 8]>
     <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
     <script src="js/html5shiv.js"></script><![endif]-->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <script src="js/jquery.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.colorbox.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){$(".tablesorter").tablesorter();});
     $(document).ready(function(){
-        //When page loads...
-        $(".tab_content").hide(); //Hide all content
-        $("ul.tabs li:first").addClass("active").show(); //Activate first tab
-        $(".tab_content:first").show(); //Show first tab content
-        //On Click Event
+        $(".tab_content").hide();
+        $("ul.tabs li:first").addClass("active").show();
+        $(".tab_content:first").show();
         $("ul.tabs li").click(function(){
-            $("ul.tabs li").removeClass("active"); //Remove any "active" class
-            $(this).addClass("active"); //Add "active" class to selected tab
-            $(".tab_content").hide(); //Hide all tab content
-            var activeTab = $(this).find("a").attr("href"); //Find the href attribute value to identify the active tab + content
-            $(activeTab).fadeIn(); //Fade in the active ID content
+            $("ul.tabs li").removeClass("active");
+            $(this).addClass("active");
+            $(".tab_content").hide();
+            var activeTab = $(this).find("a").attr("href");
+            $(activeTab).fadeIn();
             return false;
         });
     });
@@ -333,6 +338,8 @@ if(!$list&&$page!="config"){
                         )
                     );
             }
+            if($page == "newsletterconf") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a>';
+            if($page == "code_html") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">Code HTML de souscription</a>';
             if($page == "compose"){
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_COMPOSE").'</a>';
                 echo ($op=='init'?'<div class="breadcrumb_divider"></div> <a class="current">Rédaction initiale</a>':
@@ -345,15 +352,14 @@ if(!$list&&$page!="config"){
                         )
                     );
             }
-            if($page == "archives") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_ARCHIVES").'</a>';
-            if($page == "code_html") echo '<div class="breadcrumb_divider"></div> <a class="current">Code HTML de souscription</a>';
-            if($page == "newsletterconf") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a>';
-            if($page == "config") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_CONFIG").'</a>';
             if($page == "tracking"){
                 echo '<div class="breadcrumb_divider"></div> <a class="current">Tracking</a>';
                 echo ($data=='ch'?'<div class="breadcrumb_divider"></div> <a class="current">Données chiffrées</a>':'<div class="breadcrumb_divider"></div> <a class="current">Données graphiques</a>');
             }
-            if($page == "undisturbed") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des mails en erreur de distribution</a>';
+            if($page == "undisturbed") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des non-distribués</a><div class="breadcrumb_divider"></div> <a class="current">Analyse des retours</a>';
+            if($page == "archives") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des archives</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_ARCHIVES").'</a>';
+            if($page == "task") echo '<div class="breadcrumb_divider"></div>  <a class="current">Tâches planifiées</a><div class="breadcrumb_divider"></div> <a class="current">Gestion des tâches planifiées</a>';
+            if($page == "config") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_CONFIG").'</a>';
             ?>
             </article>
         </div>
@@ -361,8 +367,12 @@ if(!$list&&$page!="config"){
     <aside id="sidebar" class="column">
         <ul class="toggle">
             <li class="icn_time"><a>Heure du serveur : <span id='ts'></span></a></li>
-            <li class="icn_queue"><a><span id='mailq'>Recherche des mails en cours d'envoi...</span></a></li>
-            <?=checkVersion();?>
+            <?php
+            if($type_serveur=='dedicated'){
+                echo '<li class="icn_queue"><span id="mailq">Recherche des mails en cours d\'envoi...</span></li>';
+            }
+            checkVersion();
+            ?>
         </ul>
         <hr/>
         <h3>Listes</h3>
@@ -393,14 +403,30 @@ if(!$list&&$page!="config"){
             <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=ch">Données chiffrées</a></li>
             <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=co">Données graphiques</a></li>
         </ul>
+        <?php
+        if($type_serveur=='dedicated') {
+        ?>
         <h3>Gestion des non-distribués</h3>
         <ul class="toggle">
             <li class="icn_bounce"><a href="?page=undisturbed&token=<?=$token;?>&list_id=<?=$list_id;?>">Analyse des retours</a></li>
         </ul>
+        <?php
+        }
+        ?>
         <h3>Archives</h3>
         <ul class="toggle">
             <li class="icn_settings"><a href="?page=archives&token=<?=$token;?>&list_id=<?=$list_id;?>">Archives</a></li>
         </ul>
+         <?php
+        if($type_serveur=='dedicated') {
+        ?>
+        <h3>Tâches planifiées</h3>
+        <ul class="toggle">
+            <li class="icn_settings"><a href="?page=task&token=<?=$token;?>&list_id=<?=$list_id;?>">Gestion des tâches planifiées</a></li>
+        </ul>
+        <?php
+        }
+        ?>
         <h3>Configuration globale</h3>
         <ul class="toggle">
             <li class="icn_settings"><a href="?page=config&token=<?=$token;?>&list_id=<?=$list_id;?>">Configuration globale</a></li>
@@ -451,6 +477,12 @@ if(!$list&&$page!="config"){
                 break;
                 case "code_html":
                     require("include/code_html.php");
+                break;
+                case "task":
+                    require("include/manage_cron.php");
+                break;
+                case "manager_mailq":
+                    require("include/manager_mailq.php");
                 break;
             }
         ?>
