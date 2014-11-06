@@ -17,6 +17,13 @@ phpmynewsletter-2.0
 # SYNOPSIS
 Send mails, add attachment, manage bounce and track clicked links.
 
+# Required
+ - PHP 5.3 min with : imap, curl, openssl
+ - Mysql 5.x min
+ - VPS/linux or dedicated server/linux for crontab and bounce management
+ - mails
+ - And your hands to write your mails !
+
 # SCREENSHOT, PREVIEW
 the new version of phpmynewsletter
 ![Full preview](http://blog.aulica-conseil.com/wp-content/uploads/2014/09/PhpMyNewsLetter_full_page.png)
