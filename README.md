@@ -1,7 +1,17 @@
 phpmynewsletter-2.0
 ===================
 
-# CURRENT VERSION : 2.0.2 beta
+# CURRENT VERSION : 2.0.3
+# CHANGELOG :
+  - Schedule task to send newsletter
+  - Easy attachment to send (one or more !)
+  - Full rewrite of the portal
+  - Correction bugs
+  - Rewrite chart for tracking
+  - Captcha for suscriber (opt-in)
+  - switch for prod and dev
+  - switch for dedicated and shared server
+  - Mysqli
 
 # SYNOPSIS
 Send mails, add attachment, manage bounce and track clicked links.
