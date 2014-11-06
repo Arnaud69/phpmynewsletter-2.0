@@ -60,7 +60,11 @@ if(empty($id_mail)&&empty($list_id)){
                     <h3>Compte rendu des liens cliqués</h3>
                 </header>
                 <?php
-                $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT FROM ".$row_config_globale['table_track_links']." WHERE list_id=$list_id AND msg_id=$id_mail ORDER BY CPT DESC")->fetch();
+                $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT 
+					FROM ".$row_config_globale['table_track_links']." 
+						WHERE list_id=$list_id 
+							AND msg_id=$id_mail 
+						ORDER BY CPT DESC")->fetch();
                 if($count_clicked_links['CPT']>0){
                     echo '<table class="tablesorter" cellspacing="0"> 
                         <thead> 
@@ -71,19 +75,24 @@ if(empty($id_mail)&&empty($list_id)){
                             </tr> 
                         </thead> 
                         <tbody>';
-                    $links = $cnx->query("SELECT * FROM ".$row_config_globale['table_track_links']." WHERE list_id=$list_id AND msg_id=$id_mail ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
+                    $links = $cnx->query("SELECT link,sum(cpt) AS CPT_PER_LINK
+									FROM ".$row_config_globale['table_track_links']." 
+										WHERE list_id=$list_id
+											AND msg_id=$id_mail
+										GROUP BY link
+										ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
                     $chart_data='';
                     foreach($links as $row){
                         echo '<tr>';
                         $parse = parse_url($row['link']);
-                        $percent = number_format(($row['cpt']/$count_clicked_links['CPT']*100), 2, ',', '');
-                        $percentcss = number_format(($row['cpt']/$count_clicked_links['CPT']*100),0, ',', '');
+                        $percent = number_format(($row['CPT_PER_LINK']/$count_clicked_links['CPT']*100), 2, ',', '');
+                        $percentcss = number_format(($row['CPT_PER_LINK']/$count_clicked_links['CPT']*100),0, ',', '');
                         (intval(strlen($row['link']))>80)?$clicked_link=substr($row['link'], 0, 80).'[...]':$clicked_link=$row['link'];
                         echo '<td>'. $clicked_link . '</td>';
-                        echo '<td align="right">'.$row['cpt'].'</td>';
+                        echo '<td align="right">'.$row['CPT_PER_LINK'].'</td>';
                         echo '<td align="right"><div class="record"><div class="bar" style="width:'. $percentcss . '%;"><span>'. $percent . '%</span></div></div></td>';
                         echo '</tr>';
-                        $chart_data.='{"data": "'.$clicked_link.'", "value": '.$row['cpt'].'},';
+                        $chart_data.='{"data": "'.$clicked_link.'", "value": '.$row['CPT_PER_LINK'].'},';
                     }
                     echo '</table>';
                 } else {
