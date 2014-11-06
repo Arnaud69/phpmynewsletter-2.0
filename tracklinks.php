@@ -61,10 +61,10 @@ if(empty($id_mail)&&empty($list_id)){
                 </header>
                 <?php
                 $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT 
-					FROM ".$row_config_globale['table_track_links']." 
-						WHERE list_id=$list_id 
-							AND msg_id=$id_mail 
-						ORDER BY CPT DESC")->fetch();
+                                    FROM ".$row_config_globale['table_track_links']." 
+                                        WHERE list_id=$list_id 
+                                            AND msg_id=$id_mail 
+                                        ORDER BY CPT DESC")->fetch();
                 if($count_clicked_links['CPT']>0){
                     echo '<table class="tablesorter" cellspacing="0"> 
                         <thead> 
@@ -76,11 +76,11 @@ if(empty($id_mail)&&empty($list_id)){
                         </thead> 
                         <tbody>';
                     $links = $cnx->query("SELECT link,sum(cpt) AS CPT_PER_LINK
-									FROM ".$row_config_globale['table_track_links']." 
-										WHERE list_id=$list_id
-											AND msg_id=$id_mail
-										GROUP BY link
-										ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
+                                    FROM ".$row_config_globale['table_track_links']." 
+                                        WHERE list_id=$list_id
+                                            AND msg_id=$id_mail
+                                        GROUP BY link
+                                        ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
                     $chart_data='';
                     foreach($links as $row){
                         echo '<tr>';
@@ -102,7 +102,7 @@ if(empty($id_mail)&&empty($list_id)){
             </article>
             <div class="spacer"></div>
         </section>
-        <section>																			
+        <section>                                                                            
             <article class="module width_full">
                 <header>
                     <h3>Graphique liens cliqués</h3>
