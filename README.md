@@ -6,6 +6,7 @@ phpmynewsletter-2.0
   - Schedule task to send newsletter
   - Easy attachment to send (one or more !)
   - Full rewrite of the portal
+  - mailqueue management (* : http://www.phpmynewsletter.com/forum/viewtopic.php?id=93)
   - Correction bugs
   - Rewrite chart for tracking
   - Captcha for suscriber (opt-in)
@@ -29,17 +30,20 @@ the new version of phpmynewsletter
 ![Global tracking](http://blog.aulica-conseil.com/wp-content/uploads/2014/09/PhpMyNewsLetter_tracking.png)
 
 # INSTALLATION
-Download zip, unzip in a folder, go to install.php in your browser, complete fiels and questions, enjoy !
+Download zip, unzip in a folder, go to install.php in your browser, complete fields and questions, enjoy !
 
 # SUPPORT
 Official support on the forum, please go to http://www.phpmynewsletter.com/forum/ or tickets for bugs and support.
 
-# Roadmap for next version, TODO 2.0.3
+# Roadmap for next version, TODO 2.0.4
 - Complete translations
-- Crontab to send mails
 - Email overlay report
-- Perform a better control on registration
 - Templates for composition
+- AmCharts for tracking
+- Responsive and template mails
+- opening geolocation
+- check suscribers with smtp
+- detect mail client
 - ... What else ? Ask me !
 
 # LICENSE
