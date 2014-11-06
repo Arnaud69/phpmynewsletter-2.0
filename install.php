@@ -7,7 +7,7 @@ if(file_exists("include/config.php")) {
 }else{
     include('include/lib/pmn_fonctions.php');
 }
-$version        = '2.0.2b';
+$version        = '2.0.3';
 $langfileArray  = array('castellano','dansk','deutsch','english','francais','italiano','nederlands',',norwsegian','portugues','portugues_do_Brazil','romana','svenska');
 $langfile       = (isset($_POST['langfile'])&&in_array($_POST['langfile'],$langfileArray) ? $_POST['langfile'] :"");
 $db_typeArray   = array('mysql','mssql','pgsql','oracle');
@@ -892,6 +892,7 @@ if (empty($langfile)) {
                                 `error` ENUM("N","Y") NOT NULL DEFAULT "N",
                                 `status` VARCHAR(255) DEFAULT NULL,
                                 `type` ENUM("autoreply","blocked","soft","hard","temporary"),
+								`categorie` VARCHAR(255) NOT NULL DEFAULT "",
                                 `short_desc` TEXT NOT NULL,
                                 `long_desc` TEXT NOT NULL,
                                 PRIMARY KEY (`id`),

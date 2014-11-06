@@ -566,7 +566,11 @@ function list_bounce_error_chart_data($cnx, $table_email,$list_id) {
 }
 function list_bounce_error_chart_data_by_type($cnx, $table_email,$list_id) {
     $cnx->query("SET NAMES UTF8");
-    $x = $cnx->query("SELECT (COUNT(CASE WHEN substr(status,1,1)=5 THEN 1 END)) as hard,(COUNT(CASE WHEN substr(status,1,1)=4 THEN 1 END)) as soft FROM test_email where list_id=$list_id AND error='Y'")->fetchAll(PDO::FETCH_ASSOC);
+    $x = $cnx->query("SELECT 
+        (COUNT(CASE WHEN substr(status,1,1)=5 THEN 1 END)) as hard,
+        (COUNT(CASE WHEN substr(status,1,1)=4 THEN 1 END)) as soft 
+            FROM $table_email 
+                WHERE list_id=$list_id AND error='Y'")->fetchAll(PDO::FETCH_ASSOC);
     return $x;
 }
 function list_newsletter($cnx, $lists_table, $email_table) {
