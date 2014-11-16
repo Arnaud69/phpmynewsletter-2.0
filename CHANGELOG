@@ -1,3 +1,10 @@
+v2.0.3					  
+                          * Corrections de bugs signalés sur le forum
+						  * Génération d'un code HTML de souscription en ligne et en pop up
+                          * Mise en place des envois planifiés (valable sur serveurs dédiés et VPS !)
+                          * Distingo des hébergements dédiés et mutualisés
+                          * Modératon de la vitesse du traitement des bounce
+
 v2.0.2
                           * Correction des bugs de la version 2.0.1
                           * Gestion du Timezone, liste des fuseaux horaires à l'installation, modification possible en administration.
