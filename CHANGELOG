@@ -2,6 +2,7 @@ v2.0.3
                           * Corrections de bugs signalés sur le forum
 						  * Génération d'un code HTML de souscription en ligne et en pop up
                           * Mise en place des envois planifiés (valable sur serveurs dédiés et VPS !)
+                          * Gestion de la mailq, visualisation des mails en cours d'envoi et suppression individuelle / globale
                           * Distingo des hébergements dédiés et mutualisés
                           * Modératon de la vitesse du traitement des bounce
 
