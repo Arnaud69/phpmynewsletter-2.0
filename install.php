@@ -17,7 +17,7 @@ $step           = (isset($_POST['step'])&&in_array($_POST['step'],$stepArray) ? 
 $opArray        = array('saveConfig');
 $op             = (isset($_POST['op'])&&in_array($_POST['op'],$opArray) ? $_POST['op'] : "");
 if (empty($langfile)) {
-    include("./include/lang/francais.php");
+    include("./include/lang/francais.php");c
 } else {
     include_once("include/lang/" . $langfile . ".php");
 }
@@ -892,7 +892,7 @@ if (empty($langfile)) {
                                 `error` ENUM("N","Y") NOT NULL DEFAULT "N",
                                 `status` VARCHAR(255) DEFAULT NULL,
                                 `type` ENUM("autoreply","blocked","soft","hard","temporary"),
-								`categorie` VARCHAR(255) NOT NULL DEFAULT "",
+                                `categorie` VARCHAR(255) NOT NULL DEFAULT "",
                                 `short_desc` TEXT NOT NULL,
                                 `long_desc` TEXT NOT NULL,
                                 PRIMARY KEY (`id`),
