@@ -1,12 +1,4 @@
 <?php
-/*$array_url = parse_url($_SERVER['HTTP_REFERER']);
-$serveur_ok = array('www.bdfci.info','www.bdfci.com','www.bdfci.fr');
-//$serveur   = $_SERVER['SERVER_ADDR'];
-if (!in_array($array_url['host'],$serveur_ok)) {
-    exit;
-}*/
-
-
 header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
