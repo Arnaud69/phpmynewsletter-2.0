@@ -931,13 +931,13 @@ class CwsMailBounceHandler
         if ($this->isImapOpenMode()) {
             for ($msg_no = 1; $msg_no <= $this->result['counter']['fetched']; $msg_no++) {
                 $this->output('<h3>Msg #' . $msg_no . '</h3>', CWSMBH_VERBOSE_REPORT, false);
-                
                 $header = @imap_fetchheader($this->_handler, $msg_no);
                 $body = @imap_body($this->_handler, $msg_no);
                 if($this->gmail){
 					$info = @imap_headerinfo($this->_handler, $msg_no);
 					$this->result['uid'][] = imap_uid($this->_handler, $msg_no);
 				}
+				
                 $this->result['msgs'][] = $this->processParsing($msg_no, $header . '\r\n\r\n' . $body);
             }
         } else {
@@ -976,26 +976,22 @@ class CwsMailBounceHandler
                 }
             }
         }
-        
         $this->output('<h2>End of process</h2>', CWSMBH_VERBOSE_SIMPLE, false);
         if ($this->isImapOpenMode()) {
             $this->output('Closing mailbox, and purging messages');
+            @imap_clearflag_full($this->_handler,1:$this->result['counter']['fetched'],"//Seen");
             @imap_close($this->_handler);
         }
-        
         $this->output($this->result['counter']['fetched'] . ' messages read');
         $this->output($this->result['counter']['processed'] . ' action taken');
         $this->output($this->result['counter']['unprocessed'] . ' no action taken');
         $this->output($this->result['counter']['deleted'] . ' messages deleted');
         $this->output($this->result['counter']['moved'] . ' messages moved');
-        
         $this->output($this->_newline . '<strong>Full result:</strong>', CWSMBH_VERBOSE_REPORT);
         $this->output($this->result, CWSMBH_VERBOSE_REPORT, false, true);
-        
         //return true;
 		return $this->result;
     }
-    
     /**
      * Function to process parsing of each individual message
      * @param string $token : message number or filename.
