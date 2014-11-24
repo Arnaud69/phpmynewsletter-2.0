@@ -17,7 +17,7 @@ $step           = (isset($_POST['step'])&&in_array($_POST['step'],$stepArray) ? 
 $opArray        = array('saveConfig');
 $op             = (isset($_POST['op'])&&in_array($_POST['op'],$opArray) ? $_POST['op'] : "");
 if (empty($langfile)) {
-    include("./include/lang/francais.php");c
+    include("./include/lang/francais.php");
 } else {
     include_once("include/lang/" . $langfile . ".php");
 }
