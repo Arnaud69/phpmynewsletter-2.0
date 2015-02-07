@@ -69,7 +69,7 @@ if($type_serveur=='dedicated'){
                     <td>'.$item['date'].'</td>
                     <td>'.$item['sender'].'</td> 
                     <td>'.$item['recipients'].'</td>
-					<td><a href="?page=manager_mailq&action=delete_id_from_mailq&list_id='.$item['list_id'].'&token='.$token.'&id_mailq='.$item['id'].'" class="tooltip" title="Supprimer ce mail, ID : '.$item['id'].'" onclick="return confirm(\'Supprimer ce mail de la file des envois ?\')"><input type="image" src="css/icn_trash.png"></a></td>
+					<td><a href="?page=manager_mailq&action=delete_id_from_mailq&list_id='.$list_id.'&token='.$token.'&id_mailq='.$item['id'].'" class="tooltip" title="Supprimer ce mail, ID : '.$item['id'].'" onclick="return confirm(\'Supprimer ce mail de la file des envois ?\')"><input type="image" src="css/icn_trash.png"></a></td>
                 </tr>
                 <tr>
                     <td colspan="6">'.$item['failed'].'</td>
