@@ -1,24 +1,24 @@
 <?php
 session_start();
-    $_SESSION=array();
-    if(ini_get("session.use_cookies")){
-        $params=session_get_cookie_params();
-        setcookie(session_name(),'',time()-42000,
-            $params["path"],$params["domain"],
-            $params["secure"],$params["httponly"]
-        );
-    }
-    session_destroy();
-if(!file_exists("include/config.php")) {
+$_SESSION=array();
+if(ini_get("session.use_cookies")){
+	$params = session_get_cookie_params();
+	setcookie(session_name(),'',time()-42000,
+		$params["path"],$params["domain"],
+		$params["secure"],$params["httponly"]
+	);
+}
+session_destroy();
+if (!file_exists("include/config.php")) {
     header("Location:install.php");
     exit;
 } else {
     include("_loader.php");
 }
 $token = tok_gen();
-$error = (isset($_GET['error']) ? $_GET['error'] :0);
+$error = (isset($_GET['error']) ? $_GET['error'] : 0);
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
-(count($row_config_globale)>0)?$r='SUCCESS':$r='';
+(count($row_config_globale)>0) ? $r='SUCCESS' : $r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
     echo "<div class='error'>".translate($r)."<br>";
@@ -64,10 +64,10 @@ body{margin:0;padding:0;background:#fff;color:#fff;font-family:Arial;font-size:1
 <br>
 <div class="login">
 <form action='index.php' method='post' name='loginform'>
-<input type="password" placeholder="<?=translate("LOGIN_PLEASE_ENTER_PASSWORD");?>" name="form_pass"><br>
-<input type="submit" value="<?=translate("LOGIN");?>">
-<input type='hidden' name='form' value='1' />
-<input type='hidden' name='token' value='<?=$token;?>' />
+    <input type="password" placeholder="<?=translate("LOGIN_PLEASE_ENTER_PASSWORD");?>" name="form_pass"><br>
+    <input type="submit" value="<?=translate("LOGIN");?>">
+    <input type='hidden' name='form' value='1' />
+    <input type='hidden' name='token' value='<?=$token;?>' />
 </form>
 </div>
 <script src="js/jquery.min.js"></script>
