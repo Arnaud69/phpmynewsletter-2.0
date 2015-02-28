@@ -83,6 +83,64 @@ switch ($step) {
             case "php_mail":
                 $mail->IsMail();
                 break;
+            // PARAGRAPHE DES SMTP MUTUALISES :
+            case "smtp_mutu_ovh":
+                $mail->IsSMTP();
+                $mail->Port = 587;
+                $mail->Host = 'ssl0.ovh.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_1and1":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 465;
+                $mail->Host = 'auth.smtp.1and1.fr';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_gandi":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'tls';//465
+                $mail->Port = 587;//465
+                $mail->Host = 'mail.gandi.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_online":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->Port = 587;
+                $mail->Host = 'smtpauth.online.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_infomaniak":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'ssl';
+                $mail->Port = 587;
+                $mail->Host = 'mail.infomaniak.ch';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
             default:
                 break;
         }
