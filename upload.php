@@ -19,11 +19,8 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
 $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     header("Location:index.php");
@@ -48,8 +45,8 @@ if($test_pj['CPT_TABLE_PJ']==0){
         ) ENGINE='.$storage_engine['ENGINE'].'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
     if($cnx->Sql($sql)){
         $_CONTINUE = true;
-		$cnx->query("ALTER TABLE `$table_global_config` ADD `table_upload` VARCHAR(255) NOT NULL DEFAULT ''");
-		$cnx->query("UPDATE $table_global_config SET table_upload='$name_table_pj'");
+        $cnx->query("ALTER TABLE `$table_global_config` ADD `table_upload` VARCHAR(255) NOT NULL DEFAULT ''");
+        $cnx->query("UPDATE $table_global_config SET table_upload='$name_table_pj'");
     }else{
         die("<div class='error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</div>");
     }
@@ -61,7 +58,8 @@ if(!is_dir("upload")){
         $_CONTINUE = true;
     } else {
         $_CONTINUE = false;
-        die("<div class='error'>Error while creating upload directory : '".$row_config_globale['path']."upload'.<br>Please, check permissions or create '".$row_config_globale['path']."upload' manually<br>Refresh after you correct it !</div>");
+        die("<div class='error'>".translate("ERROR_CREATE_UPLOAD_DIRECTORY")." : '".$row_config_globale['path']."upload'.<br>"
+             .translate("CHECK_PERMISSIONS_OR_CREATE", $row_config_globale['path'])."<br>".translate("INSTALL_REFRESH")."</div>");
     }
 }
 if($_CONTINUE){
@@ -71,27 +69,26 @@ if($_CONTINUE){
     <html lang="fr">
     <head>
         <meta charset="utf-8" />
-            <title>aJout de pièces jointes</title>
+            <title>Ajout de pièces jointes</title>
             <script src="js/dropzone.min.js"></script>
             <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
             <link rel="stylesheet" href="css/dropzone.min.css" />
             <!--[if lte IE 8]>
             <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
             <script src="js/html5shiv.js"></script><![endif]-->
-            <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-            <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+            <script src="js/jquery.min.js"></script>
             <script src="js/scripts.js"></script>
         </head>
     <body>
         <div id="main" class="column">
             <article class="module width_full">
-			    <header><h3>Ajout de pièces-jointes</h3></header>
-			    <div class="module_content">
-                Les pièces ajoutées ici seront automatiquement jointes au mail en cours de rédaction.<br>Veillez à ne pas mettre de documents trop lourds en annexe (risques de rejets selon les limitations), ni trop nombreux ! (10 documents maximum, 4 à 5 Mo sont une limite raisonnable !)
+                <header><h3><?=translate("UPLOAD_ADD");?></h3></header>
+                <div class="module_content">
+                <?=translate("UPLOAD_EXPLAIN");?>
                     <div id="dropzone">
                         <form action="include/upload_files.php" class="dropzone dz-clickable" id="pj-upload">
                             <div class="dz-default dz-message">
-                                <span>Drop files here to upload</span>
+                                <span><?=translate("UPLOAD_DROP_FILES");?></span>
                             </div>
                             <input type='hidden' name='list_id' value='<?=$list_id;?>'>
                             <input type='hidden' name='token' value='<?=$token;?>' />

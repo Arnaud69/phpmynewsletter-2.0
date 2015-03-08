@@ -21,7 +21,7 @@ if($r != 'SUCCESS') {
     die();
 }
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
-include("../include/lang/".$row_config_globale['language'].".php");
+include("lang/".$row_config_globale['language'].".php");
 $actions_possibles=array('update','delete','new','manage');
 if(isset($_POST['action'])&&in_array($_POST['action'],$actions_possibles)) {
     $action=$_POST['action'];
@@ -62,85 +62,83 @@ if($continue){
                              (SELECT subject FROM '.$row_config_globale['table_sauvegarde'].' WHERE list_id = "'.$list_id.'"),"html",CURTIME())');
             $cnx->query('DELETE FROM '.$row_config_globale['table_sauvegarde'].' WHERE list_id = "'.$list_id.'"');
             $cnx->query('UPDATE '.$row_config_globale['table_upload'].' SET msg_id='.$msg_id.' WHERE list_id='.$list_id.' AND msg_id=0');
-			$continue_transaction = true;
+            $continue_transaction = true;
         break;
         case 'update':
-			
-			
-			$continue_transaction = false;
+            $continue_transaction = false;
         break;
         case 'delete':
-			$min=(isset($_POST['deltask'])&&$_POST['deltask']!=''?$_POST['deltask']:die());
-			$detail_crontab = $cnx->query('SELECT job_id,list_id,msg_id,mail_subject,min,hour,day,month,etat
+            $min=(isset($_POST['deltask'])&&$_POST['deltask']!=''?$_POST['deltask']:die());
+            $detail_crontab = $cnx->query('SELECT job_id,list_id,msg_id,mail_subject,min,hour,day,month,etat
                                 FROM '.$row_config_globale['table_crontab'] .' 
                                     WHERE list_id='.$list_id.'
-										AND job_id="'.$_POST['deltask'].'"')->fetchAll(PDO::FETCH_ASSOC);
-			if(count($detail_crontab)==1&&$detail_crontab[0]['etat']=='done'){
-				$cnx->query('DELETE FROM '.$row_config_globale['table_crontab'] .'
-								WHERE list_id='.$list_id.'
-									AND job_id="'.$_POST['deltask'].'"');
-				return true;
-			} elseif(count($detail_crontab)==1&&$detail_crontab[0]['etat']!='done') {
-				$output = shell_exec('crontab -l');
-				if (strstr($output, $detail_crontab[0]['command'])) {
-					$newcron = str_replace($detail_crontab[0]['command'],'',$output);
-					file_put_contents('backup_crontab/'.$detail_crontab[0]['job_id'].'_import', $newcron.PHP_EOL);
-					exec('crontab backup_crontab/'.$detail_crontab[0]['job_id'].'_import');
-					$cnx->query('DELETE FROM '.$row_config_globale['table_crontab'] .'
-									WHERE list_id='.$list_id.'
-										AND job_id="'.$_POST['deltask'].'"');
-				} else {
-					echo 'Tâche non trouvée';
-				}
-			} elseif(count($detail_crontab)!=1) {
-				die('transaction impossible');
-			}
-			$continue_transaction = false;
+                                        AND job_id="'.$_POST['deltask'].'"')->fetchAll(PDO::FETCH_ASSOC);
+            if(count($detail_crontab)==1&&$detail_crontab[0]['etat']=='done'){
+                $cnx->query('DELETE FROM '.$row_config_globale['table_crontab'] .'
+                                WHERE list_id='.$list_id.'
+                                    AND job_id="'.$_POST['deltask'].'"');
+                return true;
+            } elseif(count($detail_crontab)==1&&$detail_crontab[0]['etat']!='done') {
+                $output = shell_exec('crontab -l');
+                if (strstr($output, $detail_crontab[0]['command'])) {
+                    $newcron = str_replace($detail_crontab[0]['command'],'',$output);
+                    file_put_contents('backup_crontab/'.$detail_crontab[0]['job_id'].'_import', $newcron.PHP_EOL);
+                    exec('crontab backup_crontab/'.$detail_crontab[0]['job_id'].'_import');
+                    $cnx->query('DELETE FROM '.$row_config_globale['table_crontab'] .'
+                                    WHERE list_id='.$list_id.'
+                                        AND job_id="'.$_POST['deltask'].'"');
+                } else {
+                    echo 'Tâche non trouvée';
+                }
+            } elseif(count($detail_crontab)!=1) {
+                die('transaction impossible');
+            }
+            $continue_transaction = false;
         break;
     }
-	if($continue_transaction){
-		$list_crontab = $cnx->query('SELECT job_id,list_id,mail_subject,min,hour,day,month,etat
-										FROM '.$row_config_globale['table_crontab'] .' 
-											WHERE list_id='.$list_id.' 
-										ORDER BY date DESC')->fetchAll(PDO::FETCH_ASSOC);
-		echo '<article class="module width_full"><header><h3>Envois planifiés : </h3></header>';
-		echo '<table cellspacing="0" class="tablesorter"> 
-					<thead> 
-						<tr> 
-							<th>Identifiant</th> 
-							<th>Liste</th>
-							<th>Titre de l\'envoi</th>
-							<th>Date de planification</th> 
-							<th>Etat</th> 
-							<th>Fichier log</th>
-							<th></th>
-						</tr> 
-					</thead> 
-					<tbody>';
-		$month_tab=array('','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre');
-		$step_tab=array('scheduled'=>'planifié','done'=>'terminé','deleted'=>'supprimé');
-		if(count($list_crontab)>0){
-			foreach($list_crontab as $x){
-				echo '<tr';
-				if($x['job_id']==$cronID) echo ' id="tog"';
-				echo '>';
-				echo '  <td>'.$x['job_id'].'</td>';
-				echo '  <td>'.$x['list_id'].'</td>';
-				echo '  <td>'.stripslashes($x['mail_subject']).'</td>';
-				echo '  <td>'.sprintf("%02d",$x['day']).' '.$month_tab[$x['month']].' à '.sprintf("%02d",$x['hour']).'h'.sprintf("%02d",$x['min']).'</td>';
-				echo '  <td>'.$x['etat'].'</td>';
-				echo '  <td>Pas de log disponible</td>';
-				echo '  <td><input type="image" src="css/icn_trash.png"></td>';
-				echo '</tr>';
-			}
-			echo '</table>';
-			echo '<script>$(document).ready(function(){ $("tr#tog").css("background","#B5E5EF"); }); </script>';
-		} else {
-			echo '<tr>';
-			echo '  <td colspan="5" align="center">Pas d\'envoi de mail planifié</td>';
-			echo '</tr>';
-			echo '</table>';
-		}
-	}
+    if($continue_transaction){
+        $list_crontab = $cnx->query('SELECT job_id,list_id,mail_subject,min,hour,day,month,etat
+                                        FROM '.$row_config_globale['table_crontab'] .' 
+                                            WHERE list_id='.$list_id.' 
+                                        ORDER BY date DESC')->fetchAll(PDO::FETCH_ASSOC);
+        echo '<article class="module width_full"><header><h3>Envois planifiés : </h3></header>';
+        echo '<table cellspacing="0" class="tablesorter"> 
+                    <thead> 
+                        <tr> 
+                            <th>Identifiant</th> 
+                            <th>Liste</th>
+                            <th>Titre de l\'envoi</th>
+                            <th>Date de planification</th> 
+                            <th>Etat</th> 
+                            <th>Fichier log</th>
+                            <th></th>
+                        </tr> 
+                    </thead> 
+                    <tbody>';
+        $month_tab=array('','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre');
+        $step_tab=array('scheduled'=>'planifié','done'=>'terminé','deleted'=>'supprimé');
+        if(count($list_crontab)>0){
+            foreach($list_crontab as $x){
+                echo '<tr';
+                if($x['job_id']==$cronID) echo ' id="tog"';
+                echo '>';
+                echo '  <td>'.$x['job_id'].'</td>';
+                echo '  <td>'.$x['list_id'].'</td>';
+                echo '  <td>'.stripslashes($x['mail_subject']).'</td>';
+                echo '  <td>'.sprintf("%02d",$x['day']).' '.$month_tab[$x['month']].' à '.sprintf("%02d",$x['hour']).'h'.sprintf("%02d",$x['min']).'</td>';
+                echo '  <td>'.$x['etat'].'</td>';
+                echo '  <td>Pas de log disponible</td>';
+                echo '  <td><input type="image" src="css/icn_trash.png"></td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+            echo '<script>$(document).ready(function(){ $("tr#tog").css("background","#B5E5EF"); }); </script>';
+        } else {
+            echo '<tr>';
+            echo '  <td colspan="5" align="center">Pas d\'envoi de mail planifié</td>';
+            echo '</tr>';
+            echo '</table>';
+        }
+    }
 }
 

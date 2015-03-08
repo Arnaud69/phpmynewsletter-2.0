@@ -19,11 +19,8 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("lang/".$row_config_globale['language'].".php");
 $ds          = DIRECTORY_SEPARATOR;
 $storeFolder = '../upload';
 if (!empty($_FILES)) {

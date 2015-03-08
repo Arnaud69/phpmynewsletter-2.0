@@ -24,7 +24,7 @@ if ($archives = getArchivesselectList($cnx, $row_config_globale['table_archives'
     <input type='hidden' name='list_id' value='$list_id' />
     <input type='hidden' name='token' value='$token' />";
 } else {
-    echo (translate("NO_ARCHIVE"));
+    echo info_msg(translate("NO_ARCHIVE"));
 }
 echo "</form>";
 if (!empty($msg_id) && empty($action)) {

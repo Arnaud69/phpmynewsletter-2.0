@@ -4,11 +4,30 @@ header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: text/plain'); 
+if(!file_exists("config.php")) {
+    header("Location:install.php");
+    exit;
+} else {
+    include("../_loader.php");
+    $token=(empty($_POST['token'])?"":$_POST['token']);
+    if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
+    if(!tok_val($token)){
+        header("Location:login.php?error=2");
+        exit;
+    }
+}
+$row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
+(count($row_config_globale)>0)?$r='SUCCESS':$r='';
+if($r != 'SUCCESS') {
+    include("lang/english.php");
+    echo "<div class='error'>".translate($r)."<br>";
+    echo "</div>";
+    exit;
+}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("lang/".$row_config_globale['language'].".php");
 $results = array();
 $current_object = null;
-function getlocale($category) {
-    return setlocale($category, NULL);
-}
 $old_locale = getlocale(LC_ALL);
 setlocale(LC_ALL, 'C');
 $mailq_path = 'mailq';
@@ -27,14 +46,14 @@ while($pipe) {
         $line = trim($line);
         $res = preg_match('/(\w+)\*{0,1}\s+(\d+)\s+(\w+\s+\w+\s+\d+\s+\d+:\d+:\d+)\s+([^ ]+)/', $line, $matches);
         if ($res) {
-			$current_object[] = array(
-					'id' => $matches[1],
-					'size' => intval($matches[2]),
-					'date' => strftime($matches[3]),
-					'sender' => $matches[4],
-					'failed' => false,
-					'recipients' => ''
-			);
+            $current_object[] = array(
+                    'id' => $matches[1],
+                    'size' => intval($matches[2]),
+                    'date' => strftime($matches[3]),
+                    'sender' => $matches[4],
+                    'failed' => false,
+                    'recipients' => ''
+            );
         }
     }
 }

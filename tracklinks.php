@@ -19,11 +19,8 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
 $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     header("Location:index.php");
@@ -40,13 +37,13 @@ if(empty($id_mail)&&empty($list_id)){
 <html lang="fr">
     <head>
         <meta charset="utf-8" />
-        <title>PhpMyNewsLetter > Compte rendu des liens cliqués</title>
+        <title></title>
         <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
         <!--[if lte IE 8]>
-        <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
-        <script src="js/html5shiv.js"></script><![endif]-->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+            <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+            <script src="js/html5shiv.js"></script>
+        <![endif]-->
+        <script src="js/jquery.min.js"></script>
         <script src="js/scripts.js"></script>
         <script src="js/jquery.colorbox.js"></script>
         <script type="text/javascript">
@@ -57,7 +54,7 @@ if(empty($id_mail)&&empty($list_id)){
         <section class="column">
             <article class="module width_full">
                 <header>
-                    <h3>Compte rendu des liens cliqués</h3>
+                    <h3><?=translate("CLICKED_LINK_REPORT");?></h3>
                 </header>
                 <?php
                 $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT 
@@ -69,8 +66,8 @@ if(empty($id_mail)&&empty($list_id)){
                     echo '<table class="tablesorter" cellspacing="0"> 
                         <thead> 
                             <tr>
-                                <th>Lien cliqué</th>
-                                <th align="right">Compteur</th>
+                                <th>'.translate("CLICKED_LINK").'</th>
+                                <th align="right">'.translate("CLICKED_COUNT").'</th>
                                 <th align="center">%</th> 
                             </tr> 
                         </thead> 
@@ -96,7 +93,7 @@ if(empty($id_mail)&&empty($list_id)){
                     }
                     echo '</table>';
                 } else {
-                    echo '<h4 class="alert_warning">Aucun lien cliqué dans cette lettre</h4>';
+                    echo '<h4 class="alert_warning">'.translate("CLICKED_LINK_NO_LINK").'</h4>';
                 }
                 ?>
             </article>
@@ -105,7 +102,7 @@ if(empty($id_mail)&&empty($list_id)){
         <section>                                                                            
             <article class="module width_full">
                 <header>
-                    <h3>Graphique liens cliqués</h3>
+                    <h3><?=translate("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
                 </header>
                 <script type="text/javascript" src="http://www.amcharts.com/lib/3/amcharts.js"></script>
                 <script type="text/javascript" src="http://www.amcharts.com/lib/3/pie.js"></script>

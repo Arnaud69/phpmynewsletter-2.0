@@ -979,7 +979,7 @@ class CwsMailBounceHandler
         $this->output('<h2>End of process</h2>', CWSMBH_VERBOSE_SIMPLE, false);
         if ($this->isImapOpenMode()) {
             $this->output('Closing mailbox, and purging messages');
-            @imap_clearflag_full($this->_handler,1:$this->result['counter']['fetched'],"//Seen");
+            @imap_clearflag_full($this->_handler,$this->result['counter']['fetched'],'\\Seen');
             @imap_close($this->_handler);
         }
         $this->output($this->result['counter']['fetched'] . ' messages read');

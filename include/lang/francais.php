@@ -1,30 +1,10 @@
 <?php
-function translate($s, $i="") {
-    global $lang_array;
-    if (!isset($lang_array['francais'][$s])){
-        return ("[Translation required] : $s");
-    }
-    if ($lang_array['francais'][$s] != "") {
-        if($i == ""){
-            return $lang_array['francais'][$s];
-        }
-        $sprint = $lang_array['francais'][$s];
-        return sprintf("$sprint" , $i);
-    } else {
-        return ("[Translation required] : $s");
-    }
-}
-
-
 $lang_array['francais'] = array(
     //BTN
     "OK_BTN"=>"OK",
     "YES"=>"Oui",
     "NO"=>"Non",
     "BACK"=>"Retour",
-	// ADMIN_AUTOSVE
-	"SAVED_MESSAGE_AT"=>"Message sauvegardé à ",
-	"UNSAVED_MESSAGE"=>"Sauvegarde en erreur !",
     //ARCHIVE
     "ARCHIVE_TITLE"=>"Archives",
     "ARCHIVE_CHOOSE"=>"Sélectionnez une lettre d'info",
@@ -54,9 +34,10 @@ $lang_array['francais'] = array(
     "MENU_SUBSCRIBERS"=> "Abonnés",
     "MENU_COMPOSE"=>"Rédiger un message",
     "MENU_ARCHIVES"=>"Archives",
-    "MENU_NEWSLETTER"=>"Configurer la lettre d'info",
+    "MENU_NEWSLETTER"=>"Configurer la lettre",
     "MENU_CONFIG"=>"Configuration globale",
     "MENU_LOGOUT"=>"Quitter",
+    "MENU_SCHEDULE"=>"Tâches planifiées",
     "SELECTED_NEWSLETTER"=>"Lettre d'info sélectionnée",
     "NEWSLETTER_TOTAL_SUBSCRIBER"=>"abonné",
     "NEWSLETTER_TOTAL_SUBSCRIBERS"=>"abonnés",
@@ -66,6 +47,7 @@ $lang_array['francais'] = array(
     "NEWSLETTER_NEW"=>"Créer une nouvelle lettre d'info",
     "NEWSLETTER_DEL"=>"Supprimer '%s'",
     "NEWSLETTER_SETTINGS"=>"Réglages de la lettre d'info",
+    "NEWSLETTER_CONFIGURATION"=>"Configuration de la newsletter",
     "NEWSLETTER_NAME"=>"Nom de la lettre d'info",
     "NEWSLETTER_FROM_ADDR"=>"Adresse électronique de l'expéditeur",
     "NEWSLETTER_FROM_NAME"=>"Nom de l'expéditeur",
@@ -106,11 +88,16 @@ $lang_array['francais'] = array(
     "SUBSCRIBER_DELETE_TITLE"=>"Supprimer un abonné",
     "SUBSCRIBER_DELETE_BTN"=>"Supprimer cette adresse électronique",
     "SUBSCRIBER_DELETED"=>"Abonné supprimé avec succès",
-    "SUBSCRIBER_EXPORT_TITLE"=>"Exporter les abonnés",
+    "SUBSCRIBER_EXPORT_TITLE"=>"Exporter des abonnés",
+    "SUBSCRIBER_EXPORT_TITLE_SIMPLE"=>"Export des abonnés",
     "SUBSCRIBER_EXPORT_BTN"=>"Exporter",
-    "SUBSCRIBER_TEMP_TITLE"=>"Abonnement en attente de confirmation",
+    "SUBSCRIBER_TEMP_TITLE"=>"Abonnés en attente de confirmation",
     "SUBSCRIBER_TEMP_BTN"=>"Supprimer cette adresse électronique",
-    "SUBSCRIBER_TEMP_DELETED"=>"Adresse électronique supprimée avec succès",  
+    "SUBSCRIBER_TEMP_DELETED"=>"Adresse électronique supprimée avec succès",
+    "SUBSCRIBER_NOT_CONFIRMED"=>"Abonné(s) non validé(s)" ,
+    "SUBSCRIBER_BULK_IMPORT"=>"Import en masse",
+    "SUBSCRIBER_BOUNCERS"=>"Abonnés en erreur",
+    "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
     //COMPOSE 
     "COMPOSE_NEW"=>"Rédiger un nouveau message",
     "COMPOSE_SUBJECT"=>"Sujet",
@@ -193,7 +180,7 @@ $lang_array['francais'] = array(
     //MSG
     "NO_SUBSCRIBER"=>"Aucun abonné dans la base de données",
     "NO_ARCHIVE"=>"Aucune archive pour cette lettre d'info",
-    "NEWSLETTER_NOT_YET"=>"Aucunes lettres d'info n'est configurée.",
+    "NEWSLETTER_NOT_YET"=>"Aucune lettre d'info n'est configurée.",
     "BACK"=>"Retour",
     "EXAMPLE"=>"Exemple",
     "DONE"=>"Fait",  
@@ -207,7 +194,7 @@ $lang_array['francais'] = array(
     "INSTALL_DB_NAME"=>"Nom de la base de données",
     "INSTALL_DB_LOGIN"=> "Nom d'utilisateur",
     "INSTALL_DB_PASS"=>"Mot de passe",
-    "INSTALL_DB_TABLE_PREFIX"=>"Prefixe des tables",
+    "INSTALL_DB_TABLE_PREFIX"=>"Préfixe des tables",
     "INSTALL_DB_CREATE_DB"=>"Créer la base de données ?",
     "INSTALL_DB_CREATE_TABLES"=>"Créer les tables ?",
     "INSTALL_GENERAL_SETTINGS"=>"Réglages communs",
@@ -236,6 +223,46 @@ $lang_array['francais'] = array(
     "INSTALL_UNABLE_TO_SAVE_CONFIG_FILE"=>"Impossible d'écrire le fichier de configuration.",
     "INSTALL_CONFIG_MANUALLY"=>"Merci de copier les lignes ci-dessous et de les coller dans le fichier de configuration (<em>include/config.php</em>).",
     "INSTALL_FINISHED"=>"Terminer",
+    "INSTALL_STEP_FINISHED"=>"Fin de l'installation",
+    "INSTALL_VERSIONS_EXTENSIONS"=>"Versions et extensions",
+    "INSTALL_EXTENSION"=>"Extension",
+	"INSTALL_MISSING"=>"manquante",
+	"INSTALL_OBSOLETE"=>"obsolète",
+	"INSTALL_ENVIRONMENT"=>"Environnement",
+	"INSTALL_DEVELOPMENT"=>"Développement",
+	"INSTALL_PRODUCTION"=>"Production",
+	"INSTAL_SERVER_TYPE"=>"Type de serveur",
+	"SHARED_SERVER"=>"mutualisé, partagé",
+	"DEDICATED_SERVER"=>"dédié",
+	"STORAGE_ENGINE"=>"Moteur de stockage",
+	"LOCAL_TIME_ZONE"=>"Fuseau horaire local",
+	"INSTALL_SHARED"=>"mutualisé",
+	"INSTALL_CHOOSE_PASSWORD"=>"Merci de saisir un mot de passe",
+	"INSTALL_RESULT_INSTALLATION"=>"Résultat de l'installation",
+	"INSTALL_CREATE_DB_DOWN"=>"Database create down",
+	"QUERY"=>"Requête",
+	"UPLOAD_DIRECTORY"=>"Répertoire d'upload",
+	"ERROR_CREATE_UPLOAD_DIRECTORY"=>"Erreur lors de la création du répertoire d'upload", // Error while creating upload directory 
+	"MANUALLY"=>"manuellement",
+	"CHECK_PERMISSIONS_OR_CREATE"=>"Merci de vérifier les permissions ou créer", // Please, check permissions or create %supload manuellement
+	"NOT_YET_AVAILABLE"=>"n'est pas encore disponible",
+	"MANUALLY_SAVE_CONF"=>"Merci de sauvegarder ce texte de configuration sous include/config et tout sera prêt. Renez-vous alors à l'adresse %s pour commencer",
+	"YOU_DID_IT"=>"Parfait, tout est prêt",
+	"CREDITS_WITH"=>"Tout cela est possible grâce à",
+	"CREDITS_GREGORY"=>"Gregory (Développement initial du projet et auteur légitime de PhpMyNewsLetter)",
+	"CREDITS_PHPMAILER"=>"PhpMailer (Classe de gestion des envois des mails)",
+	"CREDITS_TINYMCE"=>"TinyMce (Editeur HTML de type WYSIWYG, écrit en JavaScript, utilisé pour la rédaction des mails)",
+	"CREDITS_CRAZY"=>"Cr@zy (Classe de gestion des mails revenus en erreur)",
+	"CREDITS_MEDIALOOT"=>"Medialoot (Editeur de templates et d'icônes)",
+	"CREDITS_PASSWORD"=>"Plugin jQuery de test de la qualité d'un mot de passe",
+	"CREDITS_MODAL"=>"Plugin jQuery de fenêtre modal et type lightbox",
+	"CREDITS_DND"=>"Librairie JavaScript indépendante (ne dépend d'aucune autre librairie) de gestion des \"drag'n'drop file uploads\"",
+	"CONTRIBUTE"=>"Contribuer",
+	"LICENSE"=>"Licence",
+	"LICENSE_TERMS"=>"phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href=\"http://www.gnu.org/copyleft/gpl.html\" target=\"_blank\">Licence Publique Générale</a> du projet <a href=\"http://www.gnu.org\" target=\"_blank\" class=\"lien\">GNU</a> (Gnu GPL)",
+	"CONTRIBUTE_HELP"=>"PhpMyNewsLetter est un projet libre qui nécessite d\'être encore amélioré. Vos idées et suggestions sont les bienvenues, vos qualités de développeur aussi. Rendez vous sur le forum <a href=\"http://www.phpmynewsletter.com/forum/\" target=\"_blank\">PhpMyNewsLetter</a>",
+	"ASK_ON_FORUM"=>"Je ne réponds pas aux demandes individuelles, merci de passer par le forum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href=\"http://www.phpmynewsletter.com/forum/\" target=\"_blank\">PhpMyNewsLetter</a>",
+	"INSTALL_REFRESH"=>"Merci de rafraîchir cette page après correction de l'erreur",
     "LOGOUT_DONE"=>"Vous êtes déconnecté",
     "LOGOUT_ERROR"=> "Erreur lors de la déconnection",
     "LOGOUT_TITLE"=>"Déconnection",
@@ -243,7 +270,8 @@ $lang_array['francais'] = array(
     //SUBSCRIPTION.PHP
     "SUBSCRIPTION_TITLE"=>"Abonnement à la lettre d'info",
     "SUBSCRIPTION_SEND_CONFIRM_MESSAGE"=>"Message de confirmation envoyé.",
-    "SUBSCRIPTION_ALREADY_SUBSCRIBER"=>"Vous êtes déjà abonné à cette lettre d'info.",
+    "SUBSCRIPTION_ALREADY_SUBSCRIBER"=>"Vous êtes déjà abonné à cette lettre d'info.",//You are already a subscriber
+    "SUBSCRIPTION_NOT_A__SUBSCRIBER"=>"Vous n'êtes pas abonné à cette lettre d'info.",//You are not a subscriber of this newsletter
     "SUBSCRIPTION_CONFIRMATION"=>"Confirmer votre inscription",
     "SUBSCRIPTION_FINISHED"=>"Abonnement effectué",
     "SUBSCRIPTION_MAIL_BODY"=>"Rendez-vous à l'adresse suivante pour confirmer votre abonnement",
@@ -261,6 +289,67 @@ $lang_array['francais'] = array(
     "PASSWORD_MD5_PWD"=>"Mot de passe : ",
     "PASSWORD_MD5_ERR"=>"Une erreur est survenue, peut-être que le mot de passe saisi est incorrect.",
     "PASSWORD_MD5_ERR2"=> "Une erreur SQL est survenue : %s.",
+    "SUBSCRIPTION_CAPTCHA"=>"Confirmer votre inscription en saisissant le code ci-dessous",// Please enter the word you see in the image below
+    "SUBSCRIPTION_I_SUB"=>"Je m'abonne",
+    "SUBSCRIPTION_AGREE_SUB"=>"Je confirme mon abonnement",
+    "SUBSCRIPTION_UN_SUB"=>"Je me désabonne",
+    "SUBSCRIPTION_AGREE_UN_SUB"=>"Je confirme mon désabonnement",
+    "SUBSCRIPTION_WAINTING_MODERATION"=>"Votre demande d'abonnement est bien enregistrée et est en attente de validation",//Subscription requested recorded, waiting for moderation
+    "CLOSE_WINDOW"=>"Vous pouvez fermer cette fenêtre",
+    // V2.0.4
+    // ADMIN_AUTOSVE
+	"SAVED_MESSAGE_AT"=>"Message sauvegardé à ",
+	"UNSAVED_MESSAGE"=>"Sauvegarde en erreur !",
+	// INDEX :
+	"ROOT_TO_FLUSH_MAIL_QUEUE"=>"Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.",
+	"MAIL_ADDED"=>"mail(s) ajouté(s)",
+	"DASHBOARD"=>"Tableau de bord",
+	"SUPPORT"=>"Support",
+	"ADMINISTRATION"=>"Administration",
+	"TITLE_ADMIN_PAGE"=>"PhpMyNewsLetter > Administration",
+	"CURRENT_DRAFT"=>"brouillon en cours",
+	"ACCESS_DRAFT_CONTINUE_WRITING"=>"Accéder à ce brouillon et continuer la rédaction",
+	"NO_CURRENT_DRAFT"=>"Pas de brouillon en cours",
+	"LIST_OF_LISTS"=>"Liste des listes",
+	"CREATION_NEW_LIST"=>"Création d'une nouvelle liste",
+	"CREATE_NEW_LIST"=>"Créer une nouvelle liste",
+	"INITIAL_WORDING"=>"Rédaction initiale",
+	"SCREEN_PREVIEW"=>"Prévisualisation à l'écran",
+	"SENDING_TEST_MAIL"=>"Prévisualisation par envoi du mail de test",
+	"TRACKING"=>"Tracking",
+	"STATS_NUMBER"=>"Données chiffrées",
+	"STATS_GRAPHICS"=>"Données graphiques",
+	"TIME_SERVER"=>"Heure du serveur",
+	"ANALYSIS_OF_RETURNS"=>"Analyse des retours",
+	"MANAGEMENT_UNDISTRIBUTED"=>"Gestion des non-distribués",
+	"MANAGEMENT_ARCHIVE"=>"Gestion des archives",
+	"MANAGEMENT_SCHEDULED_TASKS"=>"Gestion des tâches planifiées",
+	"SCHEDULED_TASKS"=>"Tâches planifiées",
+	"PENDING_MAILS"=>"Mails en cours d'envoi",
+	"PENDING_MAILS_MANAGEMENT"=>"Gestion des mails en cours d'envoi",
+	"LOOKING_PROGRESS_MAILS"=>"Recherche des mails en cours d'envoi",
+	"LISTS"=>"Listes",
+	"WRITING"=>"Rédaction",
+	"WRITE_AND_SEND_A_MAIL"=>"Rédaction et envoi d'un message",
+	"MANAGEMENT_ERROR_LAST_CAMPAIN"=>"Traitement des erreurs du dernier envoi",
+	"MANAGEMENT_ERROR_NOT_CONFIGURED"=>"Traitement des mails en retour non configuré",
+	"INVALID_MAIL"=>"Adresse mail invalide",
+	// ONLINE, SEND
+	"READ_ON_LINE"=>"Si cet e-mail ne s'affiche pas correctement, veuillez %scliquer ici</a>", // If you can’t view this message correctly, click here
+	"ADD_ADRESS_BOOK"=>"Ajoutez %s &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !", //Please, add % to your address book to make sure you receive our news in your inbox
+	"UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %sd&eacute;sinscription</a>", // No longer interested ? %s Unsubscribe
+	"MAIL_PREVIEW_SEND"=>"Mail de preview",
+	// TRACK
+	"CLICKED_LINK_REPORT"=>"Compte rendu des liens cliqués",
+	"CLICKED_LINK_REPORT_GRAPHIC"=>"Graphique liens cliqués",
+	"CLICKED_LINK"=>"Liens cliqués",
+	"CLICKED_LINK_COUNT"=>"Count",
+	"CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
+	// UPLOAD
+	"UPLOAD_ADD"=>"Ajout de pièces-jointes",     // add attachment
+	"UPLOAD_DROP_FILES"=>"Glisser ici les fichiers à envoyer sur le serveur", //Drop files here to upload
+	"UPLOAD_EXPLAIN"=>"Les documents ajoutés ici seront automatiquement jointes au mail en cours de rédaction.<br>Veillez à ne pas mettre de documents trop lourds en annexe (risques de rejets selon les limitations), ni trop nombreux ! (10 documents maximum, 4 à 5 Mo sont une limite raisonnable !)",
+	
     );
 
 

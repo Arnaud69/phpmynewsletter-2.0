@@ -283,6 +283,26 @@ function DelMsgTemp($cnx, $list_id, $table){
         return false;
     }
 }
+function export_subscribers($cnx, $table_email, $list_id) {
+    $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND error='N'")->fetchAll(PDO::FETCH_ASSOC);
+    if (!$x){
+        die('export error');
+    } else {
+        header("Content-disposition: filename=listing_export_liste_".sprintf("%'.03d", $list_id)."_".date('Y-m-d-H-i-s').".txt");
+        header("Content-type: application/octetstream");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        if (strpos($_SERVER["HTTP_USER_AGENT"],"MSIE")){
+            $crlf = "\r\n";
+        } else {
+            $crlf = "\n";
+        }
+        foreach  ($x as $item) {
+            print $item['email'].$crlf;
+        }
+        exit();
+    }
+}
 function escape_string($cnx, $string) {
     if (get_magic_quotes_gpc()) {
         $string = stripslashes($string);
@@ -339,6 +359,15 @@ function get_message($cnx, $table_archive, $msg_id) {
         return $x;
     }    
 }
+function get_message_preview($cnx, $table_autosave, $list_id) {
+    $cnx->query("SET NAMES UTF8");
+    $x = $cnx->query("SELECT type, subject, textarea FROM $table_autosave WHERE list_id='$list_id'")->fetch(PDO::FETCH_ASSOC);
+    if(!$x){
+        return -1;
+    } else {
+        return $x;
+    }    
+}
 function get_newsletter_name($cnx, $lists_table, $list_id) {
     $cnx->query("SET NAMES UTF8");
     $this_name = $cnx->query("SELECT newsletter_name FROM $lists_table WHERE list_id = '$list_id'")->fetch();
@@ -362,10 +391,10 @@ function get_stats_send($cnx,$list_id,$param_global){
                 (SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject=a.id) AS TID,
                 (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id) AS TOPEN
             FROM ".$param_global['table_send']." s
-            LEFT JOIN ".$param_global['table_archives']." a ON a.id=s.id_mail 
-            LEFT JOIN ".$param_global['table_tracking']." t ON a.id=t.subject
+                LEFT JOIN ".$param_global['table_archives']." a ON a.id=s.id_mail 
+                LEFT JOIN ".$param_global['table_tracking']." t ON a.id=t.subject
             WHERE a.list_id='".$list_id."'
-            GROUP BY a.id
+                GROUP BY a.id
             ORDER BY a.id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
 }
 function get_subscribers($cnx, $table_email, $list_id) {
@@ -622,6 +651,19 @@ function quick_Exit(){
     header("Location:login.php",true,307);
     echo "<html></html>";flush();ob_flush();exit;
 }
+function readfile_chunked($filename) { 
+    $chunksize = 1*(1024*1024);
+    $buffer = ''; 
+    $handle = fopen($filename, 'rb'); 
+    if ($handle === false) { 
+        return false; 
+    } 
+    while (!feof($handle)) { 
+        $buffer = fread($handle, $chunksize); 
+        print $buffer; 
+    } 
+    return fclose($handle); 
+}
 function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $hash, $id_mail) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr' AND hash='$hash'")->fetch();
@@ -790,7 +832,7 @@ function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_co
     $configfile .= "\n\t$" . "type_env = \"$environnement\";";
     $configfile .= "\n\t$" . "timezone = '$timezone';";
     $configfile .= "\n\t$" . "table_global_config=\"$db_config_table\";";
-    $configfile .= "\n\t$" . "pmnl_version =\"$version\";\n\n\t}\n\n?>";
+    $configfile .= "\n\t$" . "pmnl_version = \"$version\";\n\n\t}\n\n?>";
     if (is_writable("include/config.php")) {
         $fc = fopen("include/config.php", "w");
         $w  = fwrite($fc, $configfile);
@@ -861,14 +903,14 @@ function saveModele($cnx,$list_id,$table_listsconfig,$newsletter_name,$from,$fro
     }
 }
 function saveREFConfigFile($db_host, $db_login, $db_pass, $db_name, $db_config_table, $db_type = 'mysql') {
-    $configfile = "<?\nif (!defined( \"_CONFIG\" ))\n\t{\n\n\t\tdefine(\"_NEWSLETTER_CLASS\", 1);";
+    $configfile = "<?php\nif (!defined( \"_CONFIG\" ))\n\t{\n\n\t\tdefine(\"_NEWSLETTER_CLASS\", 1);";
     $configfile .= "\n\n\n\t\t$" . "db_type = \"$db_type\";";
     $configfile .= "\n\t\t$" . "hostname = \"$db_host\";";
     $configfile .= "\n\t\t$" . "login = \"$db_login\";";
     $configfile .= "\n\t\t$" . "pass = \"$db_pass\";";
     $configfile .= "\n\t\t$" . "database = \"$db_name\";";
     $configfile .= "\n\t\t$" . "table_global_config=\"$db_config_table\";";
-    $configfile .= "\n\t\t$" . "pmnl_version =\"0.7\";\n\n\t}\n\n?>";
+    $configfile .= "\n\t\t$" . "pmnl_version =\"$version\";\n\n\t}\n\n?>";
     if (is_writable("include/")) {
         $fc = fopen("include/config.php", "w");
         $w  = fwrite($fc, $configfile);
@@ -957,6 +999,21 @@ function tok_val($token){
         }
     }
     return $tok;
+}
+function translate($s, $i="") {
+    global $lang_array;
+    if (!isset($lang_array['francais'][$s])){
+        return ("[Translation required] : $s");
+    }
+    if ($lang_array['francais'][$s] != "") {
+        if($i == ""){
+            return $lang_array['francais'][$s];
+        }
+        $sprint = $lang_array['francais'][$s];
+        return sprintf("$sprint" , $i);
+    } else {
+        return ("[Translation required] : $s");
+    }
 }
 function unique_id() {
     mt_srand((double) microtime() * 1000000);

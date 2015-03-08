@@ -10,6 +10,8 @@ if(file_exists("include/config.php")){
     $cnx->query("SET NAMES UTF8");
     $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
     $tb_autosave = $row_config_globale['table_sauvegarde'];
+    if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+    include("include/lang/".$row_config_globale['language'].".php");
     $subject = addslashes($_POST['subject']);
     $textarea = addslashes($_POST['message']);
     $list_id  = $_POST['list_id'];
@@ -29,7 +31,7 @@ if(file_exists("include/config.php")){
         if($cnx->query("UPDATE $tb_autosave SET textarea = '$textarea',subject='$subject',type='$type' WHERE list_id='$list_id'"))
             echo '<h4 class="alert_success">'.translate('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
         else
-			echo '<h4 class="alert_error">'.translate('UNSAVED_MESSAGE').'</h4>';
+            echo '<h4 class="alert_error">'.translate('UNSAVED_MESSAGE').'</h4>';
     }  elseif (count($x)>1){
         $cnx->query("DELETE FROM $tb_autosave WHERE list_id='$list_id'");
         if($cnx->query("INSERT INTO $tb_autosave(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')"))
@@ -38,4 +40,3 @@ if(file_exists("include/config.php")){
             echo '<h4 class="alert_error">'.translate('UNSAVED_MESSAGE').'</h4>';
     }
 }
-

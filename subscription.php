@@ -48,8 +48,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
         <!--[if lte IE 8]>
         <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
         <script src="js/html5shiv.js"></script><![endif]-->
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+        <script src="js/jquery.min.js"></script>
     </head>
     <body>
         <section id="main" class="column">
@@ -70,8 +69,8 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             echo '<form method="post" action="">
                                     <div class="module_content">
                                         <fieldset>
-                                            <label>Confirmer votre inscription en saisissant le code ci-dessous :</label>
-                                            <label><img src="c.php" /></label>
+                                            <label> :</label>
+                                            <label><img src="c.php" />' . translate("SUBSCRIPTION_CAPTCHA") . '</label>
                                             <input type="text" name="c" value="" />
                                             <input type="hidden" name="email_addr" value="'.$email_addr.'" />
                                             <input type="hidden" name="list_id" value="'.$list_id.'" />
@@ -80,7 +79,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                     </div>
                                     <footer>
                                         <div class="submit_link">
-                                            <input type="submit" value="OK">
+                                            <input type="submit" value="' . translate("OK_BTN") . '">
                                         </div>
                                     </footer>
                                 </form>';
@@ -91,7 +90,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 if (strlen($add) > 3) {
                                     $body = $news['subscription_body'];
                                     $body .= "\n\n" . translate("SUBSCRIPTION_MAIL_BODY") . ":\n";
-                                    $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_join&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>Je m'abonne</a>";
+                                    $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_join&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>" . translate("SUBSCRIPTION_I_SUB") . "</a>";
                                     $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['subscription_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['subscription_subject']));
                                     $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                     $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
@@ -103,13 +102,13 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             } elseif ($row_config_globale['mod_sub']=="1") {
                                 $add = addSubscriberMod($cnx, $row_config_globale['table_email'], $row_config_globale['table_sub'], $list_id, $email_addr);
                                 if ($add)
-                                    echo "<h4 class='alert_success'>" . translate("Subscription requested recorded, waiting for moderation") . "</h4>";
+                                    echo "<h4 class='alert_success'>" . translate("SUBSCRIPTION_WAINTING_MODERATION") . "</h4>";
                                 else if ($add == 0)
-                                    echo "<h4 class='alert_error'>" . translate("You are already a subscriber") . "</h4>";
+                                    echo "<h4 class='alert_error'>" . translate("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
                                 else
-                                    echo "<h4 class='alert_error'>" . translate("Error while SQL query") . "</h4>";
+                                    echo "<h4 class='alert_error'>" . translate("ERROR_SQL2") . "</h4>";
                             }
-                            echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                            echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                             echo '<div class="spacer"></div>';
                         }
                     break;
@@ -120,7 +119,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         if ($hash==$h&&!empty($hash)&&strlen($hash)==32) {
                             $body = $news['quit_body'];
                             $body .= "\n\n" . translate("UNSUBSCRIPTION_MAIL_BODY") . " :\n";
-                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id&i=$i'>Je me désabonne</a>";
+                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id&i=$i'>".translate("SUBSCRIPTION_UN_SUB")."</a>";
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['quit_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['quit_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                             if (sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'],$news['from_name'],$subj,
@@ -131,9 +130,9 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 echo "<h4 class='alert_error'>" . translate("ERROR_SENDING_CONFIRM_MAIL") . "</h4>";
                             }
                         } else {
-                            echo "<h4 class='alert_error'>" . translate("You are not a subscriber of this newsletter") . "</h4>";
+                            echo "<h4 class='alert_error'>" . translate("SUBSCRIPTION_NOT_A__SUBSCRIBER") . "</h4>";
                         }
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                     case "confirm_join":
@@ -145,7 +144,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             $body = $news['welcome_body'];
                             $body .= "\n\n" . translate("SUBSCRIPTION_UNSUBSCRIBE_LINK") . ":\n";
-                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id'>Je confirme mon désabonnement</a>";
+                            $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id'>".translate("SUBSCRIPTION_AGREE_UN_SUB")."</a>";
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                             $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
@@ -153,7 +152,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         } else {
                             echo "<h4 class='alert_error'>" . translate("ERROR_UNKNOWN") . "</h4>";
                         }
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                     case "confirm_leave":
@@ -166,7 +165,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         } else {
                             echo "<h4 class='alert_error'>" . translate("ERROR_UNKNOWN") . "</h4>";
                         }
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                     case "join_direct":
@@ -177,7 +176,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 $body = $news['welcome_body'];
                                 $body .= "\n\n" . translate("UNSUBSCRIPTION_MAIL_BODY") . ":\n";
-                                $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>Je me désabonne</a>";
+                                $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>".translate("SUBSCRIPTION_UN_SUB")."</a>";
                                 $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                                 $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                 $mail = sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
@@ -186,7 +185,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 echo "<h4 class='alert_error'>" . translate("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
                             } 
                         }
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                     case "leave_direct":
@@ -201,11 +200,11 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 echo "<h4 class='alert_error'>" . translate("ERROR_UNKNOWN") . "</h4>";
                             }
                         }
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                     default:
-                        echo '<h4 class="alert_info">Vous pouvez fermer cette fenêtre</h4>';
+                        echo '<h4 class="alert_info">' . translate("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;
                 }

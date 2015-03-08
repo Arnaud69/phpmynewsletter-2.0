@@ -1,4 +1,27 @@
-<?php 
+<?php
+session_start();
+if(!file_exists("config.php")) {
+    echo 'Demande de transaction impossible';
+    $continue=false;
+    die();
+} else {
+    include("../_loader.php");
+    $token=(empty($_POST['token'])?"":$_POST['token']);
+    if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
+    if(!tok_val($token)){
+        header("Location:login.php?error=2");
+        exit;
+    }
+}
+$row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
+(count($row_config_globale)>0)?$r='SUCCESS':$r='';
+if($r != 'SUCCESS') {
+    echo 'Demande de transaction impossible';
+    $continue=false;
+    die();
+}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("lang/".$row_config_globale['language'].".php");
 if($type_serveur=='dedicated'){
     $results = array();
     $current_object = null;
@@ -69,7 +92,7 @@ if($type_serveur=='dedicated'){
                     <td>'.$item['date'].'</td>
                     <td>'.$item['sender'].'</td> 
                     <td>'.$item['recipients'].'</td>
-					<td><a href="?page=manager_mailq&action=delete_id_from_mailq&list_id='.$list_id.'&token='.$token.'&id_mailq='.$item['id'].'" class="tooltip" title="Supprimer ce mail, ID : '.$item['id'].'" onclick="return confirm(\'Supprimer ce mail de la file des envois ?\')"><input type="image" src="css/icn_trash.png"></a></td>
+					<td><a href="?page=manager_mailq&action=delete_id_from_mailq&list_id='.$item['list_id'].'&token='.$token.'&id_mailq='.$item['id'].'" class="tooltip" title="Supprimer ce mail, ID : '.$item['id'].'" onclick="return confirm(\'Supprimer ce mail de la file des envois ?\')"><input type="image" src="css/icn_trash.png"></a></td>
                 </tr>
                 <tr>
                     <td colspan="6">'.$item['failed'].'</td>

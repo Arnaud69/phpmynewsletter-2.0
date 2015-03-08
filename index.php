@@ -51,7 +51,7 @@ if($action=='purge_mailq'&&$page=='manager_mailq'){
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
         $result = exec('sudo '.$path_postsuper.' -d ALL');
     } else {
-        $alerte_purge_mailq = "<h4 class='alert_error'>Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.</h4>";
+        $alerte_purge_mailq = "<h4 class='alert_error'>".translate("ROOT_TO_FLUSH_MAIL_QUEUE")."</h4>";
     }
 }
 if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)){
@@ -59,21 +59,34 @@ if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)){
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
         $result = exec('sudo '.$path_postsuper.' -d '.$id_mailq);
     } else {
-        $alerte_purge_mailq = "<h4 class='alert_error'>Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.</h4>";
+        $alerte_purge_mailq = "<h4 class='alert_error'>".translate("ROOT_TO_FLUSH_MAIL_QUEUE")."</h4>";
     }
 }
 $op_true = array(
-    'SaveConfig','createConfig','saveGlobalconfig',
-    'subscriber_add','subscriber_del','subscriber_del_temp','subscriber_import',
-    'preview','send_preview'
+    'createConfig',
+    'preview',
+    'SaveConfig',
+    'saveGlobalconfig',
+    'send_preview',
+    'subscriber_add',
+    'subscriber_del',
+    'subscriber_del_temp',
+    'subscriber_import'
+    
 );
 if(in_array($op,$op_true)){
     switch($op){
         case 'SaveConfig':
-            $save=saveModele($cnx,$_POST['list_id'],$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],$_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],$_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],$_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
+            $save=saveModele($cnx,$_POST['list_id'],$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],
+                                  $_POST['from'],$_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
+                                  $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
+                                  $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
         break;
         case 'createConfig':
-            $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],$_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],$_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],$_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
+            $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],
+                                          $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
+                                          $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
+                                          $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
             if($new_id > 0){
                 $list_id=$new_id;
                 $l='l';
@@ -86,14 +99,20 @@ if(in_array($op,$op_true)){
             $smtp_pass =(isset($_POST['smtp_pass'])?$_POST['smtp_pass']:'');
             $mod_sub   =(isset($_POST['mod_sub'])?$_POST['mod_sub']:0);
             $timezone  =(isset($_POST['timezone'])?$_POST['timezone']:'');
-            if(saveConfig($cnx,$_POST['table_config'],$_POST['admin_pass'],50,$_POST['base_url'],$_POST['path'],$_POST['language'],$_POST['table_email'],$_POST['table_temp'],$_POST['table_listsconfig'],$_POST['table_archives'],$_POST['sending_method'],$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],$_POST['validation_period'],$_POST['sub_validation'],$_POST['unsub_validation'],$_POST['admin_email'],$_POST['admin_name'],$_POST['mod_sub'],$_POST['table_sub'],$_POST['charset'],$_POST['table_track'],$_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'])){
+            if(saveConfig($cnx,$_POST['table_config'],$_POST['admin_pass'],50,$_POST['base_url'],$_POST['path'],$_POST['language'],
+                               $_POST['table_email'],$_POST['table_temp'],$_POST['table_listsconfig'],$_POST['table_archives'],
+                               $_POST['sending_method'],$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],
+                               $_POST['validation_period'],$_POST['sub_validation'],$_POST['unsub_validation'],$_POST['admin_email'],
+                               $_POST['admin_name'],$_POST['mod_sub'],$_POST['table_sub'],$_POST['charset'],$_POST['table_track'],
+                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'])){
                 $configSaved=true;
                 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
             }else{
                 $configSaved=false;
             }
             if($_POST['file']==1){
-                $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],$_POST['db_pass'],$_POST['db_name'],$_POST['table_config'],$_POST['db_type'],$_POST['type_serveur'],$_POST['type_env'],$timezone);
+                $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],$_POST['db_pass'],$_POST['db_name'],
+                                                          $_POST['table_config'],$_POST['db_type'],$_POST['type_serveur'],$_POST['type_env'],$timezone);
                 $forceUpdate=1;
                 include("include/config.php");
                 unset($forceUpdate);
@@ -131,7 +150,17 @@ if(in_array($op,$op_true)){
                 $tmp_subdir_writable = true;
                 $open_basedir = @ini_get('open_basedir');
                 if (!empty($open_basedir)){
-                    $tmp_subdir = (DIRECTORY_SEPARATOR == "/" ? "./import/" : ".\\import\\");
+                    if(!is_dir("upload")){
+						if(mkdir("upload",0700)){
+							$_CONTINUE = true;
+						} else {
+							$_CONTINUE = false;
+							die("<div class='error'>Error while creating upload directory : '".$row_config_globale['path']
+								."upload'.<br>Please, check permissions or create '"
+								.$row_config_globale['path']."upload' manually<br>Refresh after you correct it !</div>");
+						}
+					}
+					$tmp_subdir="./upload/";
                     if(! is_writable($tmp_subdir)){
                         $tmp_subdir_writable = false;
                     } else{
@@ -163,11 +192,11 @@ if(in_array($op,$op_true)){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".translate("ERROR_SQL", DbError())."</h4>";
                                 }
                             } else {
-                                $subscriber_op_msg .= "<h4 class='alert_error'>Adresse mail invalide : ".$mail_importe."</h4>";
+                                $subscriber_op_msg .= "<h4 class='alert_error'>".translate("INVALID_MAIL")." : ".$mail_importe."</h4>";
                             }
                         }
                     }
-                    $subscriber_op_msg .= "<h4 class='alert_success'><b>$tx_import mails importés</b></h4>";
+                    $subscriber_op_msg .= "<h4 class='alert_success'><b>$tx_import ".translate("MAIL_ADDED")."</b></h4>";
                 } else{
                     $subscriber_op_msg = "<h4 class='alert_error'>".translate("ERROR_IMPORT_TMPDIR_NOT_WRITABLE")." !</h4>";
                 }
@@ -203,11 +232,12 @@ if(!$list&&$page!="config"){
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
-    <title>PhpMyNewsLetter > Administration</title>
+    <title><?=translate("TITLE_ADMIN_PAGE");?></title>
     <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
-    <script src="js/html5shiv.js"></script><![endif]-->
+        <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+        <script src="js/html5shiv.js"></script>
+    <![endif]-->
     <script src="js/jquery.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.colorbox.js"></script>
@@ -316,7 +346,7 @@ if(!$list&&$page!="config"){
     <header id="header">
         <hgroup>
             <h1 class="site_title"><a href="http://www.phpmynewsletter.com" target="_blank">PhpMyNewsLetter</a></h1>
-            <h2 class="section_title">Tableau de bord : <?=($list_name==-1||trim($list_name)==''?translate("NEWSLETTER_CREATE"):$list_name);?></h2><div class="btn_view_site"><a href="http://www.phpmynewsletter.com/forum/" target="_blank">Support</a></div>
+            <h2 class="section_title"><?=translate("DASHBOARD");?> : <?=($list_name==-1||trim($list_name)=='' ? translate("NEWSLETTER_CREATE") : $list_name);?></h2><div class="btn_view_site"><a href="http://www.phpmynewsletter.com/forum/" target="_blank"><?=translate("SUPPORT");?></a></div>
         </hgroup>
     </header>
     <section id="secondary_bar">
@@ -324,24 +354,27 @@ if(!$list&&$page!="config"){
         $nbDraft=getMsgDraft($cnx,$list_id,$row_config_globale['table_sauvegarde']);
         ?>
         <div class="draft">
-            <p><?=($nbDraft['NB']==0?'Pas de brouillon en cours':'<a href="?page=compose&token='.$token.'&list_id='.$list_id.'" class="tooltip" title="Accéder à ce brouillon et continuer la rédaction">1 brouillon en cours</a>');?></p>
+            <p><?=($nbDraft['NB']==0 ? translate("NO_CURRENT_DRAFT") : 
+                    '<a href="?page=compose&token='.$token.'&list_id='.$list_id.'" class="tooltip" title="'.translate("ACCESS_DRAFT_CONTINUE_WRITING").'">1 '.translate("CURRENT_DRAFT").'</a>');
+                ?></p>
         </div>
         <div class="breadcrumbs_container">
-            <article class="breadcrumbs"><a href="?page=listes&token=<?=$token;?>&l=l">Administration</a>
+            <article class="breadcrumbs"><a href="?page=listes&token=<?=$token;?>&l=l"><?=translate("ADMINISTRATION");?></a>
             <?php
             if($page == "listes"){
-                echo '<div class="breadcrumb_divider"></div> <a class="current">Listes</a>';
-                echo ($l=='l'?'<div class="breadcrumb_divider"></div> <a class="current">Liste des listes</a>':'<div class="breadcrumb_divider"></div> <a class="current">Création d\'une nouvelle liste</a>');
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("LISTS").'</a>';
+                echo ($l=='l' ? '<div class="breadcrumb_divider"></div> <a class="current">'.translate("LIST_OF_LISTS").'</a>' : 
+                                '<div class="breadcrumb_divider"></div> <a class="current">'.translate("CREATION_NEW_LIST").'</a>');
             }
             if($page == "subscribers"){
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_SUBSCRIBERS").'</a>';
-                echo ($t=='a'?'<div class="breadcrumb_divider"></div> <a class="current">Ajouter un abonné</a>':
-                        ($t=='i'?'<div class="breadcrumb_divider"></div> <a class="current">Import en masse</a>':
-                            ($t=='s'?'<div class="breadcrumb_divider"></div> <a class="current">Supprimer un abonné</a>':
-                                ($t=='e'?'<div class="breadcrumb_divider"></div> <a class="current">Export des abonnés</a>':
-                                    ($t=='x'?'<div class="breadcrumb_divider"></div> <a class="current">Abonnés en erreur</a>':
-                                        ($t=='t'?'<div class="breadcrumb_divider"></div> <a class="current">Abonnés non validés</a>':
-                                            '<div class="breadcrumb_divider"></div> <a class="current">Ajouter un abonné</a>'
+                echo ($t=='a'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_ADD_TITLE").'</a>':
+                        ($t=='i'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_BULK_IMPORT").'</a>':
+                            ($t=='s'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_DELETE_TITLE").'</a>':
+                                ($t=='e'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_EXPORT_TITLE").'</a>':
+                                    ($t=='x'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_BOUNCERS").'</a>':
+                                        ($t=='t'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_NOT_CONFIRMED").'</a>':
+                                            '<div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIBER_ADD_TITLE").'</a>'
                                         )
                                     )
                                 )
@@ -349,99 +382,113 @@ if(!$list&&$page!="config"){
                         )
                     );
             }
-            if($page == "newsletterconf") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a>';
-            if($page == "code_html") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">Code HTML de souscription</a>';
+            if($page == "newsletterconf") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a>';
+            }
+            if($page == "code_html") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("SUBSCRIPTION_HTML_CODE").'</a>';
+            }
             if($page == "compose"){
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_COMPOSE").'</a>';
-                echo ($op=='init'?'<div class="breadcrumb_divider"></div> <a class="current">Rédaction initiale</a>':
-                        ($op=='preview'?'<div class="breadcrumb_divider"></div> <a class="current">Prévisualisation à l\'écran</a>':
-                            ($op=='send_preview'?'<div class="breadcrumb_divider"></div> <a class="current" id="smail">Prévisualisation par envoi du mail de test</a>':
-                                ($op=='preview'?'<div class="breadcrumb_divider"></div> <a class="current">Prévisualisation à l\'écran</a>':
-                                    '<div class="breadcrumb_divider"></div> <a class="current">Rédaction initiale</a>'
+                echo ($op=='init'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("INITIAL_WORDING").'</a>':
+                        ($op=='preview'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SCREEN_PREVIEW").'</a>':
+                            ($op=='send_preview'?'<div class="breadcrumb_divider"></div> <a class="current" id="smail">'.translate("SENDING_TEST_MAIL").'</a>':
+                                ($op=='preview'?'<div class="breadcrumb_divider"></div> <a class="current">'.translate("SCREEN_PREVIEW").'</a>':
+                                    '<div class="breadcrumb_divider"></div> <a class="current">'.translate("INITIAL_WORDING").'</a>'
                                 )
                             )
                         )
                     );
             }
             if($page == "tracking"){
-                echo '<div class="breadcrumb_divider"></div> <a class="current">Tracking</a>';
-                echo ($data=='ch'?'<div class="breadcrumb_divider"></div> <a class="current">Données chiffrées</a>':'<div class="breadcrumb_divider"></div> <a class="current">Données graphiques</a>');
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("TRACKING").'</a>';
+                echo ($data=='ch' ? '<div class="breadcrumb_divider"></div> <a class="current">'.translate("STATS_NUMBER").'</a>' : 
+                                    '<div class="breadcrumb_divider"></div> <a class="current">'.translate("STATS_GRAPHICS").'</a>');
             }
-            if($page == "undisturbed") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des non-distribués</a><div class="breadcrumb_divider"></div> <a class="current">Analyse des retours</a>';
-            if($page == "archives") echo '<div class="breadcrumb_divider"></div> <a class="current">Gestion des archives</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_ARCHIVES").'</a>';
-            if($page == "task") echo '<div class="breadcrumb_divider"></div>  <a class="current">Tâches planifiées</a><div class="breadcrumb_divider"></div> <a class="current">Gestion des tâches planifiées</a>';
-            if($page == "config") echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_CONFIG").'</a>';
-			if($page == "manager_mailq") echo '<div class="breadcrumb_divider"></div> <a class="current">Mails en cours d\'envoi</a><div class="breadcrumb_divider"></div> <a class="current">Gestion des mails en cours d\'envoi</a>';
+            if($page == "undisturbed") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MANAGEMENT_UNDISTRIBUTED").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("ANALYSIS_OF_RETURNS").'</a>';
+            }
+            if($page == "archives") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MANAGEMENT_ARCHIVE").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_ARCHIVES").'</a>';
+            }
+            if($page == "task") {
+                echo '<div class="breadcrumb_divider"></div>  <a class="current">'.translate("SCHEDULED_TASKS").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("MANAGEMENT_SCHEDULED_TASKS").'</a>';
+            }
+            if($page == "config") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("MENU_CONFIG").'</a>';
+            }
+			if($page == "manager_mailq") {
+			    echo '<div class="breadcrumb_divider"></div> <a class="current">'.translate("PENDING_MAILS").'</a><div class="breadcrumb_divider"></div> <a class="current">'.translate("PENDING_MAILS_MANAGEMENT").'</a>';
+			}
             ?>
             </article>
         </div>
     </section>
     <aside id="sidebar" class="column">
         <ul class="toggle">
-            <li class="icn_time"><a>Heure du serveur : <span id='ts'></span></a></li>
+            <li class="icn_time"><a><?=translate("TIME_SERVER");?> : <span id='ts'></span></a></li>
             <?php
             if($type_serveur=='dedicated'){
-                echo '<li class="icn_queue"><span id="mailq">Recherche des mails en cours d\'envoi...</span></li>';
+                echo '<li class="icn_queue"><span id="mailq">'.translate("LOOKING_PROGRESS_MAILS").'...</span></li>';
             }
             checkVersion();
             ?>
         </ul>
         <hr/>
-        <h3>Listes</h3>
+        <h3><?=translate("LISTS");?></h3>
         <ul class="toggle">
-            <li class="icn_categories"><a href="?page=listes&token=<?=$token;?>&l=l&list_id=<?=@$list_id;?>">Liste des listes</a></li>
-            <li class="icn_new_article"><a href="?page=listes&token=<?=$token;?>&l=c">Créer une nouvelle liste</a></li>
+            <li class="icn_categories"><a href="?page=listes&token=<?=$token;?>&l=l&list_id=<?=@$list_id;?>"><?=translate("LIST_OF_LISTS");?></a></li>
+            <li class="icn_new_article"><a href="?page=listes&token=<?=$token;?>&l=c"><?=translate("CREATE_NEW_LIST");?></a></li>
         </ul>
-        <h3>Abonnés</h3>
+        <h3><?=translate("MENU_SUBSCRIBERS");?></h3>
         <ul class="toggle">
-            <li class="icn_add_user"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=a">Ajouter un abonné</a></li>
-            <li class="icn_view_users"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=i">Import en masse</a></li>
-            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=s">Supprimer un abonné</a></li>
-            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=e">Export des abonnés</a></li>
-            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=x">Abonnés en erreur</a></li>
-            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=t">Abonnés non validés</a></li>
+            <li class="icn_add_user"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=a"><?=translate("SUBSCRIBER_ADD_TITLE");?></a></li>
+            <li class="icn_view_users"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=i"><?=translate("SUBSCRIBER_BULK_IMPORT");?></a></li>
+            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=s"><?=translate("SUBSCRIBER_DELETE_TITLE");?></a></li>
+            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=e"><?=translate("SUBSCRIBER_EXPORT_TITLE_SIMPLE");?></a></li>
+            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=x"><?=translate("SUBSCRIBER_BOUNCERS");?></a></li>
+            <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=t"><?=translate("SUBSCRIBER_NOT_CONFIRMED");?></a></li>
         </ul>
-        <h3>Configurer la lettre</h3>
+        <h3><?=translate("MENU_NEWSLETTER");?></h3>
         <ul class="toggle">
-            <li class="icn_settings"><a href="?page=newsletterconf&token=<?=$token;?>&list_id=<?=$list_id;?>">Configuration de la newsletter</a></li>
-            <li class="icn_settings"><a href="?page=code_html&token=<?=$token;?>&list_id=<?=$list_id;?>">Code HTML de souscription</a></li>
+            <li class="icn_settings"><a href="?page=newsletterconf&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("NEWSLETTER_CONFIGURATION");?></a></li>
+            <li class="icn_settings"><a href="?page=code_html&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("SUBSCRIPTION_HTML_CODE");?></a></li>
         </ul>
-        <h3>Rédaction</h3>
+        <h3><?=translate("WRITING");?></h3>
         <ul class="toggle">
-            <li class="icn_write"><a href="?page=compose&token=<?=$token;?>&list_id=<?=$list_id;?>">Rédaction et envoi d'un message</a></li>
+            <li class="icn_write"><a href="?page=compose&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("WRITE_AND_SEND_A_MAIL");?></a></li>
         </ul>
-        <h3>Tracking</h3>
+        <h3><?=translate("TRACKING");?></h3>
         <ul class="toggle">
-            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=ch">Données chiffrées</a></li>
-            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=co">Données graphiques</a></li>
+            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=ch"><?=translate("STATS_NUMBER");?></a></li>
+            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=co"><?=translate("STATS_GRAPHICS");?></a></li>
         </ul>
         <?php
         if($type_serveur=='dedicated') {
         ?>
-        <h3>Gestion des non-distribués</h3>
+        <h3><?=translate("MANAGEMENT_UNDISTRIBUTED");?></h3>
         <ul class="toggle">
-            <li class="icn_bounce"><a href="?page=undisturbed&token=<?=$token;?>&list_id=<?=$list_id;?>">Analyse des retours</a></li>
+            <li class="icn_bounce"><a href="?page=undisturbed&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("ANALYSIS_OF_RETURNS");?></a></li>
         </ul>
         <?php
         }
         ?>
-        <h3>Archives</h3>
+        <h3><?=translate("MENU_ARCHIVES");?></h3>
         <ul class="toggle">
-            <li class="icn_settings"><a href="?page=archives&token=<?=$token;?>&list_id=<?=$list_id;?>">Archives</a></li>
-        </ul>
-         <?php
-        if($type_serveur=='dedicated') {
-        ?>
-        <h3>Tâches planifiées</h3>
-        <ul class="toggle">
-            <li class="icn_settings"><a href="?page=task&token=<?=$token;?>&list_id=<?=$list_id;?>">Gestion des tâches planifiées</a></li>
+            <li class="icn_settings"><a href="?page=archives&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("MENU_ARCHIVES");?></a></li>
         </ul>
         <?php
+        if($type_serveur=='dedicated') { ?>
+            <h3><?=translate("MENU_SCHEDULE");?></h3>
+            <ul class="toggle">
+                <li class="icn_settings"><a href="?page=task&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("MANAGEMENT_SCHEDULED_TASKS");?></a></li>
+            </ul>
+            <?php
         }
         ?>
-        <h3>Configuration globale</h3>
+        <h3><?=translate("MENU_CONFIG");?></h3>
         <ul class="toggle">
-            <li class="icn_settings"><a href="?page=config&token=<?=$token;?>&list_id=<?=$list_id;?>">Configuration globale</a></li>
+            <li class="icn_settings"><a href="?page=config&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=translate("GCONFIG_TITLE");?></a></li>
             <li class="icn_jump_back"><a href="logout.php"><?=translate("MENU_LOGOUT");?></a></li>
         </ul>
         
@@ -469,8 +516,8 @@ if(!$list&&$page!="config"){
                         require("include/undisturbed.php");
                     } else {
                         echo '<article class="module width_full">';
-                        echo '<header><h3 class="tabs_involved">Traitement des erreurs du dernier envoi :</h3></header>';
-                        echo '<h4 class="alert_error">Traitement des mails en retour non configuré.</h4><br>&nbsp;';
+                        echo '<header><h3 class="tabs_involved">'.translate("MANAGEMENT_ERROR_LAST_CAMPAIN").' :</h3></header>';
+                        echo '<h4 class="alert_error">'.translate("MANAGEMENT_ERROR_NOT_CONFIGURED").'.</h4><br>&nbsp;';
                         echo '</article>';
                     }
                 break;

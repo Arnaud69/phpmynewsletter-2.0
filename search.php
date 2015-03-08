@@ -23,12 +23,9 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
-$q = (!empty($_POST['search'])) ? $_POST['search'] : '';
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
+!empty($_POST['search']) ? $q=$_POST['search'] : $q='';
 if(!empty($q)){
     $tabMails = getEmail($cnx, $q, $row_config_globale['table_email']);
     if(sizeof($tabMails)){
@@ -39,4 +36,3 @@ if(!empty($q)){
         }    
     }
 }
-

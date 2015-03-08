@@ -4,11 +4,11 @@ if(!file_exists("include/config.php")) {
     exit;
 } else {
     include("_loader.php");
-	$token=(empty($_POST['token'])?"":$_POST['token']);
-	if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
-	if(!tok_val($token)){
-		quick_Exit();
-	}
+    $token=(empty($_POST['token'])?"":$_POST['token']);
+    if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
+    if(!tok_val($token)){
+        quick_Exit();
+    }
 }
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
@@ -60,16 +60,72 @@ switch ($step) {
             case "smtp_gmail":
                 $mail->IsSMTP();
                 $mail->SMTPAuth = true;
-                //$mail->SMTPDebug  = 1; //1=debug, 2=message only
                 $mail->SMTPSecure = 'tls';
                 $mail->Host = "smtp.gmail.com";
-                $mail->Port = 587; // 465 ssl or 587 tls
+                $mail->Port = 587;
                 $mail->IsHTML(true);
                 $mail->Username = $row_config_globale['smtp_login'];
                 $mail->Password = $row_config_globale['smtp_pass'];
                 break;
             case "php_mail":
                 $mail->IsMail();
+                break;
+            case "smtp_mutu_ovh":
+                $mail->IsSMTP();
+                $mail->Port = 587;
+                $mail->Host = 'ssl0.ovh.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_1and1":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 465;
+                $mail->Host = 'auth.smtp.1and1.fr';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_gandi":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
+                $mail->Host = 'mail.gandi.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_online":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->Port = 587;
+                $mail->Host = 'smtpauth.online.net';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
+                break;
+            case "smtp_mutu_infomaniak":
+                $mail->IsSMTP();
+                $mail->SMTPAuth = true;
+                $mail->SMTPSecure = 'ssl';
+                $mail->Port = 587;
+                $mail->Host = 'mail.infomaniak.ch';
+                if ($row_config_globale['smtp_auth']) {
+                    $mail->SMTPAuth = true;
+                    $mail->Username = $row_config_globale['smtp_login'];
+                    $mail->Password = $row_config_globale['smtp_pass'];
+                }
                 break;
             default:
                 break;
@@ -91,38 +147,46 @@ switch ($step) {
         if(empty($subject)){
             $subject    = stripslashes($msg['subject']);
         }
-        $subject = $subject.' (MESSAGE DE PREVIEW)';
+        $subject = $subject.' ('.translate("MAIL_PREVIEW_SEND").')';
         if ($format == "html"){
             $message .= "<br />";
-		}  
+        }  
         if ($format == "html"){
             $mail->IsHTML(true);
-		}
+        }
         for ($i = 0; $i < count($addr); $i++) {
             $unsubLink = "";
-			$mail->ClearAddresses();
-			$mail->ClearCCs();
-			$mail->ClearBCCs();
+            $mail->ClearAddresses();
+            $mail->ClearCCs();
+            $mail->ClearBCCs();
             $mail->AddAddress($addr);
             $body = "";
-			$trac = "<img src='".$row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=fake_hash' alt='' width='1' />";
+            $trac = "<img src='".$row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=fake_hash' alt='' width='1'  alt='".$list_id."' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
-				$body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-				$body .= "Si cet e-mail ne s'affiche pas correctement, veuillez <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=$msg_id&list_id=$list_id&email_addr=" . $addr . "&h=fake_hash'>cliquer-ici</a>.<br />";
-				$body .= "Ajoutez ".$newsletter['from_addr']." &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !<br />";
-				$body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
-				$unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>Je ne souhaite plus recevoir la newsletter : <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=" . $addr . "&h=fake_hash' style='' target='_blank'>d&eacute;sinscription / unsubscribe</a><br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";	
-			} else {
-			    $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr)."&h=fake_hash";
-			}
+                $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
+                $body .= translate("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr."&h=fake_hash'>")."<br />";
+                $body .= translate("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
+                $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
+                $message = preg_replace_callback(
+                    '/href="(http:\/\/)([^"]+)"/',
+                    function($matches) {
+                        global $new_url;
+                        return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
+                    },$message);
+                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
+                            .translate("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=" . $addr . "&h=fake_hash' style='' target='_blank'>")
+                            ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+            } else {
+                $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr)."&h=fake_hash";
+            }
             $subject         = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $subject : iconv("UTF-8", $row_config_globale['charset'], $subject));
             $body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
             @set_time_limit(150);
             if (!$mail->Send()) {
-                die('Erreur d\'envoi du mail de preview');
+                die(translate("ERROR_SENDING"));
             }else{
                 header("location:index.php?page=compose&op=send_preview&error=$error&list_id=$list_id&errorlog=$dontlog&token=$token");
             }

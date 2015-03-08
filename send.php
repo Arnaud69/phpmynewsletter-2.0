@@ -23,11 +23,8 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
 $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     quick_Exit();
@@ -83,7 +80,6 @@ switch ($step) {
             case "php_mail":
                 $mail->IsMail();
                 break;
-            // PARAGRAPHE DES SMTP MUTUALISES :
             case "smtp_mutu_ovh":
                 $mail->IsSMTP();
                 $mail->Port = 587;
@@ -109,8 +105,8 @@ switch ($step) {
             case "smtp_mutu_gandi":
                 $mail->IsSMTP();
                 $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';//465
-                $mail->Port = 587;//465
+                $mail->SMTPSecure = 'tls';
+                $mail->Port = 587;
                 $mail->Host = 'mail.gandi.net';
                 if ($row_config_globale['smtp_auth']) {
                     $mail->SMTPAuth = true;
@@ -146,9 +142,9 @@ switch ($step) {
         }
         $mail->Sender = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
-        $msg            = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
-        $format         = $msg['type'];
-        $list_pj    = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." WHERE list_id=$list_id AND msg_id=$msg_id ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+        $msg     = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
+        $format  = $msg['type'];
+        $list_pj = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." WHERE list_id=$list_id AND msg_id=$msg_id ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
         if(count($list_pj)>0){
             foreach  ($list_pj as $item) {
                 $mail->AddAttachment('upload/'.$item['name']);
@@ -181,12 +177,12 @@ switch ($step) {
                 $message .= "<br />";
             }
             $body = "";
-            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' />";
+            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."'  />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-                $body .= "Si cet e-mail ne s'affiche pas correctement, veuillez <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=$msg_id&list_id=$list_id&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>cliquer-ici</a>.<br />";
-                $body .= "Ajoutez ".$newsletter['from_addr']." &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !<br />";
+                $body .= translate("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
+                $body .= translate("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h='.$addr[$i]['hash'].'&l='.$list_id.'&r=';
                 $message = preg_replace_callback(
@@ -195,7 +191,9 @@ switch ($step) {
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
                     },$message);
-                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>Je ne souhaite plus recevoir la newsletter : <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>d&eacute;sinscription / unsubscribe</a><br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
+                            .translate("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."' style='' target='_blank'>")
+                            ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr[$i]['email'])."&h=" . $addr[$i]['hash'];
             }
@@ -236,8 +234,7 @@ switch ($step) {
                         'TTS'    => $tts
                        );
             echo json_encode($arr);
-            $sql_suivi = "UPDATE ".$row_config_globale['table_send_suivi']." SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'";
-            $cnx->query($sql_suivi);
+            $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'");
         } else {
             $errstr = "------------------------------------------------------------\r\n";
             $errstr .= "Finished at " . date("H:i:s") . "\r\n";
@@ -274,10 +271,8 @@ switch ($step) {
             $dontlog = 1;
         }
         $num    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$list_id);
-        $sql = "INSERT into ".$row_config_globale['table_send']." (`id_mail`, `id_list`, `cpt`) VALUES ('".$msg_id."','".$list_id."','0')";
-        $cnx->query($sql);
-        $sql_suivi = "INSERT into ".$row_config_globale['table_send_suivi']." (`list_id`, `msg_id`, `total_to_send`) VALUES ('".$list_id."','".$msg_id."','".$num."')";
-        $cnx->query($sql_suivi);
+        $cnx->query("INSERT into ".$row_config_globale['table_send']." (`id_mail`, `id_list`, `cpt`) VALUES ('".$msg_id."','".$list_id."','0')");
+        $cnx->query("INSERT into ".$row_config_globale['table_send_suivi']." (`list_id`, `msg_id`, `total_to_send`) VALUES ('".$list_id."','".$msg_id."','".$num."')");
         $errstr = "============================================================\r\n";
         $errstr .= date("d M Y") . "\r\n";
         $errstr .= "Started at " . date("H:i:s") . "\r\n";

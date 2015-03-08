@@ -5,7 +5,7 @@ if(!sizeof($list)){
 switch($l){
     case 'l':
         if($page != "config"){
-			echo '<article class="module width_full">';
+            echo '<article class="module width_full">';
             echo '<header><h3>Liste des listes existantes</h3></header>';
             echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
@@ -20,10 +20,10 @@ switch($l){
             foreach  ($list as $item){
                 echo '<tr>';
                 echo '<td>'. ($item['list_id']==$list_id?"<b>$list_id</b>":$item['list_id']) .'</td>';
-				echo ($item['list_id']==$list_id?
-					'<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" style="padding-left:4px;padding-right:6px;color:rgb(255,255,255);background-color:rgb(22,167,101);font:12px arial,sans-serif;" class="tooltip" title="Liste sélectionnée"
-					>'.$item['newsletter_name'].'</a></td>':
-					'<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="Sélectionner cette liste">'.$item['newsletter_name'].'</a></td>');
+                echo ($item['list_id']==$list_id?
+                    '<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" style="padding-left:4px;padding-right:6px;color:rgb(255,255,255);background-color:rgb(22,167,101);font:12px arial,sans-serif;" class="tooltip" title="Liste sélectionnée"
+                    >'.$item['newsletter_name'].'</a></td>':
+                    '<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="Sélectionner cette liste">'.$item['newsletter_name'].'</a></td>');
                 echo '<td>'. getSubscribersNumbers($cnx,$row_config_globale['table_email'],$item['list_id']).'</td>';
                 echo '<td><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="Supprimer cette lettre d\'information" onclick="return confirm(\'Supprimer toutes les informations relatives à cette liste ?\nCette action est iiréversible !\')"><input type="image" src="css/icn_trash.png"></a></td>';
                 echo '</tr>';
@@ -38,11 +38,11 @@ switch($l){
         } else{
             // dummy !
         }
-		echo '</article>';
+        echo '</article>';
     break;
     case 'c':
         echo "<form action='' method='post'>
-		<article class='module width_3_quarter'><header><h3>".translate("NEWSLETTER_CREATE")."</h3></header>
+        <article class='module width_3_quarter'><header><h3>".translate("NEWSLETTER_CREATE")."</h3></header>
         <div class='module_content'>
         <input type='hidden' name='op' value='createConfig' /><input type='hidden' name='token' value='$token' />
         <fieldset><label>".translate("NEWSLETTER_NAME")." : </label>
@@ -103,15 +103,15 @@ switch($l){
             filemanager_title:'Responsive Filemanager' ,
             external_plugins:{ 'filemanager' : '/".$row_config_globale['path']."js/tinymce/plugins/filemanager/plugin.min.js'}});
         </script>";
-		echo '</article>';
-		echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
-		echo '<header><h3>Actions :</h3></header><div align="center">';
-		echo "<br>
-			<input type='submit' value=\"".translate("NEWSLETTER_SAVE_NEW")."\" />
-			<input type='hidden' name='page' value='listes' />
-			<input type='hidden' name='token' value='$token' />
-			<div class='spacer'></div>";
-		echo '</div></article></div></form>';
+        echo '</article>';
+        echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
+        echo '<header><h3>Actions :</h3></header><div align="center">';
+        echo "<br>
+            <input type='submit' value=\"".translate("NEWSLETTER_SAVE_NEW")."\" />
+            <input type='hidden' name='page' value='listes' />
+            <input type='hidden' name='token' value='$token' />
+            <div class='spacer'></div>";
+        echo '</div></article></div></form>';
     break;
 }
 echo '</article>';

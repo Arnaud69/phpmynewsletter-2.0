@@ -23,11 +23,8 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("lang/".$row_config_globale['language'].".php");
 $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     header("Location:index.php");
@@ -92,7 +89,6 @@ if(file_exists("config_bounce.php")){
 } else {
     echo '<h4 class="alert_error">Traitement des mails en retour non configuré</h4>';
 }
-
 
 
 

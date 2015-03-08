@@ -9,14 +9,14 @@ if(!file_exists("include/config.php")) {
 } else {
     include("_loader.php");
     $token=(empty($_POST['token'])?"":$_POST['token']);
-    if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
+    if(!isset($token) || $token=="")$token=(empty($_GET['token']) ? "" : $_GET['token']);
     if(!tok_val($token)){
         header("Location:login.php?error=2");
         exit;
     }
 }
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
-(count($row_config_globale)>0)?$r='SUCCESS':$r='';
+(count($row_config_globale)>0) ? $r='SUCCESS' : $r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
     echo "<div class='error'>".translate($r)."<br>";

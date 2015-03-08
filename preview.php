@@ -9,8 +9,8 @@ if(!file_exists("include/config.php")) {
 $token=(empty($_POST['token'])?"":$_POST['token']);
 if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
 if(!tok_val($token)){
-	header("Location:login.php?error=2");
-	exit;
+    header("Location:login.php?error=2");
+    exit;
 }
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
@@ -31,14 +31,14 @@ if(!checkAdminAccess($row_config_globale['admin_pass'],$form_pass)) {
         header("Location:login.php");
     exit;
 }
-$list_id  		=(empty($_GET['list_id'])?"":$_GET['list_id']);
-$id  		    =(empty($_GET['id'])?"":$_GET['id']);
+$list_id        =(empty($_GET['list_id'])?"":$_GET['list_id']);
+$id             =(empty($_GET['id'])?"":$_GET['id']);
 if(isset($id)&&is_numeric($id)){
     $msg        = getMsgById($cnx,$id,$row_config_globale['table_archives']);
-	$message    = stripslashes($msg['message']);
+    $message    = stripslashes($msg['message']);
 } else {
     $msg        = getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
-	$message    = stripslashes($msg['textarea']);
+    $message    = stripslashes($msg['textarea']);
 }
 $format         = $msg['type'];
 if(empty($subject)){
@@ -49,14 +49,14 @@ $_SESSION['subject']=$subject;
 $_SESSION['format']=$format;
 $subj           = htmlspecialchars($subject);
 if($format == "html"){
-	$Vmsg = $message;
+    $Vmsg = $message;
 } else {
-	$Vmsg = htmlspecialchars($message);
+    $Vmsg = htmlspecialchars($message);
 }
 echo "<u>".translate("COMPOSE_SUBJECT")."</u> : ".stripslashes($subj)."<br /><br />"; 
 if($format == "html"){
-	echo stripslashes($Vmsg);
+    echo stripslashes($Vmsg);
 } else {
-	echo nl2br(stripslashes($Vmsg));
+    echo nl2br(stripslashes($Vmsg));
 }
 

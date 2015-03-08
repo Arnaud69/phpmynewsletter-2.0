@@ -31,19 +31,7 @@ if(tok_val($token)){
     header("Location:login.php?error=2");
     exit;
 }
-function readfile_chunked($filename) { 
-    $chunksize = 1*(1024*1024); // how many bytes per chunk 
-    $buffer = ''; 
-    $handle = fopen($filename, 'rb'); 
-    if ($handle === false) { 
-        return false; 
-    } 
-    while (!feof($handle)) { 
-        $buffer = fread($handle, $chunksize); 
-        print $buffer; 
-    } 
-    return fclose($handle); 
-}
+
 $log =(empty($_GET['log'])?"":urldecode($_GET['log']));
 if(file_exists($log)){       
     header("Pragma: public");

@@ -7,7 +7,7 @@ if(file_exists("include/config.php")) {
 }else{
     include('include/lib/pmn_fonctions.php');
 }
-$version        = '2.0.3';
+$version        = '2.0.4';
 $langfileArray  = array('castellano','dansk','deutsch','english','francais','italiano','nederlands',',norwsegian','portugues','portugues_do_Brazil','romana','svenska');
 $langfile       = (isset($_POST['langfile'])&&in_array($_POST['langfile'],$langfileArray) ? $_POST['langfile'] :"");
 $db_typeArray   = array('mysql','mssql','pgsql','oracle');
@@ -26,46 +26,23 @@ if (empty($langfile)) {
 <html lang="fr">
 <head>
     <meta charset="utf-8" />
-    <title>PhpMyNewsLetter > Installation</title>
+    <title><?=translate("INSTALL_TITLE");?></title>
     <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
-    <script src="js/html5shiv.js"></script><![endif]-->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>!window.jQuery && document.write(unescape('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+        <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+        <script src="js/html5shiv.js"></script>
+    <![endif]-->
+    <script src="js/jquery.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.colorbox.js"></script>
     <script src="js/strength.min.js"></script>
-    <script type="text/javascript">
-    $(document).ready(function() { $(".tablesorter").tablesorter(); } );
-    $(document).ready(function() {
-        $(".tab_content").hide();
-        $("ul.tabs li:first").addClass("active").show();
-        $(".tab_content:first").show();
-        $("ul.tabs li").click(function() {
-            $("ul.tabs li").removeClass("active");
-            $(this).addClass("active");
-            $(".tab_content").hide();
-            var activeTab = $(this).find("a").attr("href");
-            $(activeTab).fadeIn();
-            return false;
-        });
-    });
-    $(function(){ $('.column').equalHeight(); });
-    </script>
-    <style>.strength_meter{}
-    .strength_meter div{width:100%;height:45px;text-align:center;color:black;font-weight:bold;line-height:45px;}
-    .veryweak{background-color: #FFA0A0;border-color: #F04040!important}
-    .weak{background-color: #FFB78C;border-color: #FF853C!important;}
-    .medium{background-color: #FFEC8B;border-color: #FC0!important;}
-    .strong{background-color: #C3FF88;border-color: #8DFF1C!important;}
-    </style>
+    <style>.strength_meter{}.strength_meter div{width:100%;height:45px;text-align:center;color:black;font-weight:bold;line-height:45px;}.veryweak{background-color: #FFA0A0;border-color: #F04040!important}.weak{background-color: #FFB78C;border-color: #FF853C!important;}.medium{background-color: #FFEC8B;border-color: #FC0!important;}.strong{background-color: #C3FF88;border-color: #8DFF1C!important;}</style>
 </head>
 <body>
     <header id="header">
         <hgroup>
             <h1 class="site_title"><a href="http://www.phpmynewsletter.com">PhpMyNewsLetter</a></h1>
-            <h2 class="section_title"><?=translate("INSTALL_TITLE") . " " . $step . "/4";?></h2><div class="btn_view_site"><a href="http://www.phpmynewsletter.com/forum/" target="_blank">Support</a></div>
+            <h2 class="section_title"><?=translate("INSTALL_TITLE") . " " . $step . "/4";?></h2><div class="btn_view_site"><a href="http://www.phpmynewsletter.com/forum/" target="_blank"><?=translate("SUPPORT");?></a></div>
         </hgroup>
     </header>
     <section id="secondary_bar">
@@ -73,10 +50,10 @@ if (empty($langfile)) {
             <article class="breadcrumbs">
                 <a><?=translate("INSTALL_TITLE");?></a>
                 <?php
-                echo ($step==1?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a>':
-                        ($step==2?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a>':
-                            ($step==3?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a>':
-                                ($step==4?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a><div class="breadcrumb_divider"></div><a class="current">Fin installation</a>':''
+                echo ($step==1?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a>' :
+                        ($step==2?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a>' :
+                            ($step==3?'<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a>' :
+                                ($step==4 ? '<div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_LANGUAGE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TYPE").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a><div class="breadcrumb_divider"></div><a class="current">'.translate("INSTALL_STEP_FINISHED").'</a>' : ''
                                 )
                             )
                         )
@@ -85,51 +62,51 @@ if (empty($langfile)) {
           </article>
         </div>
     </section>
-    <!-- FIN DE LA BARRE DE MENU -->
-    
-    
     <aside id="sidebar" class="column">
         <ul class="toggle">
-            <li class="icn_time"><a>Heure du serveur : <span id='ts'></span></a></li>
+            <li class="icn_time"><a><?=translate("TIME_SERVER");?> : <span id='ts'></span></a></li>
         </ul>
         <script>$(function(){function ts(){$.ajax({url:"datetime.php",success:function(data){$('#ts').html(data);}});setTimeout(ts,1000);}ts();});</script>
         <hr>
         <h3>Installation</h3>
         <ul>
-            <li class="icn_settings"><a>Versions et extensions, <?=translate("INSTALL_LANGUAGE");?></a></li>
+            <li class="icn_settings"><a><?=translate("INSTALL_VERSIONS_EXTENSIONS");?>, <?=translate("INSTALL_LANGUAGE");?></a></li>
             <?php
-                if($step==2||$step==3||$step==4) echo '<li class="icn_settings"><a>'.translate("INSTALL_DB_TYPE").'</a></li>';
-                if($step==3||$step==4) echo '<li class="icn_settings"><a>'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a></li>';
-                if($step==4) echo '<li class="icn_settings"><a>Fin installation</a></li>';
+                if($step==2||$step==3||$step==4) {
+                    echo '<li class="icn_settings"><a>'.translate("INSTALL_DB_TYPE").'</a></li>';
+                }
+                if($step==3||$step==4) {
+                    echo '<li class="icn_settings"><a>'.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</a></li>';
+                }
+                if($step==4) {
+                    echo '<li class="icn_settings"><a>'.translate("INSTALL_STEP_FINISHED").'</a></li>';
+                }
             ?>
         </ul>
         <footer></footer>
     </aside>
-    <!-- FIN DE LA BARRE DE GAUCHE -->
-    
-    
     <section id="main" class="column">
         <?php
         if($step==1){
             echo '<article class="module width_full">';
             echo '<header>';
-            echo '<h3>Versions et extensions</h3>';
+            echo '<h3>'.translate("INSTALL_VERSIONS_EXTENSIONS").'</h3>';
             echo '</header>';
             echo '<div class="module_content">';
             if (version_compare(PHP_VERSION, '5.3.0', '>')) {
-                echo "<h4 class='alert_success'>PHP : ".phpversion()." OK</h4>";
+                echo "<h4 class='alert_success'>PHP : ".phpversion()." ".translate("OK_BTN")."</h4>";
             } else {
-                echo "<h4 class='alert_error'>PHP : ".phpversion()." obsolète</h4>";
+                echo "<h4 class='alert_error'>PHP : ".phpversion()." ".translate("INSTALL_OBSOLETE")."</h4>";
             }
-            if(extension_loaded('imap')) {
-                echo "<h4 class='alert_success'>Extension imap OK</h4>";
+            if (extension_loaded('imap')) {
+                echo "<h4 class='alert_success'>".translate("INSTALL_VERSIONS_EXTENSIONS")." imap ".translate("OK_BTN")."</h4>";
             } else {
-                echo "<h4 class='alert_error'>Extension imap manquante</h4>";
+                echo "<h4 class='alert_error'>".translate("INSTALL_VERSIONS_EXTENSIONS")." imap ".translate("INSTALL_MISSING")."</h4>";
             }
-            if(extension_loaded('curl')) {
-                echo "<h4 class='alert_success'>Extension curl OK</h4>";
+            if (extension_loaded('curl')) {
+                echo "<h4 class='alert_success'>".translate("INSTALL_VERSIONS_EXTENSIONS")." curl ".translate("OK_BTN")."</h4>";
             } else {
-                echo "<h4 class='alert_error'>Extension curl manquante</h4>";
+                echo "<h4 class='alert_error'>".translate("INSTALL_VERSIONS_EXTENSIONS")." curl ".translate("INSTALL_MISSING")."</h4>";
             }
             echo '</div>';
             echo '</article>';
@@ -190,20 +167,20 @@ if (empty($langfile)) {
                 }</script>";
             echo "<form method='post' name='global_config' action='".$_SERVER['PHP_SELF']."'>";
             echo '<article class="module width_full">';
-            echo '<header><h3>Environnement, '.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</h3></header>';
+            echo '<header><h3>'.translate("INSTALL_ENVIRONMENT").', '.translate("INSTALL_DB_TITLE").', '.translate("INSTALL_GENERAL_SETTINGS").'</h3></header>';
             echo '<div class="module_content">';
             echo '<fieldset>';
-            echo '<label>Environnement</label>';
+            echo '<label>'.translate("INSTALL_ENVIRONMENT").'</label>';
             echo "<select name='type_env'>";
-            echo "<option value='dev'>Développement</option>";
-            echo "<option value='prod' selected>Production</option>";
+            echo "<option value='dev'>".translate("INSTALL_DEVELOPMENT")."</option>";
+            echo "<option value='prod' selected>".translate("INSTALL_PRODUCTION")."</option>";
             echo '</select>';
             echo '</fieldset>';
             echo '<fieldset>';
-            echo '<label>Type de serveur</label>';
+            echo '<label>'.translate("INSTALL_SERVER_TYPE").'</label>';
             echo "<select name='type_serveur'>";
-            echo "<option value='shared' selected>mutualisé, partagé</option>";
-            echo "<option value='dedicated'>dédié</option>";
+            echo "<option value='shared' selected>".translate("SHARED_SERVER")."</option>";
+            echo "<option value='dedicated'>".translate("DEDICATED_SERVER")."</option>";
             echo "</select>";
             echo '</fieldset>';
             echo '</article>';
@@ -240,7 +217,7 @@ if (empty($langfile)) {
             echo "<input type='checkbox' checked name='createtables' value='1'>";
             echo '</fieldset>';
             echo '<fieldset>';
-            echo '<label>Moteur de stockage</label>';
+            echo '<label>'.translate("STORAGE_ENGINE").'</label>';
             echo "<select name='storage_engine'>";
             echo "<option value='MyISAM' selected>MyISAM</option>";
             echo "<option value='InnoDB'>InnoDB</option>";
@@ -252,7 +229,7 @@ if (empty($langfile)) {
             echo '<header><h3>'.translate("INSTALL_GENERAL_SETTINGS").'</h3></header>';
             echo '<div class="module_content">';
             echo '<fieldset>';
-            echo '<label>Fuseau horaire local</label>';
+            echo '<label>'.translate("LOCAL_TIME_ZONE").'</label>';
             echo "<select name='timezone' class='input'>";
             echo "<option value='Africa/Abidjan'>Africa/Abidjan</option>
                     <option value='Africa/Accra'>Africa/Accra</option>
@@ -732,7 +709,7 @@ if (empty($langfile)) {
             echo '<script>$(document).ready(function ($) { $("#admin_pass").strength({strengthButtonText: \' (Show password)\'}); });</script>';
             echo '<fieldset>';
             echo '<label>'.translate("INSTALL_ADMIN_BASEURL").'</label>';
-            echo "<input type='text' class='input' name='base_url' size='30' value='http://" . $_SERVER['HTTP_HOST'] . "/'><br>(" . translate("EXAMPLE") . ": http://www.mydomain.com/";
+            echo "<input type='text' class='input' name='base_url' size='30' value='http://" . $_SERVER['HTTP_HOST'] . "/'><br>(" . translate("EXAMPLE") . " : http://www.mydomain.com/)";
             echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.translate("INSTALL_ADMIN_PATH_TO_PMNL").'</label>';
@@ -764,6 +741,11 @@ if (empty($langfile)) {
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
             echo "<option value='smtp_gmail'>smtp Gmail</option>";
+			echo "<option value='smtp_mutu_ovh'>smtp ".translate("INSTALL_SHARED")." OVH</option>";
+			echo "<option value='smtp_mutu_1and1'>smtp ".translate("INSTALL_SHARED")." 1AND (fr)</option>";
+			echo "<option value='smtp_mutu_gandi'>smtp ".translate("INSTALL_SHARED")." GANDI</option>";
+			echo "<option value='smtp_mutu_online'>smtp ".translate("INSTALL_SHARED")." ONLINE</option>";
+			echo "<option value='smtp_mutu_infomaniak'>smtp ".translate("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . translate("INSTALL_PHP_MAIL_FONCTION") . "</option>";
             echo "</select>";
             echo '</fieldset>';
@@ -808,14 +790,14 @@ if (empty($langfile)) {
             echo "<input type='hidden' name='mod_sub' value='0'><br>";
             echo "<input type='hidden' name='step' value=" . ($step + 1) . " />";
             echo "<div align='center'><input id='submit' type='submit' value='Go Go Go !!!'></div>";
-			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('Merci de saisir un mot de passe');}})</script>";
+			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . translate("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
             echo '</div>';
             echo '</article>';
             echo '</form>';
         } elseif (isset($db_type) && $op == "saveConfig") {
             echo '<article class="module width_full">';
             echo '<header>';
-            echo '<h3>Bilan installation</h3>';
+            echo '<h3>'. translate("INSTALL_RESULT_INSTALLATION") .'</h3>';
             echo '</header>';
             echo '<div class="module_content">';
             $createdb          = (isset($_POST['createdb']) ? $_POST['createdb'] : 0);
@@ -851,7 +833,7 @@ if (empty($langfile)) {
                 if(mysql_query("CREATE DATABASE $database")){
                     echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_DB", $database).' OK</div>';
                 } else {
-                    die("<h4 class='alert_error'>" . translate("ERROR_SQL", mysql_error()) . "<br>Query:Database create down !<br>Please, refresh after you correct it !</h4>");
+                    die("<h4 class='alert_error'>" . translate("ERROR_SQL", mysql_error()) . "<br>" . translate("QUERY") . " : " . translate("INSTALL_CREATE_DB_DOWN") . " !<br>" . translate("INSTALL_REFRESH") . " !</h4>");
                 }
             }
             include_once("include/db/db_connector.inc.php");
@@ -870,7 +852,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "archives") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'autosave (
                                 `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
@@ -882,7 +864,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "autosave") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'email (
                                 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -905,14 +887,14 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS `' . $table_prefix . 'config`(
                                 `admin_pass`        VARCHAR(64) NOT NULL DEFAULT "",
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","php_mail","smtp_gmail") NOT NULL DEFAULT "php_mail",
+                                `sending_method`    ENUM("smtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak",) NOT NULL DEFAULT "php_mail",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `table_email`       VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_temp`        VARCHAR(255) NOT NULL DEFAULT "",
@@ -942,7 +924,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "config") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'listsconfig (
                                 `list_id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -964,7 +946,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "listconfig") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = ' CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'sub (
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
@@ -974,7 +956,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "sub") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'temp (
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
@@ -989,7 +971,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "temp") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'track(
                                 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1007,7 +989,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'send (
                                 `id` int(7) UNSIGNED NOT NULL AUTO_INCREMENT, 
@@ -1024,7 +1006,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "send") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'send_suivi (
                                 `id` int(9) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -1043,7 +1025,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "send_suivi") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'track_links (
                                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -1062,7 +1044,7 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track_links") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'upload (
                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -1080,13 +1062,13 @@ if (empty($langfile)) {
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "upload") .' '.translate("DONE").'</h4>';
                         if(!is_dir("upload")){
                             if(mkdir("upload",0700)){
-                                echo '<h4 class="alert_success">Upload directory '.translate("DONE").'</h4>';
+                                echo '<h4 class="alert_success">'.translate("UPLOAD_DIRECTORY").' '.translate("DONE").'</h4>';
                             } else {
-                                die("<h4 class='alert_error'>Error while creating upload directory : '".$path."upload'.<br>Please, check permissions or create '".$path."upload' manually<br>Refresh after you correct it !</div>");
+                                die('<h4 class="alert_error">'.translate("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' . translate("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . translate("MANUALLY") . '<br>' . translate("INSTALL_REFRESH") . ' !</div>');
                             }
                         }
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'crontab (
                               `id` int(7) NOT NULL AUTO_INCREMENT,
@@ -1112,16 +1094,15 @@ if (empty($langfile)) {
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.translate("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "crontab") .' '.translate("DONE").'</h4>';
                     }else{
-                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . "<br>Please, refresh after you correct it !</h4>");            
+                        die("<h4 class='alert_error'>" . translate("ERROR_SQL", $db->DbError()) . "<br>" . translate("QUERY") . " : " . $sql . "<br>" . translate("INSTALL_REFRESH") . " !</h4>");            
                     }
-                    
                 }
             } elseif ($db_type == "pgsql") {
-                die('PGSQL Not yet available');
+                die('PGSQL, ' . translate("NOT_YET_AVAILABLE"));
             } elseif ($db_type == "mssql") {
-                die('MSSQL Not yet available');
+                die('MSSQL, ' . translate("NOT_YET_AVAILABLE"));
             } elseif ($db_type == "oracle") {
-                die('ORACLE Not yet available');
+                die('ORACLE, ' . translate("NOT_YET_AVAILABLE"));
             }
             if (!get_magic_quotes_gpc()) {
                 $table_prefix      = $cnx->CleanInput($table_prefix);
@@ -1154,7 +1135,7 @@ if (empty($langfile)) {
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . translate("INSTALL_SAVE_CONFIG") . ' ' .translate("DONE").'</h4>';
             }else{
-                die('<h4 class="alert_error">' . translate("ERROR_SQL", $db->DbError() . "<br>Query:" . $sql) . '<br>Please, refresh after you correct it !</h4>');            
+                die('<h4 class="alert_error">' . translate("ERROR_SQL", $db->DbError()) . '<br>' . translate("QUERY") . ' : ' . $sql . '<br>' . translate("INSTALL_REFRESH") . ' !</h4>');            
             }
             $configfile = "<?php\nif(!defined('_CONFIG')){\n\tdefine('_CONFIG', 1);";
             $configfile .= "\n\t$"."db_type = '$db_type';";
@@ -1170,46 +1151,46 @@ if (empty($langfile)) {
             if (is_writable("include/")) {
                 $fc = fopen("include/config.php", "w");
                 $w  = fwrite($fc, $configfile);
-                echo '<h4 class="alert_success">' . translate("INSTALL_SAVE_CONFIG_FILE") . ': OK </div> ';
+                echo '<h4 class="alert_success">' . translate("INSTALL_SAVE_CONFIG_FILE") . ' : ' . translate("OK_BTN") . ' </div> ';
             } else {
                 echo translate("INSTALL_CONFIG_MANUALLY");
                 echo "<textarea cols=60 rows=18>" . $configfile . "</textarea>";
-                die("<h4 class='alert_error'>" . translate("INSTALL_UNABLE_TO_SAVE_CONFIG_FILE") . "<br>Please, save it to include/config.php if you agree and all is OK. Then go to $base_url to manage.</div>");  
+                die("<h4 class='alert_error'>" . translate("INSTALL_UNABLE_TO_SAVE_CONFIG_FILE") . "<br>" . translate("MANUALLY_SAVE_CONF", $base_url) . ".</div>");  
             }
-            echo '<br><div align="center"><img src="js/tinymce/plugins/emoticons/img/smiley-cool.gif" alt="Yeah ! You did it !" title="Yeah ! You did it !" width="18" heigh="18" /><br><a href="index.php">' . translate("INSTALL_FINISHED") . '</a></div>';
+            echo '<br><div align="center"><img src="js/tinymce/plugins/emoticons/img/smiley-cool.gif" alt="Yeah ! '. translate("YOU_DID_IT") . ' !" title="Yeah ! '. translate("YOU_DID_IT") . ' !" width="18" heigh="18" /><br><a href="index.php">' . translate("INSTALL_FINISHED") . '</a></div>';
             echo '</div>';
             echo '</article>';
             echo '<article class="module width_full">
-                    <header><h3>All this was possible with :</h3></header>
+                    <header><h3>'.translate("CREDITS_WITH").' :</h3></header>
                     <div class="module_content">
                         <ul>
-                            <li><a href="http://gregory.kokanosky.free.fr/v4/phpmynewsletter/" target="_blank">Gregory (Développement initial du projet et auteur légitime de PhpMyNewsLetter</a></li>
-                            <li><a href="https://github.com/Synchro/PHPMailer">PhpMailer (Classe de gestion des envois des mails)</a></li>
-                            <li><a href="http://www.tinymce.com/" target="_blank">TinyMce (Editeur HTML de type WYSIWYG, écrit en JavaScript, utilisé pour la rédaction des mails)</a></li>
-                            <li><a href="http://www.crazyws.fr/dev/classes-php/classe-de-gestion-des-bounces-en-php-C72TG.html" target="_blank">Cr@zy (Classe de gestion des mails revenus en erreur)</a></li>
-                            <li><a href="http://medialoot.com/preview/admin-template/index.html" targe="_blank">Medialoot (Editeur de templates et d\'icônes)</a></li>
-                            <li><a href="http://git.aaronlumsden.com/strength.js/" targe="_blank">Plugin jQuery de test de la qualité d\'un mot de passe</a></li>
-                            <li><a href="http://www.jacklmoore.com/colorbox" targe="_blank">Plugin jQuery de fenêtre modal et type lightbox</a></li>
-                            <li><a href="http://www.dropzonejs.com/" targe="_blank">Librairie JavaScript indépendante (ne dépend d\'aucune autre librairie) de gestion des "drag\'n\'drop file uploads"</a></li>
+                            <li><a href="http://gregory.kokanosky.free.fr/v4/phpmynewsletter/" target="_blank">'. translate("CREDITS_GREGORY") . '</a></li>
+                            <li><a href="https://github.com/Synchro/PHPMailer">'. translate("CREDITS_PHPMAILER") . '</a></li>
+                            <li><a href="http://www.tinymce.com/" target="_blank">'. translate("CREDITS_TINYMCE") . '</a></li>
+                            <li><a href="http://www.crazyws.fr/dev/classes-php/classe-de-gestion-des-bounces-en-php-C72TG.html" target="_blank">'. translate("CREDITS_CRAZY") . '</a></li>
+                            <li><a href="http://medialoot.com/preview/admin-template/index.html" targe="_blank">'. translate("CREDITS_MEDIALOOT") . '</a></li>
+                            <li><a href="http://git.aaronlumsden.com/strength.js/" targe="_blank">'. translate("CREDITS_PASSWORD") . '</a></li>
+                            <li><a href="http://www.jacklmoore.com/colorbox" targe="_blank">'. translate("CREDITS_MODAL") . '</a></li>
+                            <li><a href="http://www.dropzonejs.com/" targe="_blank">'. translate("CREDITS_DND") . '</a></li>
                         </ul> 
                     <div>
                   </article>
                   <article class="module width_full">
-                    <header><h3>Licence :</h3></header>
+                    <header><h3>'. translate("LICENSE") . ' :</h3></header>
                     <div class="module_content">
-                        <p>phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">Licence Publique Générale</a> du projet <a href="http://www.gnu.org" target="_blank" class="lien">GNU</a> (Gnu GPL)</p>
+                        <p>'. translate("LICENSE_TERMS") . '.</p>
                     <div>
                   </article>
                   <article class="module width_full">
-                    <header><h3>Contribuer :</h3></header>
+                    <header><h3>'. translate("CONTRIBUTE") . ' :</h3></header>
                     <div class="module_content">
-                        <p>PhpMyNewsLetter est un projet libre qui nécessite d\'être encore amélioré. Vos idées et suggestions sont les bienvenues, vos qualités de développeur aussi. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
+                        <p>'. translate("CONTRIBUTE_HELP") . '.</p>
                     <div>
                   </article>
                   <article class="module width_full">
-                    <header><h3>Support :</h3></header>
+                    <header><h3>'. translate("SUPPORT") . ' :</h3></header>
                     <div class="module_content">
-                        <p>Je ne réponds pas aux demandes individuelles, merci de passer par le foum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href="http://www.phpmynewsletter.com/forum/" target="_blank">PhpMyNewsLetter</a>.</p>
+                        <p>'. translate("ASK_ON_FORUM") . '.</p>
                     <div>
                   </article>';
                 
