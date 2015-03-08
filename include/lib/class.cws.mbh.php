@@ -215,7 +215,7 @@ class CwsMailBounceHandler
      */
     public $disable_delete = false;
     
-	/**
+    /**
      * If true, it will active functions to move mails to trash
      */
     public $gmail = false;
@@ -850,7 +850,7 @@ class CwsMailBounceHandler
         if (stristr($this->host, 'gmail')) {
             //$this->move_soft = false;
             //$this->move_hard = false;
-			$this->gmail = true;
+            $this->gmail = true;
         }
         
         // required options for imap_open connection.
@@ -934,10 +934,10 @@ class CwsMailBounceHandler
                 $header = @imap_fetchheader($this->_handler, $msg_no);
                 $body = @imap_body($this->_handler, $msg_no);
                 if($this->gmail){
-					$info = @imap_headerinfo($this->_handler, $msg_no);
-					$this->result['uid'][] = imap_uid($this->_handler, $msg_no);
-				}
-				
+                    $info = @imap_headerinfo($this->_handler, $msg_no);
+                    $this->result['uid'][] = imap_uid($this->_handler, $msg_no);
+                }
+                
                 $this->result['msgs'][] = $this->processParsing($msg_no, $header . '\r\n\r\n' . $body);
             }
         } else {
@@ -960,14 +960,14 @@ class CwsMailBounceHandler
                     $this->processMove($msg['token'], 'soft');
                     $this->result['counter']['moved']++;
                 } elseif ($this->gmail) {
-					if ($this->move_hard) {
-						$this->processMove($msg['uid'], 'hard');
-						$this->result['counter']['moved']++;
-					} elseif ($this->move_soft) {
-						$this->processMove($msg['uid'], 'soft');
-						$this->result['counter']['moved']++;
-					}
-				}
+                    if ($this->move_hard) {
+                        $this->processMove($msg['uid'], 'hard');
+                        $this->result['counter']['moved']++;
+                    } elseif ($this->move_soft) {
+                        $this->processMove($msg['uid'], 'soft');
+                        $this->result['counter']['moved']++;
+                    }
+                }
             } else {
                 $this->result['counter']['unprocessed']++;
                 if (!$this->test_mode && !$this->disable_delete && $this->purge) {
@@ -979,7 +979,7 @@ class CwsMailBounceHandler
         $this->output('<h2>End of process</h2>', CWSMBH_VERBOSE_SIMPLE, false);
         if ($this->isImapOpenMode()) {
             $this->output('Closing mailbox, and purging messages');
-            @imap_clearflag_full($this->_handler,1:$this->result['counter']['fetched'],"//Seen");
+            @imap_clearflag_full($this->_handler,$this->result['counter']['fetched'],'\\Seen');
             @imap_close($this->_handler);
         }
         $this->output($this->result['counter']['fetched'] . ' messages read');
@@ -990,7 +990,7 @@ class CwsMailBounceHandler
         $this->output($this->_newline . '<strong>Full result:</strong>', CWSMBH_VERBOSE_REPORT);
         $this->output($this->result, CWSMBH_VERBOSE_REPORT, false, true);
         //return true;
-		return $this->result;
+        return $this->result;
     }
     /**
      * Function to process parsing of each individual message
