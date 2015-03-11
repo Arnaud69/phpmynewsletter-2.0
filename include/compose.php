@@ -1,10 +1,10 @@
 <?php
 $subject = (!empty($_POST['subject'])) ? $_POST['subject'] : '';
 $message = (!empty($_POST['message'])) ? $_POST['message'] : '';
-$format  = (!empty($_POST['format'])) ? $_POST['format'] : '';
+$format  = (!empty($_POST['format']))  ? $_POST['format']  : '';
 switch($op){
     case "preview":
-        $up = @($_GET['up']=='false'?false:true);
+        $up = @($_GET['up']=='false' ? false : true);
         if($up){
             $cnx->query("UPDATE ".$row_config_globale['table_sauvegarde']." SET textarea = '".addslashes($message)."',subject='".addslashes($subject)."',type='$format' WHERE list_id='$list_id'");
         }
@@ -24,25 +24,27 @@ switch($op){
             $msg = htmlspecialchars($message);
         }
         echo "<form method='post' action='send_preview.php' class='post_message'>";
-        echo "<div align='center'><h4 class='alert_info'>Mode preview : Cette étape permet de visualiser la création de votre newsletter.<br>Cliquez sur \"Envoyer ce message\" pour envoyer un exemplaire à <b>".$newsletter['preview_addr']."</b>.</h4></div>";
+        echo "<div align='center'><h4 class='alert_info'>".tr("STEP_SEND_PREVIEW", $newsletter['preview_addr']).".</h4></div>";
         echo '<article class="module width_3_quarter">';
-        echo '<header><h3 class="tabs_involved">'.translate("COMPOSE_PREVIEW_TITLE").'</h3></header>';
-        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>Oups ! Your browser does not support iframes.</p></iframe></div>";
+        echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").'</h3></header>';
+        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>".tr("ERROR_IFRAME")."...</p></iframe></div>";
         echo "<input type='hidden' name='list_id' value='".$list_id."'>
-        <input type='hidden' name='op' value='send_preview'>
-        <input type='hidden' name='token' value='$token' />";
+              <input type='hidden' name='op' value='send_preview'>
+              <input type='hidden' name='token' value='$token' />";
         echo "</article>";
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
-        echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" value=\"".translate("COMPOSE_BACK")."\" />";
-        echo "<br><br><input type='submit' value='".translate("COMPOSE_SEND")."  (Mode PREVIEW)' /></div>";
+        echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" value=\"".tr("COMPOSE_BACK")."\" />";
+        echo "<br><br><input type='submit' value='".tr("COMPOSE_SEND")."  (Mode PREVIEW)' /></div>";
         echo '<header></header>';
-        echo '<header><h3>Pièces jointes</h3></header>';
+        echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
         echo "<div id='pjs'></div>";
-        echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>Ajouter une ou plusieurs pièces jointes à ce mail</a></div>";
+        echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
         echo '</article>';
-        echo "</form><script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});
-</script>";
+        echo "</form>";
+        echo "<script>";
+        echo "$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});";
+        echo "</script>";
     break;
     case "send_preview":
         $newsletter     = getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
@@ -63,26 +65,26 @@ switch($op){
         $error          =(empty($_GET['error'])?"":$_GET['error']);
         echo '<div class="archmsg">';
         if($error==""){
-            echo "<div align='center'><h4 class='alert_success'>Le message de preview a été correctement envoyé, merci de le vérifier avant de continuer.</h4>";
-            echo "<h4 class='advt alert_info' align='center'>L'aperçu de votre composition est OK ?<br>Cliquez sur '".translate("COMPOSE_SEND")."' pour envoyer à votre mailing-list, sinon cliquez sur '".translate("COMPOSE_BACK")."'</h4></div>";
+            echo "<div align='center'><h4 class='alert_success'>".tr("PREVIEW_SEND_OK").".</h4>";
+            echo "<h4 class='advt alert_info' align='center'>".tr("PREVIEW_OK")." ?<br>".tr("CLICK_TO_SEND", tr("COMPOSE_SEND")).", sinon cliquez sur '".tr("COMPOSE_BACK")."'</h4></div>";
         } else {
-            echo "<div align='center'><h4 class='alert_error'>Attention ! Le message de preview est en erreur. Motif : $error ! Merci de corriger, puis relancer le message de preview en cliquant ici : <a href='".$_SERVER['PHP_SELF']."?page=compose&op=init&list_id=$list_id&token=$token'>Relancer le message de preview</a></h4></div>";
+            echo "<div align='center'><h4 class='alert_error'>Attention ! Le message de preview est en erreur. Motif : $error ! Merci de corriger, puis relancer le message de preview en cliquant ici : <a href='".$_SERVER['PHP_SELF']."?page=compose&op=init&list_id=$list_id&token=$token'>".tr("RE_SEND_PREVIEW")."</a></h4></div>";
         }
         echo '<article class="module width_3_quarter">';
-        echo '<header><h3 class="tabs_involved">'.translate("COMPOSE_PREVIEW_TITLE").' :</h3></header>';
-        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>Oups ! Your browser does not support iframes.</p></iframe>";
+        echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").' :</h3></header>';
+        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>".tr("ERROR_IFRAME")."...</p></iframe>";
         echo "</article>";
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
-        echo "<br><br><input type='button' value='".translate("COMPOSE_BACK")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=preview&up=false'\" />";
+        echo "<br><br><input type='button' value='".tr("COMPOSE_BACK")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=preview&up=false'\" />";
         if($error==""){
-            echo "<br><br><input type='button' value='".translate("COMPOSE_SEND")."' class='button' id='SendIt'>";
+            echo "<br><br><input type='button' value='".tr("COMPOSE_SEND")."' class='button' id='SendIt'>";
         } else {
-            echo "<h4 class='alert_error'>Preview en erreur, vous ne pouvez pas envoyer cette lettre à votre mailing-list !</h4>";
+            echo "<h4 class='alert_error'>".tr("STOP_ON_PREVIEW_ERROR")." !</h4>";
         }
         if($type_serveur=='dedicated'){
         echo "<br><br><form method='post' action=''>
-            <input type='submit' value='Planifier cet envoi' />
+            <input type='submit' value='".tr("SCHEDULE_THIS_SEND")."' />
             <input type='hidden' name='NEWTASK' value='SCHEDULE_NEW_TASK' />
             <input type='hidden' name='list_id' value='$list_id' />
             <input type='hidden' name='page' value='task' />";
@@ -91,9 +93,9 @@ switch($op){
         echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});
         </script>";
         echo '<header></header>';
-        echo '<header><h3>Pièces jointes</h3></header>';
+        echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
         echo "<div id='pjs'></div>";
-        echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>Ajouter une ou plusieurs pièces jointes à ce mail</a></div>";
+        echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
         echo '</article></div>';
         ?>
         <script type="text/javascript">
@@ -132,8 +134,8 @@ switch($op){
                                 $("#ch_last").html(tts);
                                 if(pct > 99.999) {
                                     clearInterval(progresspump);
-                                    $("#send_title").text("Envoi terminé...");
-                                    $("#all_done").html("Redirection en cours...");
+                                    $("#send_title").text("?=tr("SEND_ENDED");?>...");
+                                    $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';
                                     },3000);
@@ -147,7 +149,7 @@ switch($op){
         </script>
         <div id='msg' style='display:none'>
             <article class="module width_full">
-            <header><h3 id='send_title'>Progression de l'envoi en cours</h3></header>
+            <header><h3 id='send_title'><?=tr("PROGRESSION_OF_CURRENT_SEND");?></h3></header>
                 <div class="module_content">
                     <article class='stats_graph' style='height:143px;'>
                         <div class='record' style='height:30px;border: 1px solid #9BA0AF;'><div id='pct' class='bar' style='width:0%'></div></div>
@@ -155,16 +157,16 @@ switch($op){
                     </article>
                     <article class="stats_overview">
                         <div class="overview_today">
-                            <p class="overview_day">Envoi</p>
+                            <p class="overview_day"><?=tr("COMPOSE_SENDING");?></p>
                             <p class="overview_count" id='done'>0,00%</p>
-                            <p class="overview_type">% envoyés</p>
+                            <p class="overview_type">% <?=tr("SENDED");?></p>
                             <p class="overview_count" id='total_to_send'>0</p>
-                            <p class="overview_type">Total à envoyer</p>
+                            <p class="overview_type"><?=tr("TOTAL_TO_SEND");?></p>
                         </div>
                         <div class="overview_previous">
-                            <p class="overview_day">Chrono</p>
+                            <p class="overview_day"><?=tr("CHRONO");?></p>
                             <p class="overview_count" id='ch_last'>0</p>
-                            <p class="overview_type">Dernier envoi (en ms)</p>
+                            <p class="overview_type"><?=tr("LAST_TIME_SEND");?></p>
                         </div>
                     </article>
                     <div class="clear"></div>
@@ -199,28 +201,28 @@ switch($op){
                 $cnx->query("INSERT INTO ".$row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
             }
             echo "<form id='mailform' name='mailform' method='post' action='' class='post_message'>";
-            echo "<div align='center'><h4 class='alert_info'>Rédigez votre lettre d'information puis cliquez sur \"Aperçu du message\" pour la visualiser.</h4></div>";
+            echo "<div align='center'><h4 class='alert_info'>".tr("COMPOSE_AND_PREVIEW").".</h4></div>";
             echo '<article class="module width_3_quarter">';
-            echo '<header><h3 class="tabs_involved">'.translate("COMPOSE_NEW").'</h3></header>';
-            echo translate("COMPOSE_SUBJECT")." : (Attention : selon la norme <a href='http://www.faqs.org/rfcs/rfc2822.htm' target='_blank'>RFC 2822</a> section 2.1.1, il convient de ne pas dépasser 78 caractères !)<br><br>
-            <input type='text' name='subject' value=\"".  stripslashes($subject)  ."\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
-            <br><br>
-            Corps du message :";
-            if($ft=="")
-                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&ft=else'>Cliquez ici pour insérer un message composé au format html</a>)<br><br>";
-            elseif($ft=='else')
-                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id'>Cliquez ici pour composer un message avec l'éditeur</a>)<br><br>";
+            echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_NEW").'</h3></header>';
+            echo tr("COMPOSE_SUBJECT")." : ".tr("RFC_2822")."<br><br>
+                <input type='text' name='subject' value=\"".  stripslashes($subject)  ."\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
+                <br><br>".tr("COMPOSE_MSG_BODY")." :";
+            if($ft=="") {
+                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
+            } elseif($ft=='else') {
+                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
+            }
             echo "<textarea name='message' id='redac' rows='20' cols='70'>".   stripslashes($textarea)  ."</textarea>";
-            echo "<div id='as'><h4 class='alert_info'>Initialisation en cours...</h4></div><br>&nbsp;</article>";
+            echo "<div id='as'><h4 class='alert_info'>".tr("START_INITIALISATION")."...</h4></div><br>&nbsp;</article>";
             echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
-            echo '<header><h3>Actions :</h3></header><div align="center">';
-            echo "<input type='button' value='Enregistrer ce message' id='rec' type='button' class='button' />
-            <br><br><input type='button' value='".translate("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&reset=true'\" />
-            <br><br><input type='button' value='".translate("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' /></div>";
+            echo '<header><h3>'.tr("ACTIONS").' :</h3></header><div align="center">';
+            echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />
+            <br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&reset=true'\" />
+            <br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' /></div>";
             echo '<header></header>';
-            echo '<header><h3>Pièces jointes</h3></header>';
+            echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
             echo "<div id='pjs'></div>";
-            echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>Ajouter une ou plusieurs pièces jointes à ce mail</a></div>";
+            echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
             echo "</div></article>";
             echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});</script>";
             echo "<input type='hidden' id='type' name='format' value='html' />
@@ -231,17 +233,17 @@ switch($op){
             <input type='hidden' id='token' name='token' value='$token' />
             </form>";
             if($ft==""){
-                echo "<script type=\"text/javascript\" src=\"js/tinymce/tinymce.min.js\"></script>
+                echo "<script src='js/tinymce/tinymce.min.js'></script>
                     <script>
                     tinymce.init({
-                        selector: \"textarea#redac\", theme: \"modern\",
+                        selector: 'textarea#redac', theme: 'modern',
                         plugins: [
-                            \"advlist autolink lists link image charmap print preview anchor\",
-                            \"searchreplace visualblocks code fullscreen textcolor emoticons\",
-                            \"insertdatetime media table contextmenu paste filemanager colorpicker\"
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen textcolor emoticons',
+                            'insertdatetime media table contextmenu paste filemanager colorpicker'
                         ],
-                        toolbar1: \"insertfile undo redo | bold italic | colorpicker forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent\",
-                        toolbar2: \"styleselect | fontselect fontsizeselect | emoticons | link image | filemanager\",
+                        toolbar1: 'insertfile undo redo | bold italic | colorpicker forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+                        toolbar2: 'styleselect | fontselect fontsizeselect | emoticons | link image | filemanager',
                         style_formats: [
                             {title: 'Open Sans', inline: 'span', styles: { 'font-family':'Open Sans'}},
                             {title: 'Arial', inline: 'span', styles: { 'font-family':'arial'}},
@@ -274,7 +276,7 @@ switch($op){
                         $(document).ready(function() { Si=setInterval(save,10000); });
                         function save(){
                             tinyMCE.triggerSave();
-                            //$('#as').html('Sauvegarde en cours...').show();
+                            //$('#as').html('".tr("SAVE_PROCESS")."...').show();
                             var ds=$('#mailform').serialize();
                             $.ajax({
                                 type: 'POST',
@@ -285,7 +287,7 @@ switch($op){
                                     $('#as').html(msg).show();
                                 },
                                 error: function() {
-                                    $('#as').html('<span class=error>Procédure de sauvegarde en erreur !</span>').show();
+                                    $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show();
                                 }
                             });
                         }
@@ -297,7 +299,7 @@ switch($op){
                         function save(){";
                             echo ($ft=='else'?"":"tinyMCE.triggerSave();");
                             echo "
-                            $('#as').html('Sauvegarde en cours...').show();
+                            $('#as').html('".tr("SAVE_PROCESS")."...').show();
                             var ds=$('#mailform').serialize();
                             $.ajax({
                                 type: 'POST',
@@ -308,7 +310,7 @@ switch($op){
                                     $('#as').html(msg).show();
                                 },
                                 error: function() {
-                                    $('#as').html('<span class=error>Procédure de sauvegarde en erreur !</span>').show();
+                                    $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show();
                                 }
                             });
                         }
@@ -318,26 +320,29 @@ switch($op){
             echo "<script>
             function Soumettre(){
                 if ( (document.mailform.subject.value=='') || (document.mailform.message.value=='') )
-                    alert('".translate("ERROR_ALL_FIELDS_REQUIRED")."');
+                    alert('".tr("ERROR_ALL_FIELDS_REQUIRED")."');
                 else {
                     document.mailform.submit();
                 }
             }
             </script>";
         } else {
-            echo "<h4 class='alert_error'>".translate("ERROR_UNABLE_TO_SEND")."</h4>";
+            echo "<h4 class='alert_error'>".tr("ERROR_UNABLE_TO_SEND")."</h4>";
         }
     break;
     case "done":
-        echo "<div align='center' class='info'>".translate("COMPOSE_SENDING")."</div>";
+        echo "<div align='center' class='info'>".tr("COMPOSE_SENDING")."</div>";
         $error=(empty($_GET['error']) ? "0" : $_GET['error']);
         $errorlog=(empty($_GET['errorlog']) ? "0" : $_GET['errorlog']);
         if($error!=0){
-            echo "<div align='center' class='error'>".translate("ERROR_SENDING")."</div>";
+            echo "<div align='center' class='error'>".tr("ERROR_SENDING")."</div>";
+        } else {
+            echo "<div align='center' class='success'>".tr("COMPOSE_SENT").".</div>";
         }
-        else echo "<div align='center' class='success'>".translate("COMPOSE_SENT").".</div>";
-        if($errorlog) echo "<div align='center' class='error'>".translate("ERROR_LOG_CREATE")."</div>";
-        echo "<br><div align='center'><img align='middle' src='css/puce.gif'> <a href='?page=compose&list_id=".$list_id."&token=$token'>".translate("BACK")."</a></div>";
+        if($errorlog) {
+            echo "<div align='center' class='error'>".tr("ERROR_LOG_CREATE")."</div>";
+        }
+        echo "<br><div align='center'><img align='middle' src='css/puce.gif'> <a href='?page=compose&list_id=".$list_id."&token=$token'>".tr("BACK")."</a></div>";
     break;
 }
 ?>

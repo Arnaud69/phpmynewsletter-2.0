@@ -1,10 +1,13 @@
 <?php
-$lang_array['francais'] = array(
+$lang_array = array(
     //BTN
     "OK_BTN"=>"OK",
     "YES"=>"Oui",
     "NO"=>"Non",
     "BACK"=>"Retour",
+    "ACTION"=>"Action",
+    "ACTIONS"=>"Actions",
+    "SUBMIT"=>"Valider",
     //ARCHIVE
     "ARCHIVE_TITLE"=>"Archives",
     "ARCHIVE_CHOOSE"=>"Sélectionnez une lettre d'info",
@@ -110,8 +113,25 @@ $lang_array['francais'] = array(
     "COMPOSE_PREVIEW_TITLE"=>"Aperçu du message",
     "COMPOSE_BACK"=>"Retour",
     "COMPOSE_SEND"=>"Envoyer ce message",
-    "COMPOSE_SENDING"=>"Envoi du message ...",
+    "COMPOSE_SENDING"=>"Envoi du message...",
     "COMPOSE_SENT"=>"Message envoyé avec succès",
+    "COMPOSE_MSG_BODY"=>"Corps du message",
+    "STEP_SEND_PREVIEW"=>"Mode preview : Cette étape permet de visualiser la création de votre newsletter.<br>Cliquez sur \"Envoyer ce message\" pour envoyer un exemplaire à <b>%s</b>",
+	"RE_SEND_PREVIEW"=>"Relancer le message de preview",
+	"SCHEDULE_THIS_SEND"=>"Planifier cet envoi",
+	"STOP_ON_PREVIEW_ERROR"=>"Preview en erreur, vous ne pouvez pas envoyer cette lettre à votre mailing-list",
+	"PREVIEW_SEND_OK"=>"Le message de preview a été correctement envoyé, merci de le vérifier avant de continuer",
+	"PREVIEW_OK"=>"L'aperçu de votre composition est OK",
+	"CLICK_TO_SEND"=>"Cliquez sur % pour envoyer à votre mailing-list",
+	"SENDED"=>"envoyés",
+	"TOTAL_TO_SEND"=>"Total à envoyer",
+	"CHRONO"=>"Chrono",
+	"LAST_TIME_SEND"=>"Dernier envoi (ms)",
+	"START_INITIALISATION"=>"Initialisation en cours",
+	"COMPOSE_AND_PREVIEW"=>"Rédigez votre lettre d'information puis cliquez sur \"Aperçu du message\" pour la visualiser",
+	"RFC_2822"=>"(Attention : selon la norme <a href='http://www.faqs.org/rfcs/rfc2822.htm' target='_blank'>RFC 2822</a> section 2.1.1, il convient de ne pas dépasser 78 caractères !)",
+	"CLICK_TO_COMPOSE_HTML"=>"Cliquez ici pour insérer un message composé au format html",
+	"CLICK_TO_COMPOSE_WITH_EDITOR"=>"Cliquez ici pour composer un message avec l'éditeur",
     //GLOBAL CONFIG
     "GCONFIG_TITLE"=>"Configuration globale",
     "GCONFIG_DB_TITLE"=> "Réglages de la base de données",
@@ -126,6 +146,11 @@ $lang_array['francais'] = array(
     "GCONFIG_DB_TABLE_ARCHIVES"=>"Les archives sont stockées dans",
     "GCONFIG_DB_TABLE_SUBMOD"=>"Les inscriptions en attente de confirmation sont stockées dans",
     "GCONFIG_DB_CONFIG_UNWRITABLE"=>"Davantage de réglages seraient disponibles, si le serveur web avait les droits d'écriture sur %s.",
+    "GCONFIG_DB_TABLE_TRACK"=>"Table de tracking (suivi des lectures des emails)",
+    "GCONFIG_DB_TABLE_SEND"=>"Table de suivi du nombre d'emails envoyés par campagne et par liste",
+    "GCONFIG_DB_TABLE_SV"=>"Table des sauvegardes automatiques des messages en cours de composition",
+    "GCONFIG_DB_TABLE_UPLOAD"=>"Table des pièces jointes",
+    "GCONFIG_DB_TABLE_"=>"",
     "GCONFIG_MISC_TITLE"=>"Réglages divers",
     "GCONFIG_MISC_ADMIN_PASSW"=>"Mot de passe d'accès à la zone d'administration",
     "GCONFIG_MISC_ADMIN_PASSW2"=> "(laisser vide si vous ne voulez pas le modifier)",
@@ -150,6 +175,29 @@ $lang_array['francais'] = array(
     "GCONFIG_SUBSCRIPTION_MODERATE"=>"Les inscriptions sont modérées ?",
     "GCONFIG_SAVE_BTN"=>"Enregistrer ces réglages",
     "GCONFIG_SUCCESSFULLY_SAVED"=>"Configuration globale enregistrée avec succès",
+    "UNABLE_WRITE_CONFIG"=>"Impossible d'écrire le fichier config.php dans le répertoire include/, vérifier les droits", // Unable to write config.php in include/ directory (check permissions please)
+    "GCONFIG_MANAGE_ENVIRONMENT"=>"Gestion de l'environnement",
+    "GCONFIG_MANAGE_BOUNCE"=>"Gestion des mails non distribués",
+    "GCONFIG_TRY_CONNECT"=>"En cours de tentative de connexion",
+    "BOUNCE_WARNING"=>"<h4 class='alert_warning'>Ne remplissez pas cette zone si vous ne connaissez pas les paramètres !</h4>
+        <p>Notez bien que ces réglages vous permettront de gérer les mails non distribués.<br>
+        Ne remplissez pas cette zone si vous utilisez gmail pour vos envois !<br>
+        PhpMyNewsLetter doit se connecter au compte de messagerie de l'expéditeur et procédera ainsi :
+        <ul>
+        <li>Lecture des mails retournés sur erreur de distribution</li>
+        <li>Analyse du code retour</li>
+        <li>Mise à jour du compteur</li>
+        <li>Suppression de l'email retourné</li>
+        <li>Signalement de l'adresse email en erreur de distribution</li>
+        </ul>
+        Ne relevez pas les mails du compte de l'expéditeur, les mises à jour seraient impossibles !
+        Merci ;-)
+        </p>",
+    "GCONFIG_HOST_MAIL"=>"Host serveur mail",
+    "GCONFIG_PORT"=>"Port<br>Par défaut : 110",
+    "GCONFIG_SERVICE"=>"Service : pop3 ou imap<br> Par défaut : pop3",
+    "GCONFIG_SERVICE_OPTION"=>"Option du service : none, tls, notls, ssl<br> Par défaut : notls",
+    "GCONFIG_TEST_BOUNCE"=>"Tester ces paramètres",
     //ERROR
     "ERROR_SQL"=>"Erreur de la base de donnée :<br>%s<br>",
     "ERROR_SQL2"=>"Erreur SQL :<br>%s<br>",
@@ -158,6 +206,7 @@ $lang_array['francais'] = array(
     "ERROR_DBCONNECT_3"=>"Erreur de connection",
     "ERROR_FLUSHING_TEMP_TABLE"=>"Erreur lors du nettoyage de la table temp (%s)",
     "ERROR_SAVING_SETTINGS"=>"Erreur lors de l'enregistrement des réglages: %s",
+    "ERROR_WHILE_SAVING_CONFIGURATION"=>"Erreur lors de la sauvegarde de la configuration",
     "ERROR_DELETING_NEWSLETTER"=>"Erreur lors de la suppression de cette lettre d'info",
     "ERROR_CHOOSE_ANOTHER_NEWSLETTER"=>"Merci de choisir une autre lettre d'info, ou <a href=\"index.php?page=home&action=create\">d'en créer une nouvelle</a>",
     "ERROR_NO_NEWSLETTER_CREATE_ONE"=>"Merci de <a href=\"index.php?page=newsletterconf&action=create\">créer une nouvelle lettre d'info</a>",
@@ -177,6 +226,7 @@ $lang_array['francais'] = array(
     "ERROR_UNKNOWN"=>"Erreur inconnue",
     "ERROR_SENDING_CONFIRM_MAIL"=>"Erreur lors de l'expedition du message de confirmation",
     "ERROR_LOG_CREATE"=>"Impossible de créer le fichier de log.<br>Vérifiez les permissions du répertoire admin/logs",
+    "ERROR_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes",   // Oups ! Your browser does not support iframes
     //MSG
     "NO_SUBSCRIBER"=>"Aucun abonné dans la base de données",
     "NO_ARCHIVE"=>"Aucune archive pour cette lettre d'info",
@@ -231,7 +281,7 @@ $lang_array['francais'] = array(
 	"INSTALL_ENVIRONMENT"=>"Environnement",
 	"INSTALL_DEVELOPMENT"=>"Développement",
 	"INSTALL_PRODUCTION"=>"Production",
-	"INSTAL_SERVER_TYPE"=>"Type de serveur",
+	"INSTALL_SERVER_TYPE"=>"Type de serveur",
 	"SHARED_SERVER"=>"mutualisé, partagé",
 	"DEDICATED_SERVER"=>"dédié",
 	"STORAGE_ENGINE"=>"Moteur de stockage",
@@ -264,8 +314,8 @@ $lang_array['francais'] = array(
 	"ASK_ON_FORUM"=>"Je ne réponds pas aux demandes individuelles, merci de passer par le forum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href=\"http://www.phpmynewsletter.com/forum/\" target=\"_blank\">PhpMyNewsLetter</a>",
 	"INSTALL_REFRESH"=>"Merci de rafraîchir cette page après correction de l'erreur",
     "LOGOUT_DONE"=>"Vous êtes déconnecté",
-    "LOGOUT_ERROR"=> "Erreur lors de la déconnection",
-    "LOGOUT_TITLE"=>"Déconnection",
+    "LOGOUT_ERROR"=> "Erreur lors de la déconnexion",
+    "LOGOUT_TITLE"=>"Déconnexion",
     "LOGOUT_BACK"=>"Retour",
     //SUBSCRIPTION.PHP
     "SUBSCRIPTION_TITLE"=>"Abonnement à la lettre d'info",
@@ -300,6 +350,8 @@ $lang_array['francais'] = array(
     // ADMIN_AUTOSVE
 	"SAVED_MESSAGE_AT"=>"Message sauvegardé à ",
 	"UNSAVED_MESSAGE"=>"Sauvegarde en erreur !",
+	"SAVE_PROCESS"=>"Sauvegarde en cours",
+	"SAVE_THIS_MESSAGE"=>"Enregistrer ce message",
 	// INDEX :
 	"ROOT_TO_FLUSH_MAIL_QUEUE"=>"Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.",
 	"MAIL_ADDED"=>"mail(s) ajouté(s)",
@@ -346,11 +398,154 @@ $lang_array['francais'] = array(
 	"CLICKED_LINK_COUNT"=>"Count",
 	"CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
 	// UPLOAD
-	"UPLOAD_ADD"=>"Ajout de pièces-jointes",     // add attachment
+	"ATTACHMENTS"=>"Pièces jointes",
+	"UPLOAD_ADD"=>"Ajout de pièces jointes",     // add attachment
+	"ADD_ONE_OR_MORE_ATTACHMENT"=>"Ajouter une ou plusieurs pièces jointes à ce mail",
 	"UPLOAD_DROP_FILES"=>"Glisser ici les fichiers à envoyer sur le serveur", //Drop files here to upload
 	"UPLOAD_EXPLAIN"=>"Les documents ajoutés ici seront automatiquement jointes au mail en cours de rédaction.<br>Veillez à ne pas mettre de documents trop lourds en annexe (risques de rejets selon les limitations), ni trop nombreux ! (10 documents maximum, 4 à 5 Mo sont une limite raisonnable !)",
+	// ARCHIVES
+	"SUBSCRIBER_DIDNT_RECEIVE"=>"Attention : %s inscrit n'a pas reçu cette information ! Cliquez ici pour la renvoyer à cet inscrit",
+	"SUBSCRIBERS_DIDNT_RECEIVE"=>"Attention : %s inscrits n'ont pas reçu cette information ! Cliquez ici pour la renvoyer à ces inscrits",
+	"SEND_ENDED"=>"Envoi terminé",
+	"REDIRECT_NOW"=>"Redirection en cours",
+	"PROGRESSION_OF_CURRENT_SEND"=>"Progression de l'envoi en cours",
+	// BOUNCE
+	"BOUNCE_NOT_CONFIGURED"=>"Traitement des mails en retour non configuré",
+	"BOUNCE_TOTAL_MAILS"=>"Nombre de mails",
+	"BOUNCE_FETCHED"=>"Nombre de traitements",
+	"BOUNCE_PROCESSED"=>"Emails traités en erreur",
+	"BOUNCE_UNPROCESSED"=>"Emails traités corrects",
+	"BOUNCE_COUNTER_DELETED"=>"Emails supprimés",
+	"BOUNCE_COUNTER_MOVED"=>"Emails déplacés",
+	"BOUNCE"=>"Gestion des retours",
+	// CODE_HTML
+	"PASTE_CODE"=>"Copiez ce code et insérez le dans la ou les pages de votre portail, pour que vos utilisateurs puissent souscrire à vos lettres d'information",
+	"WITH_POP_UP"=>"Code avec pop-up",
+	"FULL_PAGE"=>"Code en page pleine",
+	"MODIFY_IT"=>"NB : ce code peut être modifié. Vous pouvez ajoutez du javascript ou lier une feuille de style.<br>Vous ne devez pas modifier les variables qui vous sont présentées",
+	"SUSCRIBE"=>"souscrire",
+	"CODE_TITLE"=>"Code HTML de souscription",
+	// LISTS
+	"LIST_NUMBER"=>"Liste N°",
+	"LIST_NAME"=>"Nom de la liste",
+	"LIST_COUNT_SUSCRIBERS"=>"Nombre d'abonnés",
+	"LIST_DELETE"=>"Supprimer",
+	"LIST_SELECTED"=>"Liste sélectionnée",
+	"CHOOSE_THIS_LIST"=>"Choisir cette liste",
+	"DELETE_THIS_LIST"=>"Supprimer cette liste",
+	"WARNING_DELETE_LIST"=>"Supprimer toutes les informations relatives à cette liste ?\nCette action est irréversible",
+	// MAILQ
+	"NO_MAIL_IN_PROCESS"=>"pas de mail en cours d'envoi",
+	// MANAGERS (ALL)
+	"MONTH_TAB"=>array('','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'),
+	"SCHEDULE_A_SEND"=>"Planification d'un envoi",
+	"SCHEDULE_EXPLAIN"=>"<p>Vous allez planifier l'envoi de la campagne intitulée : <b>%s</b><br>
+	        Vous devez choisir une date, en précisant :
+	        <ul>
+	            <li>les minutes, (00) par défaut</li>
+	            <li>les heures, (00) par défaut</li>
+	            <li>le jour du mois, (1er) par défaut</li>
+	            <li>le mois, (janvier) par défaut</li>
+	        </ul>
+	        Une fois l'envoi terminé, la tâche planifiée sera automatiquement supprimée.
+	        </p>",
+	"SCHEDULE_DATE_HEAD"=>"<th>Minute(s)</th>
+                            <th>Heure(s)</th>
+                            <th>Jour du mois</th> 
+                            <th>Mois</th>",
+	"SCHEDULE_MONTHS_OPTION"=>"<option value='1'>Janvier</option>
+                                    <option value='2'>Février</option>
+                                    <option value='3'>Mars</option>
+                                    <option value='4'>Avril</option>
+                                    <option value='5'>Mai</option>
+                                    <option value='6'>Juin</option>
+                                    <option value='7'>Juillet</option>
+                                    <option value='8'>Août</option>
+                                    <option value='9'>Septembre</option>
+                                    <option value='10'>Octobre</option>
+                                    <option value='11'>Novembre</option>
+                                    <option value='12'>Décembre</option>",
+	"SCHEDULE_RESULT"=>"<h4>Tel que défini, l'envoi de la campagne \"<i>%s</i>\" aura lieu le <span id='dd'>1er</span> <span id='dmo'>janvier</span> à <span id='dh'>00</span>h<span id='dmi'>00</span>min</h4>",
+	"SCHEDULE_JS_LIST_MONTH"=>'"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"',
+	"SCHEDULE_NO_SEND_SCHEDULED"=>"Pas d'envoi de mail planifié",
+	"SCHEDULE_SEND_SCHEDULED"=>"Envois planifiés",
+	"SCHEDULE_DOWNLOAD_LOG"=>"Télécharger le fichier log",
+	"SCHEDULE_NO_LOG"=>"Pas de log disponible",
+	"SCHEDULE_STATE"=>array('scheduled'=>'planifié','done'=>'terminé','deleted'=>'supprimé'),
+	"SCHEDULE_DELETE_TASK"=>"Supprimer cette tâche",
+	"SCHEDULE_REPORT_HEAD"=>"<th>Identifiant</th> 
+            <th>Liste</th>
+            <th>Titre de l'envoi</th>
+            <th>Date de planification</th> 
+            <th>Etat</th> 
+            <th>Fichier log</th>
+            <th></th>",
+	"SCHEDULE_TASK_NOT_FOUND"=>"Tâche non trouvée",
+	"SCHEDULE_NOT_POSSIBLE_TRANSACTION"=>"Transaction impossible",
+	"MAILS_REPORT_HEAD"=>"<th>Id</th>
+                    <th>Taille</th>
+                    <th>Date</th> 
+                    <th>Expéditeur</th> 
+                    <th>Destinataire</th>
+                    <th></th>",
+	"MAIL_FULL_MSG_ERROR"=>"Message d'erreur complet",
+	"MAIL_DELETE_THIS"=>"Supprimer ce mail",
+	"MAIL_REMOVE_FROM_QUEUE"=>"Supprimer ce mail de la file des envois",
+	"MAIL_PURGE_QUEUE"=>"Purger la file des envois",
+	"MAIL_CORRECTED"=>"Correction du mail %s correcte",
+	"MAIL_DELETED"=>"Suppression du mail %s correcte",
+	"MAIL_ERROR_TO_DELETE"=>"Erreur lors de la suppression du mail : %s",
+	"MAIL_ERROR_TO_CORRECT"=>"Erreur lors de la correction du mail : %s",
+	"PJ_DELETED"=>"Pièce jointe supprimée de l'envoi en cours",
+	"PJ_ERROR_DELETE"=>"Une erreur a été rencontrée lors de la suppression de la pièce jointe",
+	"PJ_TO_DELETE"=>"Supprimer cette pièce jointe",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	""=>"",
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
     );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

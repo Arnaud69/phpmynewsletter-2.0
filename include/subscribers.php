@@ -5,17 +5,17 @@ switch($t){
         echo "<script language='javascript' type='text/javascript'>
         function Submitform(){
             if  (document.sub.add_addr.value=='') {
-                alert(\"".translate("EMAIL_ADDRESS_NOT_VALID").".\");
+                alert(\"".tr("EMAIL_ADDRESS_NOT_VALID").".\");
             }else{
                 if(((document.sub.add_addr.value.indexOf('@',1))==-1)||(document.sub.add_addr.value.indexOf('.',1))==-1 ){
-                    alert(\"".translate("EMAIL_ADDRESS_NOT_VALID")."\");
+                    alert(\"".tr("EMAIL_ADDRESS_NOT_VALID")."\");
                 }else{
                     document.sub.submit();
                 }
             }
         }
         </script>";
-        echo "<header><h3>".translate("SUBSCRIBER_ADD_TITLE")."</h3></header>
+        echo "<header><h3>".tr("SUBSCRIBER_ADD_TITLE")."</h3></header>
         <div class='module_content'>
         <h4 class='alert_info'>Ajouter un abonné au format adress@domain.com</h4>
         <br><div align='center'>
@@ -26,21 +26,21 @@ switch($t){
         <input type='hidden' name='list_id' value='$list_id' />
         <input type='text'class='input' placeholder='Ajouter une adresse' name='add_addr' value='' maxlength='255' size='30' />
         <input type='hidden' name='token' value='$token' />
-        <input type='button'  value='".translate("SUBSCRIBER_ADD_BTN")."' onclick='Submitform()' class='littlebutton' />
+        <input type='button'  value='".tr("SUBSCRIBER_ADD_BTN")."' onclick='Submitform()' class='littlebutton' />
         </form>
         </div>";
         echo @$subscriber_op_msg;
         echo "</div>";
     break;
     case 'i':
-        echo "<header><h3>".translate("SUBSCRIBER_IMPORT_TITLE")."</h3></header>
+        echo "<header><h3>".tr("SUBSCRIBER_IMPORT_TITLE")."</h3></header>
         <div class='module_content'>
-        <h4 class='alert_info'>".translate("SUBSCRIBER_IMPORT_HELP")."</h4>
+        <h4 class='alert_info'>".tr("SUBSCRIBER_IMPORT_HELP")."</h4>
         <br><div align='center'>
         <script language='javascript' type='text/javascript'>function Soumettre(){document.importform.import_file.value=document.importform.insert_file.value;document.importform.submit();}</script>
         <form action='' method='post' enctype='multipart/form-data' name='importform'>
             <input type='file' name='import_file' class='input' />
-            <input type='submit' value='".translate("SUBSCRIBER_IMPORT_BTN")."' class='littlebutton' />
+            <input type='submit' value='".tr("SUBSCRIBER_IMPORT_BTN")."' class='littlebutton' />
             <input type='hidden' name='op' value='subscriber_import' />
             <input type='hidden' name='page' value='subscribers' /> 
             <input type='hidden' name='token' value='$token' />
@@ -55,7 +55,7 @@ switch($t){
         <div class='module_content'>";
         $cpt_suscribers = getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id);
         if($cpt_suscribers==0){
-            echo "<h4 class='alert_info'>".translate("NO_SUBSCRIBER")."</h4>";
+            echo "<h4 class='alert_info'>".tr("NO_SUBSCRIBER")."</h4>";
         }elseif($cpt_suscribers<501&&$cpt_suscribers>0){
             $subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$list_id);
             if(sizeof($subscribers)){
@@ -73,7 +73,7 @@ switch($t){
                     echo "<option value='".$row['email']."' >".$row['email']."</option>";
                 }
                 echo "</select>
-                <input type='submit' value='".translate("SUBSCRIBER_DELETE_BTN")."' />
+                <input type='submit' value='".tr("SUBSCRIBER_DELETE_BTN")."' />
                 </form>";
                 echo @$subscriber_op_msg;
                 "</div>";
@@ -110,36 +110,36 @@ switch($t){
     break;
     case 'e':
         $cpt_suscribers = getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id);
-        echo "<header><h3>".translate("SUBSCRIBER_EXPORT_TITLE")."</h3></header>
+        echo "<header><h3>".tr("SUBSCRIBER_EXPORT_TITLE")."</h3></header>
         <div class='module_content'>";
         if($cpt_suscribers>0){
             echo "<h4 class='alert_info'>NB : Sauvegardez régulièrement votre liste d'abonnés !</h4>
             <form action='export.php' method='post'><input type='hidden' name='list_id' value='$list_id' />
             <input type='hidden' name='token' value='$token' />
             <br><div align='center'>
-            <input type='submit' name='Submit' value='".translate("SUBSCRIBER_EXPORT_BTN")."' />
+            <input type='submit' name='Submit' value='".tr("SUBSCRIBER_EXPORT_BTN")."' />
             </div></form>";
         }else{
-            echo "<h4 class='alert_info'>".translate("NO_SUBSCRIBER")."</h4>";
+            echo "<h4 class='alert_info'>".tr("NO_SUBSCRIBER")."</h4>";
         }
         echo "</div>";
     break;
     case 't':
         if($op=="subscriber_del_temp"){
-            echo "<header><h3>".translate("SUBSCRIBER_TEMP_TITLE")."</h3></header>
+            echo "<header><h3>".tr("SUBSCRIBER_TEMP_TITLE")."</h3></header>
             <div class='module_content'>";
             $del_tmpaddr  = (empty($_POST['del_tmpaddr']) ? "" : $_POST['del_tmpaddr']);
             $deleted_temp = delete_subscriber($cnx,$row_config_globale['table_temp'],$list_id,$del_tmpaddr);
             if( $deleted_temp ){
-                echo "<h4 class='alert_success'>".translate("SUBSCRIBER_TEMP_DELETED")."</h4>";
+                echo "<h4 class='alert_success'>".tr("SUBSCRIBER_TEMP_DELETED")."</h4>";
             }else{
-                echo "<h4 class='alert_error'>".translate("ERROR_DELETING_TEMP","<i>$del_tmpaddr</i>")."</h4>";
+                echo "<h4 class='alert_error'>".tr("ERROR_DELETING_TEMP","<i>$del_tmpaddr</i>")."</h4>";
             }
             echo "</div>";
         }
         $tmp_subscribers=get_subscribers($cnx,$row_config_globale['table_temp'],$list_id);
         if(sizeof($tmp_subscribers)){
-            echo "<header><h3>".translate("SUBSCRIBER_TEMP_TITLE")."</h3></header>
+            echo "<header><h3>".tr("SUBSCRIBER_TEMP_TITLE")."</h3></header>
             <div class='module_content' align='center'>";
             echo "<h4 class='alert_info'>".count($tmp_subscribers)." adresses dans la base</h4><br>";
             echo "<form action='".$_SERVER['PHP_SELF']."' method='post'>";
@@ -154,12 +154,12 @@ switch($t){
                 echo "<option value='".$row['email']."' >".$row['email']."</option>";
             }
             echo "</select>";
-            echo "<input type='submit' value='".translate("SUBSCRIBER_TEMP_BTN")."' class='littlebutton'>";
+            echo "<input type='submit' value='".tr("SUBSCRIBER_TEMP_BTN")."' class='littlebutton'>";
             echo "</form>";
             echo "<h4 class='alert_info'>Ces adresses ont fait l'objet d'une inscription et sont en attente de confirmation.</h4>";
             echo "</div>";
         } else {
-            echo "<header><h3>".translate("SUBSCRIBER_TEMP_TITLE")."</h3></header>
+            echo "<header><h3>".tr("SUBSCRIBER_TEMP_TITLE")."</h3></header>
             <div class='module_content'>
             <h4 class='alert_info'>Pas de comptes en attente de confirmation</h4>
             </div>

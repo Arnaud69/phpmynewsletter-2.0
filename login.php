@@ -21,7 +21,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0) ? $r='SUCCESS' : $r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
@@ -64,8 +64,8 @@ body{margin:0;padding:0;background:#fff;color:#fff;font-family:Arial;font-size:1
 <br>
 <div class="login">
 <form action='index.php' method='post' name='loginform'>
-    <input type="password" placeholder="<?=translate("LOGIN_PLEASE_ENTER_PASSWORD");?>" name="form_pass"><br>
-    <input type="submit" value="<?=translate("LOGIN");?>">
+    <input type="password" placeholder="<?=tr("LOGIN_PLEASE_ENTER_PASSWORD");?>" name="form_pass"><br>
+    <input type="submit" value="<?=tr("LOGIN");?>">
     <input type='hidden' name='form' value='1' />
     <input type='hidden' name='token' value='<?=$token;?>' />
 </form>

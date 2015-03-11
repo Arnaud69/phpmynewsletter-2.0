@@ -5,14 +5,14 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: text/plain'); 
 if(!file_exists("config.php")) {
-    header("Location:install.php");
+    header("Location:../install.php");
     exit;
 } else {
     include("../_loader.php");
-    $token=(empty($_POST['token'])?"":$_POST['token']);
+    $token=(empty($_SESSION['_token'])?"":$_SESSION['_token']);
     if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
     if(!tok_val($token)){
-        header("Location:login.php?error=2");
+        header("Location:../login.php?error=2");
         exit;
     }
 }
@@ -20,7 +20,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
@@ -36,7 +36,7 @@ $pipe = popen($mailq_path, 'r');
 while($pipe) {
     $line = fgets($pipe);
     if(trim($line)=='Mail queue is empty'){
-        echo '<a>pas de mail en cours d\'envoi</a>';
+        echo '<a>'.tr("NO_MAIL_IN_PROCESS").'</a>';
         pclose($pipe);
         setlocale(LC_ALL, $old_locale);
         exit(1);
@@ -61,7 +61,7 @@ pclose($pipe);
 setlocale(LC_ALL, $old_locale);
 $mails_en_cours = count($current_object);
 if($mails_en_cours>0){
-    echo '<a href="?page=manager_mailq&list_id='.$list_id.'&token='.$_SESSION['_token'].'" title="Visualiser et gérer les mails en cours d\'envoi" class="tooltip">'.$mails_en_cours.' mail(s) en cours d\'envoi</a>';
+    echo '<a href="?page=manager_mailq&token='.$_SESSION['_token'].'" title="Visualiser et gérer les mails en cours d\'envoi" class="tooltip">'.$mails_en_cours.' '.tr("PENDING_MAILS").'</a>';
 } else {
-    echo '<a>pas de mail en cours d\'envoi</a>';
+    echo '<a>'.tr("NO_MAIL_IN_PROCESS").'</a>';
 }

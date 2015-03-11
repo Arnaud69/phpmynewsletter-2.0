@@ -16,7 +16,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
@@ -53,7 +53,7 @@ if($format == "html"){
 } else {
     $Vmsg = htmlspecialchars($message);
 }
-echo "<u>".translate("COMPOSE_SUBJECT")."</u> : ".stripslashes($subj)."<br /><br />"; 
+echo "<u>".tr("COMPOSE_SUBJECT")."</u> : ".stripslashes($subj)."<br /><br />"; 
 if($format == "html"){
     echo stripslashes($Vmsg);
 } else {

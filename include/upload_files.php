@@ -1,6 +1,6 @@
 <?php
 if(!file_exists("config.php")) {
-    header("Location:install.php");
+    header("Location:../install.php");
     exit;
 } else {
     include("../_loader.php");
@@ -15,7 +15,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }

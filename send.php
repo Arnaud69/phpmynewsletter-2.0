@@ -19,7 +19,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
@@ -181,8 +181,8 @@ switch ($step) {
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-                $body .= translate("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
-                $body .= translate("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
+                $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
+                $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h='.$addr[$i]['hash'].'&l='.$list_id.'&r=';
                 $message = preg_replace_callback(
@@ -192,7 +192,7 @@ switch ($step) {
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
                     },$message);
                 $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
-                            .translate("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."' style='' target='_blank'>")
+                            .tr("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."' style='' target='_blank'>")
                             ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr[$i]['email'])."&h=" . $addr[$i]['hash'];

@@ -86,19 +86,19 @@
             default:
             case 'ch':
                 echo '<table class="tablesorter" cellspacing="0"> 
-			    <thead> 
-				    <tr> 
-       					<th>Date</th> 
-        				<th>Sujet</th> 
-        				<th>Envois</th> 
-        				<th>Lectures</th> 
-        				<th>Ouvertures</th>
-        				<th>Erreurs</th> 
-        				<th>Abandons</th> 
-        				<th>Fichier log</th> 
-				    </tr> 
-			    </thead> 
-			    <tbody>';
+                <thead> 
+                    <tr> 
+                        <th>Date</th> 
+                        <th>Sujet</th> 
+                        <th>Envois</th> 
+                        <th>Lectures</th> 
+                        <th>Ouvertures</th>
+                        <th>Erreurs</th> 
+                        <th>Abandons</th> 
+                        <th>Fichier log</th> 
+                    </tr> 
+                </thead> 
+                <tbody>';
                 foreach($array_stats as $row){
                     echo '<tr><td>'.    $row['date'].    '</td>';
                     $links = $cnx->query("SELECT * FROM ".$row_config_globale['table_track_links']." WHERE list_id=$list_id AND msg_id=".$row['id_mail']." ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
@@ -115,7 +115,7 @@
                     echo '<td>'. $row['leave'].                         '</td>';
                     if(is_file("logs/list$list_id-msg".$row['id_mail'].".txt")){
                         echo '<td><a href="dl.php?log=logs/list'.$list_id.'-msg'.$row['id_mail'].'.txt&token='.$token.'" title="Télécharger le fichier log"><img src="css/icn_download.png" /></a></td>';
-					}
+                    }
                     echo '</tr>';
                 }
                 echo '</table>';

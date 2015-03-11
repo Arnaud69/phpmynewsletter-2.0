@@ -61,7 +61,7 @@ if (!defined( "_DB_PGSQL_LAYER" ))
       function DbError()
 	{
 	  if( pg_connection_status($this->ConnectionID) != 0){
-	  return translate("ERROR_DBCONNECT_3");
+	  return tr("ERROR_DBCONNECT_3");
 	  }
 	  return pg_last_error($this->ConnectionID);
 	}

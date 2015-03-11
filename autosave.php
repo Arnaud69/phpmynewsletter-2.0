@@ -24,19 +24,19 @@ if(file_exists("include/config.php")){
     $x = $cnx->query("SELECT * FROM ".$row_config_globale['table_sauvegarde']." WHERE list_id='$list_id'")->fetchAll();
     if(count($x)==0){
         if($cnx->query("INSERT INTO $tb_autosave(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')"))
-            echo '<h4 class="alert_success">'.translate('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
+            echo '<h4 class="alert_success">'.tr('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
         else
-            echo '<h4 class=error>'.translate('UNSAVED_MESSAGE').'</h4>';
+            echo '<h4 class=error>'.tr('UNSAVED_MESSAGE').'</h4>';
     } elseif (count($x)==1){
         if($cnx->query("UPDATE $tb_autosave SET textarea = '$textarea',subject='$subject',type='$type' WHERE list_id='$list_id'"))
-            echo '<h4 class="alert_success">'.translate('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
+            echo '<h4 class="alert_success">'.tr('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
         else
-            echo '<h4 class="alert_error">'.translate('UNSAVED_MESSAGE').'</h4>';
+            echo '<h4 class="alert_error">'.tr('UNSAVED_MESSAGE').'</h4>';
     }  elseif (count($x)>1){
         $cnx->query("DELETE FROM $tb_autosave WHERE list_id='$list_id'");
         if($cnx->query("INSERT INTO $tb_autosave(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')"))
-            echo '<h4 class="alert_success">'.translate('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
+            echo '<h4 class="alert_success">'.tr('SAVED_MESSAGE_AT').date('H:i:s').'</h4>';
         else
-            echo '<h4 class="alert_error">'.translate('UNSAVED_MESSAGE').'</h4>';
+            echo '<h4 class="alert_error">'.tr('UNSAVED_MESSAGE').'</h4>';
     }
 }

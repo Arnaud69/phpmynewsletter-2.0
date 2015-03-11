@@ -15,7 +15,7 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
@@ -54,7 +54,7 @@ if(empty($id_mail)&&empty($list_id)){
         <section class="column">
             <article class="module width_full">
                 <header>
-                    <h3><?=translate("CLICKED_LINK_REPORT");?></h3>
+                    <h3><?=tr("CLICKED_LINK_REPORT");?></h3>
                 </header>
                 <?php
                 $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT 
@@ -66,8 +66,8 @@ if(empty($id_mail)&&empty($list_id)){
                     echo '<table class="tablesorter" cellspacing="0"> 
                         <thead> 
                             <tr>
-                                <th>'.translate("CLICKED_LINK").'</th>
-                                <th align="right">'.translate("CLICKED_COUNT").'</th>
+                                <th>'.tr("CLICKED_LINK").'</th>
+                                <th align="right">'.tr("CLICKED_COUNT").'</th>
                                 <th align="center">%</th> 
                             </tr> 
                         </thead> 
@@ -93,7 +93,7 @@ if(empty($id_mail)&&empty($list_id)){
                     }
                     echo '</table>';
                 } else {
-                    echo '<h4 class="alert_warning">'.translate("CLICKED_LINK_NO_LINK").'</h4>';
+                    echo '<h4 class="alert_warning">'.tr("CLICKED_LINK_NO_LINK").'</h4>';
                 }
                 ?>
             </article>
@@ -102,7 +102,7 @@ if(empty($id_mail)&&empty($list_id)){
         <section>                                                                            
             <article class="module width_full">
                 <header>
-                    <h3><?=translate("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
+                    <h3><?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
                 </header>
                 <script type="text/javascript" src="http://www.amcharts.com/lib/3/amcharts.js"></script>
                 <script type="text/javascript" src="http://www.amcharts.com/lib/3/pie.js"></script>

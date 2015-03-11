@@ -9,7 +9,7 @@ if(!tok_val($token)){
 }
 echo '<article class="module width_full">';
 echo "<script>function deleteArchive(){document.archive_form.elements['action'].value = 'delete';document.archive_form.submit();}</script>";
-echo "<header><h3>".translate("ARCHIVE_TITLE") . "</h3></header>
+echo "<header><h3>".tr("ARCHIVE_TITLE") . "</h3></header>
 		<div class='module_content'>";
 echo "<form action='".$_SERVER['PHP_SELF']."' method='post' name='archive_form'>";
 $newsletter=getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
@@ -17,14 +17,14 @@ if (!empty($msg_id) && $action == "delete"){
     $deleted = deleteArchive($cnx, $row_config_globale['table_archives'], $msg_id);
 }
 if ($archives = getArchivesselectList($cnx, $row_config_globale['table_archives'], $msg_id,'archive_form',$list_id) != -1) {
-    echo "<input type='submit' value='" . translate("ARCHIVE_DISPLAY") . "' class='button' />
-    <input type='button' value='" . translate("ARCHIVE_DELETE") . "' onclick='deleteArchive();' />
+    echo "<input type='submit' value='" . tr("ARCHIVE_DISPLAY") . "' class='button' />
+    <input type='button' value='" . tr("ARCHIVE_DELETE") . "' onclick='deleteArchive();' />
     <input type='hidden' name='page' value='archives' />
     <input type='hidden' name='action' value='' />
     <input type='hidden' name='list_id' value='$list_id' />
     <input type='hidden' name='token' value='$token' />";
 } else {
-    echo info_msg(translate("NO_ARCHIVE"));
+    echo info_msg(tr("NO_ARCHIVE"));
 }
 echo "</form>";
 if (!empty($msg_id) && empty($action)) {
@@ -37,10 +37,10 @@ if (!empty($msg_id) && empty($action)) {
     $to_send = $diff_send['cpt_rec']-$diff_send['cpt_send'];
     $js = false;
     if($to_send==1){
-        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">Attention : '.$to_send.' inscrit n\'a pas reçu cette information ! Cliquez ici pour la renvoyer à cet inscrit<h4></div><br>';
+        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBER_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
         $js = true;
     }elseif($to_send>1){
-        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">Attention : '.$to_send.' inscrits n\'ont pas reçu cette information ! Cliquez ici pour la renvoyer à ces inscrits</h4></div><br>';
+        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBERs_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
         $js = true;
     }
     if($js){ ?>
@@ -74,9 +74,9 @@ if (!empty($msg_id) && empty($action)) {
                                 if(pct > 99.999) {
                                     clearInterval(progresspump);
                                     $('.record').hide('slow');
-                                    $("#send_title").text("Envoi terminé...");
+                                    $("#send_title").text("<?=tr("SEND_ENDED");?>");
                                     setTimeout(function() {
-                                        $("#send_title").text("Redirection en cours...");
+                                        $("#send_title").text("<?=tr("REDIRECT_NOW");?>");
                                     },3000);
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>&date=ch';
@@ -89,7 +89,7 @@ if (!empty($msg_id) && empty($action)) {
             });
         </script>
         <div id='msg' style='display:none'>
-            <h2 id='send_title'>Progression de l'envoi en cours :</h2>
+            <h2 id='send_title'><?=tr("PROGRESSION_OF_CURRENT_SEND");?> :</h2>
             <div class="8u"><div class="record"><div id="pct" class="bar" style="width:0%"><span id="done">0,00%</span></div></div></div>
             <br><br>
         </div>
@@ -102,10 +102,38 @@ if (!empty($msg_id) && empty($action)) {
 
 if (!empty($msg_id) && $action == "delete") {
     if ($deleted){
-        echo "<h4 class='alert_success'>" . translate("ARCHIVE_DELETED") . "</h4>";
+        echo "<h4 class='alert_success'>" . tr("ARCHIVE_DELETED") . "</h4>";
     }else{
-        echo "<h4 class='alert_error'>" . translate("ERROR_DELETING_ARCHIVE") . "</h4>";
+        echo "<h4 class='alert_error'>" . tr("ERROR_DELETING_ARCHIVE") . "</h4>";
     }
 }
 echo "</div></article>";
-?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
 <?php
-$PMNL_VERSION = "2.0.3";
+$PMNL_VERSION = "2.0.4";
 if (!function_exists('iconv') && function_exists('libiconv')) {
     function iconv($input_encoding, $output_encoding, $string) {
         return libiconv($input_encoding, $output_encoding, $string);
@@ -1000,7 +1000,22 @@ function tok_val($token){
     }
     return $tok;
 }
-function translate($s, $i="") {
+function tr($s, $i="") {
+    global $lang_array;
+    if (!isset($lang_array[$s])){
+        return ("[Translation required] : $s");
+    }
+    if ($lang_array[$s] != "") {
+        if($i == ""){
+            return $lang_array[$s];
+        }
+        $sprint = $lang_array[$s];
+        return sprintf("$sprint" , $i);
+    } else {
+        return ("[Translation required] : $s");
+    }
+}
+/*function tr($s, $i="") {
     global $lang_array;
     if (!isset($lang_array['francais'][$s])){
         return ("[Translation required] : $s");
@@ -1014,7 +1029,7 @@ function translate($s, $i="") {
     } else {
         return ("[Translation required] : $s");
     }
-}
+}*/
 function unique_id() {
     mt_srand((double) microtime() * 1000000);
     return md5(mt_rand(0, 9999999));

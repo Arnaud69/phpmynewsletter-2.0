@@ -1,21 +1,5 @@
-<?
-
-function translate($s, $i="") {
-    global $lang_array;
-
-    if(!isset($lang_array['english'][$s]))
-      return ("[Translation required] : $s");
-
-    if($lang_array['english'][$s]!="") {
-	if($i == "") return $lang_array['english'][$s];
-        $sprint = $lang_array['english'][$s];
-	return sprintf("$sprint" , $i);
-    }
-    else return ("[Translation required] : $s");
-}
-
-
-$lang_array['english'] = array(
+<?php
+$lang_array = array(
 		   //BTN
 		   "OK_BTN" => "OK",
 		   "YES" => "Yes",

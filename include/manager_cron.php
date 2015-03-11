@@ -1,24 +1,24 @@
 <?php
 session_start();
 if(!file_exists("config.php")) {
-    echo 'Demande de transaction impossible';
-    $continue=false;
-    die();
+    header("Location:../install.php");
+    exit;
 } else {
     include("../_loader.php");
     $token=(empty($_POST['token'])?"":$_POST['token']);
     if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
     if(!tok_val($token)){
-        header("Location:login.php?error=2");
+        header("Location:../login.php?error=2");
         exit;
     }
 }
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
-    echo 'Demande de transaction impossible';
-    $continue=false;
-    die();
+    include("lang/english.php");
+    echo "<div class='error'>".tr($r)."<br>";
+    echo "</div>";
+    exit;
 }
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("lang/".$row_config_globale['language'].".php");
@@ -26,11 +26,14 @@ $actions_possibles=array('update','delete','new','manage');
 if(isset($_POST['action'])&&in_array($_POST['action'],$actions_possibles)) {
     $action=$_POST['action'];
 } else {
-    echo 'Demande de transaction impossible';
-    $continue=false;
-    die();
+    header("Location:../login.php?error=2");
+    exit;
 }
-$list_id = (empty($_POST['list_id'])?(empty($_GET['list_id'])?die('Demande de transaction impossible'):$_GET['list_id']):$_POST['list_id']);
+$list_id = (empty($_POST['list_id']) ? 
+            (empty($_GET['list_id']) ? 
+              die('Demande de transaction impossible') : 
+               $_GET['list_id']) : 
+               $_POST['list_id']);
 $continue=true;
 if($continue){
     $cronID = cronID();
@@ -88,10 +91,10 @@ if($continue){
                                     WHERE list_id='.$list_id.'
                                         AND job_id="'.$_POST['deltask'].'"');
                 } else {
-                    echo 'Tâche non trouvée';
+                    echo tr("SCHEDULE_TASK_NOT_FOUND");
                 }
             } elseif(count($detail_crontab)!=1) {
-                die('transaction impossible');
+                die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
             }
             $continue_transaction = false;
         break;
@@ -101,22 +104,16 @@ if($continue){
                                         FROM '.$row_config_globale['table_crontab'] .' 
                                             WHERE list_id='.$list_id.' 
                                         ORDER BY date DESC')->fetchAll(PDO::FETCH_ASSOC);
-        echo '<article class="module width_full"><header><h3>Envois planifiés : </h3></header>';
+        echo '<article class="module width_full"><header><h3>'.tr("SCHEDULE_SEND_SCHEDULED").' : </h3></header>';
         echo '<table cellspacing="0" class="tablesorter"> 
                     <thead> 
                         <tr> 
-                            <th>Identifiant</th> 
-                            <th>Liste</th>
-                            <th>Titre de l\'envoi</th>
-                            <th>Date de planification</th> 
-                            <th>Etat</th> 
-                            <th>Fichier log</th>
-                            <th></th>
+                            '.tr("SCHEDULE_REPORT_HEAD").'
                         </tr> 
                     </thead> 
                     <tbody>';
-        $month_tab=array('','janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre');
-        $step_tab=array('scheduled'=>'planifié','done'=>'terminé','deleted'=>'supprimé');
+        $month_tab=tr("MONTH_TAB");
+        $step_tab=tr("SCHEDULE_STATE");
         if(count($list_crontab)>0){
             foreach($list_crontab as $x){
                 echo '<tr';
@@ -127,18 +124,42 @@ if($continue){
                 echo '  <td>'.stripslashes($x['mail_subject']).'</td>';
                 echo '  <td>'.sprintf("%02d",$x['day']).' '.$month_tab[$x['month']].' à '.sprintf("%02d",$x['hour']).'h'.sprintf("%02d",$x['min']).'</td>';
                 echo '  <td>'.$x['etat'].'</td>';
-                echo '  <td>Pas de log disponible</td>';
-                echo '  <td><input type="image" src="css/icn_trash.png"></td>';
+                echo '  <td>'.tr("SCHEDULE_NO_LOG").'</td>';
+                echo '  <td><a title="'.tr("SCHEDULE_DELETE_TASK").'" class="tooltip"><input type="image" src="css/icn_trash.png"></a></td>';
                 echo '</tr>';
             }
             echo '</table>';
             echo '<script>$(document).ready(function(){ $("tr#tog").css("background","#B5E5EF"); }); </script>';
         } else {
             echo '<tr>';
-            echo '  <td colspan="5" align="center">Pas d\'envoi de mail planifié</td>';
+            echo '  <td colspan="5" align="center">'.tr("SCHEDULE_NO_SEND_SCHEDULED").'</td>';
             echo '</tr>';
             echo '</table>';
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
