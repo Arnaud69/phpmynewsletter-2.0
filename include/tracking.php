@@ -1,5 +1,5 @@
 <article class="module width_full">
-    <header><h3>Tracking, suivi des envois</h3></header>
+    <header><h3><?=tr("TRACKING_TITLE");?></h3></header>
     <?php
     $row_cnt = get_id_send($cnx,$list_id,$row_config_globale['table_send']);
     if($row_cnt['CPTID'] > 0){
@@ -36,7 +36,7 @@
                 $theme_class=new UniversalTheme;
                 $graph->SetTheme($theme_class);
                 $graph->img->SetAntiAliasing(false);
-                $graph->title->Set('Compte-rendu graphique');
+                $graph->title->Set(tr("TRACKING_STATS_GRAPHICS_REPORT"));
                 $graph->SetBox(false);
                 $graph->img->SetAntiAliasing(false);   
                 require_once("include/lib/jpgraph/src/jpgraph_bar.php");
@@ -123,7 +123,7 @@
             
         }
     } else {
-        echo '<div class="module_content"><h4 class="alert_info">Pas de statistiques disponibles, en attente de campagnes...</h4></div>';
+        echo '<div class="module_content">'.tr("TRACKING_NO_DATA_AVAILABLE").'<h4 class="alert_info">...</h4></div>';
     }
     ?>
     <div class="spacer"></div>

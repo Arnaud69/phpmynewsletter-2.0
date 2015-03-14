@@ -33,7 +33,14 @@ if (!empty($_FILES)) {
     $targetFile =  $targetPath. $name;
     move_uploaded_file($tempFile,$targetFile);
     $list_id  = (!empty($_POST['list_id'])) ? $_POST['list_id'] : '';
-    $sql_pj = "INSERT INTO ".$row_config_globale['table_upload']."(id,list_id,name,date) VALUES ('','$list_id','".$name."',now())";
-    $cnx->query($sql_pj);
-     
+    $cnx->query("INSERT INTO ".$row_config_globale['table_upload']."(id,list_id,name,date) VALUES ('','$list_id','".$name."',now())");
 }
+
+
+
+
+
+
+
+
+

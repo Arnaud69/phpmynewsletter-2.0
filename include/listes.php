@@ -13,7 +13,7 @@ switch($l){
                         <th>'.tr("LIST_NUMBER").'</th>
                         <th>'.tr("LIST_NAME").'</th>
                         <th>'.tr("LIST_COUNT_SUSCRIBERS").'</th> 
-                        <th>'.tr("LIST_DELETE").'</th> 
+                        <th>'.tr("DELETE").'</th> 
                     </tr> 
                 </thead> 
                 <tbody>';

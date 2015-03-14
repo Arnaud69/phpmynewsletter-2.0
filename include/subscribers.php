@@ -17,14 +17,14 @@ switch($t){
         </script>";
         echo "<header><h3>".tr("SUBSCRIBER_ADD_TITLE")."</h3></header>
         <div class='module_content'>
-        <h4 class='alert_info'>Ajouter un abonné au format adress@domain.com</h4>
+        <h4 class='alert_info'>".tr("SUBSCRIBER_ADD_MAIL_FORMAT")."</h4>
         <br><div align='center'>
         <form method='post' name='sub' action=''>
         <input type='hidden' name='op' value='subscriber_add' />
         <input type='hidden' name='action' value='manage' />
         <input type='hidden' name='page' value='subscribers' />
         <input type='hidden' name='list_id' value='$list_id' />
-        <input type='text'class='input' placeholder='Ajouter une adresse' name='add_addr' value='' maxlength='255' size='30' />
+        <input type='text'class='input' placeholder='".tr("SUBSCRIBER_ADD_TITLE")."' name='add_addr' value='' maxlength='255' size='30' />
         <input type='hidden' name='token' value='$token' />
         <input type='button'  value='".tr("SUBSCRIBER_ADD_BTN")."' onclick='Submitform()' class='littlebutton' />
         </form>
@@ -51,7 +51,7 @@ switch($t){
         echo "</div>";
     break;
     case 's':
-        echo "<header><h3>Supprimer un abonné</h3></header>
+        echo "<header><h3>".tr("SUBSCRIBER_DELETE_TITLE")."</h3></header>
         <div class='module_content'>";
         $cpt_suscribers = getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id);
         if($cpt_suscribers==0){
@@ -59,7 +59,7 @@ switch($t){
         }elseif($cpt_suscribers<501&&$cpt_suscribers>0){
             $subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$list_id);
             if(sizeof($subscribers)){
-                echo "<h4 class='alert_info'>Rechercher un abonné pour suppression définitive</h4>
+                echo "<h4 class='alert_info'>".tr("SUBSCRIBER_FIND_AND_DELETE")."</h4>
                 <br><div align='center'>
                 <form action='".$_SERVER['PHP_SELF']."' method='post'>
                 <input type='hidden' name='op' value='subscriber_del' />
@@ -72,18 +72,16 @@ switch($t){
                 foreach ($subscribers as $row) {
                     echo "<option value='".$row['email']."' >".$row['email']."</option>";
                 }
-                echo "</select>
-                <input type='submit' value='".tr("SUBSCRIBER_DELETE_BTN")."' />
-                </form>";
+                echo "</select>&nbsp;<input type='submit' value='".tr("SUBSCRIBER_DELETE_BTN")."' /></form>";
                 echo @$subscriber_op_msg;
                 "</div>";
             }
         } elseif($cpt_suscribers>500) {
-            echo "<h4 class='alert_info'>Rechercher un abonné pour suppression définitive</h4>
+            echo "<h4 class='alert_info'>".tr("SUBSCRIBER_FIND_AND_DELETE")."</h4>
             <br><div align='center'>
             <form>
-            <input type='input' id='searchid' placeholder='Rechercher une adresse' size='30' maxlength='255' style='width:300px' />
-            &nbsp;<input type='button' name='action' class='actionMail' value='DELETE' id='delete' />
+            <input type='input' id='searchid' placeholder='".tr("SUBSCRIBER_FIND")."' size='30' maxlength='255' style='width:300px' />
+            &nbsp;<input type='button' name='action' class='actionMail' value='".tr("LIST_DELETE")."' id='delete' />
             &nbsp;<span id='resultdel'></span>
             </form>
             <div id='result'></div>
@@ -113,7 +111,7 @@ switch($t){
         echo "<header><h3>".tr("SUBSCRIBER_EXPORT_TITLE")."</h3></header>
         <div class='module_content'>";
         if($cpt_suscribers>0){
-            echo "<h4 class='alert_info'>NB : Sauvegardez régulièrement votre liste d'abonnés !</h4>
+            echo "<h4 class='alert_info'>".tr("SUBSCRIBER_BACKUP")." !</h4>
             <form action='export.php' method='post'><input type='hidden' name='list_id' value='$list_id' />
             <input type='hidden' name='token' value='$token' />
             <br><div align='center'>
@@ -154,14 +152,14 @@ switch($t){
                 echo "<option value='".$row['email']."' >".$row['email']."</option>";
             }
             echo "</select>";
-            echo "<input type='submit' value='".tr("SUBSCRIBER_TEMP_BTN")."' class='littlebutton'>";
+            echo "<input type='submit' value='".tr("SUBSCRIBER_DELETE_BTN")."' class='littlebutton'>";
             echo "</form>";
-            echo "<h4 class='alert_info'>Ces adresses ont fait l'objet d'une inscription et sont en attente de confirmation.</h4>";
+            echo "<h4 class='alert_info'>".tr("SUBSCRIBER_NOT_CONFIRMED_WAITING")."</h4>";
             echo "</div>";
         } else {
             echo "<header><h3>".tr("SUBSCRIBER_TEMP_TITLE")."</h3></header>
             <div class='module_content'>
-            <h4 class='alert_info'>Pas de comptes en attente de confirmation</h4>
+            <h4 class='alert_info'>".tr("SUBSCRIBER_EMPTY_LIST")."</h4>
             </div>
             <div class='spacer'></div>";
         }
@@ -169,7 +167,7 @@ switch($t){
     case 'x':
         $cnx->query("SET NAMES UTF8");
         $mails_errors = $cnx->query("SELECT email, hash, status FROM ".$row_config_globale['table_email']." WHERE error='Y' AND list_id='".$list_id."' ORDER BY email ASC")->fetchAll(PDO::FETCH_ASSOC);
-        echo "<header><h3>Gestion des adresses mails (abonnés) en erreur</h3></header>
+        echo "<header><h3>".tr("SUBSCRIBER_ERROR_MANAGE_TITLE")."</h3></header>
         <div class='module_content'>";
         if (count($mails_errors)>0){
             foreach($mails_errors as $row){
@@ -179,12 +177,12 @@ switch($t){
                 echo '<input type="hidden" name="list_id" value="'.$list_id.'" />';
                 echo '<input type="hidden" name="hash" value="'.$row['hash'].'" />';
                 echo "<input type='hidden' name='token' value='$token' />";
-                echo '<input type="button" name="action" class="actionMail" value="UPDATE" id="update" />';
-                echo '<input type="button" name="action" class="actionMail" value="DELETE" id="delete" />';
+                echo '<input type="button" name="action" class="actionMail" value="'.tr("UPDATE").'" id="update" />';
+                echo '<input type="button" name="action" class="actionMail" value="'.tr("DELETE").'" id="delete" />';
                 echo '</form>';
             }
         } else {
-            echo '<h4 class="alert_info">Pas d\'adresse(s) e-mail incidentée(s) à traiter. Good job ! <img src="js/tinymce/plugins/emoticons/img/smiley-cool.gif" alt="Yeah ! You did it !" title="Yeah ! You did it !" width="18" heigh="18" /></h4>';
+            echo '<h4 class="alert_info">'.tr("SUBSCRIBER_NO_ERRORS").'. Good job ! <img src="js/tinymce/plugins/emoticons/img/smiley-cool.gif" alt="Yeah ! You did it !" title="Yeah ! You did it !" width="18" heigh="18" /></h4>';
             echo '<div class="spacer"></div>';
         }
         ?>

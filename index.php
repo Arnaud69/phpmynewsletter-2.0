@@ -244,6 +244,7 @@ if(!$list&&$page!="config"){
     <script src="js/jquery.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.colorbox.js"></script>
+    <script src="js/jsclock-0.8.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function(){$(".tablesorter").tablesorter();});
     $(document).ready(function(){
@@ -357,9 +358,9 @@ if(!$list&&$page!="config"){
         $nbDraft=getMsgDraft($cnx,$list_id,$row_config_globale['table_sauvegarde']);
         ?>
         <div class="draft">
-            <p><?=($nbDraft['NB']==0 ? tr("NO_CURRENT_DRAFT") : 
-                    '<a href="?page=compose&token='.$token.'&list_id='.$list_id.'" class="tooltip" title="'.tr("ACCESS_DRAFT_CONTINUE_WRITING").'">1 '.tr("CURRENT_DRAFT").'</a>');
-                ?></p>
+            <p>
+            <?=($nbDraft['NB']==0 ? tr("NO_CURRENT_DRAFT") : '<a href="?page=compose&token='.$token.'&list_id='.$list_id.'" class="tooltip" title="'.tr("ACCESS_DRAFT_CONTINUE_WRITING").'">1 '.tr("CURRENT_DRAFT").'</a>');?>
+            </p>
         </div>
         <div class="breadcrumbs_container">
             <article class="breadcrumbs"><a href="?page=listes&token=<?=$token;?>&l=l"><?=tr("ADMINISTRATION");?></a>
@@ -550,5 +551,6 @@ if(!$list&&$page!="config"){
         ?>
         <div class="spacer"></div>
     </section>
+    <script type="text/javascript">$('#ts').jsclock('<?=date('H:i:s');?>');</script>
 </body>
 </html>

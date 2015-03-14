@@ -8,6 +8,10 @@ $lang_array = array(
     "ACTION"=>"Action",
     "ACTIONS"=>"Actions",
     "SUBMIT"=>"Valider",
+    "UPDATE"=>"Mettre à jour",
+    "DELETE"=>"Supprimer",
+    "FOUND"=>"Trouvé",
+    "NOT_FOUND"=>"Non trouvé",
     //ARCHIVE
     "ARCHIVE_TITLE"=>"Archives",
     "ARCHIVE_CHOOSE"=>"Sélectionnez une lettre d'info",
@@ -83,23 +87,30 @@ $lang_array = array(
     "NEWSLETTER_UNSUB_DEFAULT_BODY"=>"Quelqu'un, certainement vous, a demandé votre désinscription de cette lettre d'info, merci de suivre les informations qui suivent.", 
     //SUBSCRIBER
     "SUBSCRIBER_ADD_TITLE"=>"Ajouter un abonné",
+    "SUBSCRIBER_ADD_MAIL_FORMAT"=>"Ajouter un abonné au format adress@domain.com",
     "SUBSCRIBER_ADD_BTN"=>"Ajouter cette adresse électronique",
     "SUBSCRIBER_ADDED"=>"%s ajoutée avec succès",
     "SUBSCRIBER_IMPORT_TITLE"=>"Importer une liste d'adresse électronique",
     "SUBSCRIBER_IMPORT_BTN"=>"Importer",
     "SUBSCRIBER_IMPORT_HELP"=>"Vous pouvez importer une liste d'adresse électronique depuis un fichier.<br />Ce fichier doit suivre le formalisme suivant: une adresse par ligne<br>adress1@domain.com<br />adress2@domain.com<br>adress3@domain.com",
     "SUBSCRIBER_DELETE_TITLE"=>"Supprimer un abonné",
+    "SUBSCRIBER_FIND_AND_DELETE"=>"Rechercher un abonné pour suppression définitive",
+    "SUBSCRIBER_FIND"=>"Rechercher un abonné",
     "SUBSCRIBER_DELETE_BTN"=>"Supprimer cette adresse électronique",
     "SUBSCRIBER_DELETED"=>"Abonné supprimé avec succès",
     "SUBSCRIBER_EXPORT_TITLE"=>"Exporter des abonnés",
     "SUBSCRIBER_EXPORT_TITLE_SIMPLE"=>"Export des abonnés",
     "SUBSCRIBER_EXPORT_BTN"=>"Exporter",
     "SUBSCRIBER_TEMP_TITLE"=>"Abonnés en attente de confirmation",
-    "SUBSCRIBER_TEMP_BTN"=>"Supprimer cette adresse électronique",
     "SUBSCRIBER_TEMP_DELETED"=>"Adresse électronique supprimée avec succès",
     "SUBSCRIBER_NOT_CONFIRMED"=>"Abonné(s) non validé(s)" ,
     "SUBSCRIBER_BULK_IMPORT"=>"Import en masse",
     "SUBSCRIBER_BOUNCERS"=>"Abonnés en erreur",
+    "SUBSCRIBER_BACKUP"=>"NB : Sauvegardez régulièrement votre liste d'abonnés",
+    "SUBSCRIBER_NOT_CONFIRMED_WAITING"=>"Ces adresses ont fait l'objet d'une inscription et sont en attente de confirmation.",
+    "SUBSCRIBER_EMPTY_LIST"=>"Pas de comptes en attente de confirmation",
+    "SUBSCRIBER_ERROR_MANAGE_TITLE"=>"Gestion des adresses mails (abonnés) en erreur",
+    "SUBSCRIBER_NO_ERRORS"=>"Pas d'adresse(s) e-mail incidentée(s) à traiter",
     "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
     //COMPOSE 
     "COMPOSE_NEW"=>"Rédiger un nouveau message",
@@ -208,8 +219,8 @@ $lang_array = array(
     "ERROR_SAVING_SETTINGS"=>"Erreur lors de l'enregistrement des réglages: %s",
     "ERROR_WHILE_SAVING_CONFIGURATION"=>"Erreur lors de la sauvegarde de la configuration",
     "ERROR_DELETING_NEWSLETTER"=>"Erreur lors de la suppression de cette lettre d'info",
-    "ERROR_CHOOSE_ANOTHER_NEWSLETTER"=>"Merci de choisir une autre lettre d'info, ou <a href=\"index.php?page=home&action=create\">d'en créer une nouvelle</a>",
-    "ERROR_NO_NEWSLETTER_CREATE_ONE"=>"Merci de <a href=\"index.php?page=newsletterconf&action=create\">créer une nouvelle lettre d'info</a>",
+    "ERROR_CHOOSE_ANOTHER_NEWSLETTER"=>"Merci de choisir une autre lettre d'info, ou <a href='index.php?page=home&action=create'>d'en créer une nouvelle</a>",
+    "ERROR_NO_NEWSLETTER_CREATE_ONE"=>"Merci de <a href='index.php?page=newsletterconf&action=create'>créer une nouvelle lettre d'info</a>",
     "ERROR_NO_SUCH_NEWSLETTER"=>"Lettre d'info introuvable",
     "ERROR_ADDING_SUBSCRIBER"=>"Erreur lors de l'ajout de %s",
     "ERROR_ALREADY_SUBSCRIBER"=>"%s est déjà abonné",
@@ -309,9 +320,9 @@ $lang_array = array(
 	"CREDITS_DND"=>"Librairie JavaScript indépendante (ne dépend d'aucune autre librairie) de gestion des \"drag'n'drop file uploads\"",
 	"CONTRIBUTE"=>"Contribuer",
 	"LICENSE"=>"Licence",
-	"LICENSE_TERMS"=>"phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href=\"http://www.gnu.org/copyleft/gpl.html\" target=\"_blank\">Licence Publique Générale</a> du projet <a href=\"http://www.gnu.org\" target=\"_blank\" class=\"lien\">GNU</a> (Gnu GPL)",
-	"CONTRIBUTE_HELP"=>"PhpMyNewsLetter est un projet libre qui nécessite d\'être encore amélioré. Vos idées et suggestions sont les bienvenues, vos qualités de développeur aussi. Rendez vous sur le forum <a href=\"http://www.phpmynewsletter.com/forum/\" target=\"_blank\">PhpMyNewsLetter</a>",
-	"ASK_ON_FORUM"=>"Je ne réponds pas aux demandes individuelles, merci de passer par le forum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href=\"http://www.phpmynewsletter.com/forum/\" target=\"_blank\">PhpMyNewsLetter</a>",
+	"LICENSE_TERMS"=>"phpMyNewsletter est un logiciel libre disponible sous les termes de la <a href='http://www.gnu.org/copyleft/gpl.html' target='_blank'>Licence Publique Générale</a> du projet <a href='http://www.gnu.org' target='_blank' class='lien'>GNU</a> (Gnu GPL)",
+	"CONTRIBUTE_HELP"=>"PhpMyNewsLetter est un projet libre qui nécessite d'être encore amélioré. Vos idées et suggestions seront les bienvenues, vos qualités de développeur aussi ! Rendez vous sur le forum <a href='http://www.phpmynewsletter.com/forum/' target='_blank'>PhpMyNewsLetter</a>",
+	"ASK_ON_FORUM"=>"Je ne réponds pas aux demandes individuelles, merci de passer par le forum pour toutes questions ou problèmes rencontrés. Rendez vous sur le forum <a href='http://www.phpmynewsletter.com/forum/' target='_blank'>PhpMyNewsLetter</a>",
 	"INSTALL_REFRESH"=>"Merci de rafraîchir cette page après correction de l'erreur",
     "LOGOUT_DONE"=>"Vous êtes déconnecté",
     "LOGOUT_ERROR"=> "Erreur lors de la déconnexion",
@@ -399,6 +410,7 @@ $lang_array = array(
 	"CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
 	// UPLOAD
 	"ATTACHMENTS"=>"Pièces jointes",
+	"NO_ATTACHMENTS"=>"Pas de pièces jointes",
 	"UPLOAD_ADD"=>"Ajout de pièces jointes",     // add attachment
 	"ADD_ONE_OR_MORE_ATTACHMENT"=>"Ajouter une ou plusieurs pièces jointes à ce mail",
 	"UPLOAD_DROP_FILES"=>"Glisser ici les fichiers à envoyer sur le serveur", //Drop files here to upload
@@ -429,7 +441,6 @@ $lang_array = array(
 	"LIST_NUMBER"=>"Liste N°",
 	"LIST_NAME"=>"Nom de la liste",
 	"LIST_COUNT_SUSCRIBERS"=>"Nombre d'abonnés",
-	"LIST_DELETE"=>"Supprimer",
 	"LIST_SELECTED"=>"Liste sélectionnée",
 	"CHOOSE_THIS_LIST"=>"Choisir cette liste",
 	"DELETE_THIS_LIST"=>"Supprimer cette liste",
@@ -499,30 +510,34 @@ $lang_array = array(
 	"PJ_DELETED"=>"Pièce jointe supprimée de l'envoi en cours",
 	"PJ_ERROR_DELETE"=>"Une erreur a été rencontrée lors de la suppression de la pièce jointe",
 	"PJ_TO_DELETE"=>"Supprimer cette pièce jointe",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	""=>"",
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	"IMAP_OK"=>"Connexion réussie",
+	"IMAP_DOWN"=>"Pas de connexion",
+	// TRACKING
+	"TRACKING_TITLE"=>"Tracking, suivi des envois",
+	"TRACKING_NO_DATA_AVAILABLE"=>"Pas de statistiques disponibles, en attente de campagnes",
+	"TRACKING_STATS_GRAPHICS_REPORT"=>"Compte-rendu graphique",
+	// UNDISTURBED
+	"UNDISTURBED_TITLE"=>"Traitement des erreurs du dernier envoi",
+	"UNDISTURBED_MSG_EXPLAIN"=>"Message d'erreur complet",
+	"UNDISTURBED_NO_ERROR"=>"Pas de mails en erreur",
+	"UNDISTURBED_TABLE_HEAD"=>"<th>Code</th>
+                                <th>Destinataire</th>
+                                <th>Type</th> 
+                                <th>Catégorie</th> 
+                                <th>Titre</th>",
+	"UNDISTURBED_TITLE_GRPH_AND_ERROR"=>"Graphique et répartition des erreurs du dernier envoi",
+	"UNDISTURBED_LABEL_ERROR"=>"",
+	"UNDISTURBED_LABEL_CLASS"=>"Répartiton par classe d'erreur : hard-bounce, soft-bounce",
+	"UNDISTURBED_ERROR_SERVER"=>"Votre serveur n'autorise pas le traitement des retours de mail",
+	// FUNCTIONS 
+	"F_UNDETECTED_VERSION"=>"fichier version non détecté",
+	"F_NEW_VERSION_AVAILABLE"=>"Version %s disponible",
+	"F_MAILS_OF_SUBSCRIBERS"=>"adresses emails des abonnés",
+	"F_TITLE_MAILS_OF_SUBSCRIBERS"=>"Liste des adresses",
+	"F_TRANSLATION_REQUIRED"=>"[Traduction manquante]",
+	"F_SENT_ON"=>"Envoyé le",
+	"F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
+	"F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
 
 

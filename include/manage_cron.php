@@ -40,7 +40,7 @@ if(isset($_POST['NEWTASK'])&&$_POST['NEWTASK']=='SCHEDULE_NEW_TASK'&&$list_id==$
                     </table>
                 </form>
                 </fieldset>
-            <?=tr("SCHEDULE_RESULT", $subject);?>");?>
+            <?=tr("SCHEDULE_RESULT", $subject);?>
         </div>
         <footer>
             <div class="submit_link">

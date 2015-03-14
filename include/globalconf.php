@@ -182,6 +182,7 @@ echo '<article class="module width_3_quarter">
         echo "<fieldset><label>".tr("GCONFIG_SERVICE_OPTION")."</label>";
         echo "<input type='text' name='bounce_option' id='bounce_option' value='" . (!empty($bounce_option) ? $bounce_option : 'notls') . "'></fieldset>";
         echo "<input type='button' name='action' id='TestBounce' value='".tr("GCONFIG_TEST_BOUNCE")."' />";
+        echo "<input type='hidden' name='bounce_token' id='bounce_token' value='$token'>";
         echo "<span id='RsBounce' align='center'>&nbsp;</span>";
         echo "<script>
         $('#TestBounce').click(function(){
@@ -189,7 +190,7 @@ echo '<article class="module width_3_quarter">
             $.ajax({
                 type:'POST',
                 url: 'include/test_imap.php',
-                data: {'bounce_host':$('#bounce_host').val(),'bounce_user':$('#bounce_user').val(),'bounce_pass':$('#bounce_pass').val(),'bounce_port':$('#bounce_port').val(),'bounce_service':$('#bounce_service').val(),'bounce_option':$('#bounce_option').val()},
+                data: {'bounce_host':$('#bounce_host').val(),'bounce_user':$('#bounce_user').val(),'bounce_pass':$('#bounce_pass').val(),'bounce_port':$('#bounce_port').val(),'bounce_service':$('#bounce_service').val(),'bounce_option':$('#bounce_option').val(),'token':$('#bounce_token').val()},
                 cache: false,
                 success: function(data){
                     $('#RsBounce').html(data);

@@ -24,10 +24,11 @@ $isCLI = ( $_SERVER['REMOTE_ADDR'] == $_SERVER['SERVER_ADDR'] ); if( !$isCLI ) {
 unset($_GET);
 unset($_POST);
 if((count($_SERVER['argv'])>2)||(count($_SERVER['argv'])==1)){
-    die('No task scheduled for this job');
+    die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
 }
-/*
 
+
+/*
 2/ on récupère l'argument du script
 $task_id = $argv[1]
 */
@@ -36,6 +37,8 @@ $task_id = $_SERVER['argv'][1];
 define('DOCROOT',dirname(dirname(__FILE__)));
 
 //echo DOCROOT.'  '.$_SERVER['argv'][1];
+
+
 
 /*
 3/ on charge les classes et autres fichiers nécessaires au déroulement du script
@@ -47,37 +50,42 @@ require(DOCROOT.'/include/lib/PHPMailerAutoload.php');
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 
+
 /*
 4/ on va chercher les éléments dans la table crontab
 */
 $detail_task = $cnx->query('SELECT * FROM '.$row_config_globale['table_crontab'] .' WHERE job_id="'.$task_id.'" ORDER BY date DESC')->fetchAll(PDO::FETCH_ASSOC);
 if(count($detail_task)==0){
-    die('No task scheduled for this job');
+    echo tr("SCHEDULE_NO_SEND_SCHEDULED");
+    exit;
 } else {
     $dat = getrusage();
+    
+    
     /*
     5/ on met l'envoi dans les archives
     // on va mettre le message de la table sauvegarde dans la table archives :
     // cette requête sera faite dans l'envoi
     */
-    echo "\n".$sql_arch = 'INSERT INTO '.$row_config_globale['table_archives'].' (id,date,type,subject,message,list_id)
+    $cnx->query('INSERT INTO '.$row_config_globale['table_archives'].' (id,date,type,subject,message,list_id)
                     SELECT "'.$detail_task[0]['msg_id'].'",CURTIME(),type,mail_subject,mail_body,list_id FROM '.$row_config_globale['table_crontab'].'
-                        WHERE list_id = "'.$detail_task[0]['list_id'].'" AND job_id = "'.$task_id.'"';
-    $cnx->query($sql_arch);
+                        WHERE list_id = "'.$detail_task[0]['list_id'].'" AND job_id = "'.$task_id.'"');
     // on récupère le nombre total de destinataire :
     $total_suscribers    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id']);
+    
+    
     /*                  
     6/ on créée l'entrée dans la table send
     */
-    echo "\n".$sql = "INSERT into ".$row_config_globale['table_send']." (id_mail, id_list, cpt) 
-        VALUES ('".$detail_task[0]['msg_id']."','".$detail_task[0]['list_id']."','0')";
-    $cnx->query($sql);
+    $cnx->query("INSERT into ".$row_config_globale['table_send']." (id_mail, id_list, cpt) 
+                    VALUES ('".$detail_task[0]['msg_id']."','".$detail_task[0]['list_id']."','0')");
+    
+    
     /*
     7/ on crée l'entrée dans la table send_suivi
     */
-    echo "\n".$sql_suivi = "INSERT into ".$row_config_globale['table_send_suivi']." (list_id, msg_id, total_to_send) 
-        VALUES ('".$detail_task[0]['list_id']."','".$detail_task[0]['msg_id']."','".$total_suscribers."')";
-    $cnx->query($sql_suivi);
+    $cnx->query("INSERT into ".$row_config_globale['table_send_suivi']." (list_id, msg_id, total_to_send) 
+                    VALUES ('".$detail_task[0]['list_id']."','".$detail_task[0]['msg_id']."','".$total_suscribers."')");
     $dontlog = 0;
     if (!$handler = @fopen(DOCROOT.'/logs/list' . $detail_task[0]['list_id'] . '-msg' . $detail_task[0]['msg_id'] . '.txt', 'a+')){
         $dontlog = 1;
@@ -90,6 +98,8 @@ if(count($detail_task)==0){
     if (!$dontlog){
         fwrite($handler, $errstr, strlen($errstr));
     }
+    
+    
     /*
     8/ on crée la boucle d'envoi, cadencée selon la même norme que l'envoi normal.
     */
@@ -155,6 +165,7 @@ if(count($detail_task)==0){
         $mail->DKIM_identity   = $DKIM_identity;
     }
     
+    
     /*
     DEBUT DELA BOUCLE GLOBALE DES ENVOIS, DEBUT DE LA TASK
     */
@@ -175,8 +186,7 @@ if(count($detail_task)==0){
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-                $body .= "Si cet e-mail ne s'affiche pas correctement, veuillez <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=".$detail_task[0]['msg_id']."&list_id=".$detail_task[0]['list_id']."&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>cliquer-ici</a>.<br />";
-                $body .= "Ajoutez ".$newsletter['from_addr']." &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !<br />";
+                $body .= tr("READ_ON_LINE", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=".$detail_task[0]['msg_id']."&list_id=".$detail_task[0]['list_id']."&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>") . ".<br />";
                 $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$detail_task[0]['msg_id'].'&h='.$addr[$i]['hash'].'&l='.$detail_task[0]['list_id'].'&r=';
                 $message = preg_replace_callback(
@@ -185,7 +195,8 @@ if(count($detail_task)==0){
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
                     },$message_to_send);
-                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>Je ne souhaite plus recevoir la newsletter : <a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>d&eacute;sinscription / unsubscribe</a><br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
+                . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>") ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i=' .$detail_task[0]['msg_id']. '&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . urlencode($addr[$i]['email']).'&h=' . $addr[$i]['hash'];
             }
@@ -203,10 +214,9 @@ if(count($detail_task)==0){
                 $cnx->query("UPDATE ".$row_config_globale['table_send']." SET cpt=cpt+1 WHERE id_mail='".$detail_task[0]['msg_id']."' AND id_list='".$detail_task[0]['list_id']."'");
                 $ms_err_info = 'OK';
             }
-            echo "\n".$sql_update_send_suivi = 'UPDATE '.$row_config_globale['table_send_suivi'].' 
+            $cnx->query('UPDATE '.$row_config_globale['table_send_suivi'].' 
                         SET nb_send=nb_send+1,last_id_send='.$addr[$i]['id'].' 
-                            WHERE msg_id='.$detail_task[0]['msg_id'].' AND list_id='.$detail_task[0]['list_id'];
-            $cnx->query($sql_update_send_suivi);
+                            WHERE msg_id='.$detail_task[0]['msg_id'].' AND list_id='.$detail_task[0]['list_id']);
             $endtimesend = microtime(true);
             $time_info = substr(($endtimesend-$begintimesend),0,5);
             $errstr = ($begin + $i + 1) . "\t" . date("H:i:s") . "\t " . $time_info . "\t\t " .$ms_err_info. " \t" . $addr[$i]['email'] . "\r\n";
@@ -218,19 +228,21 @@ if(count($detail_task)==0){
         $end = microtime(true);
         $tts = substr(($end - $start),0,5);
         if ($begin < $total_suscribers) {
-            echo "\n".$sql_suivi = 'UPDATE '.$row_config_globale['table_send_suivi'].' 
+            $cnx->query('UPDATE '.$row_config_globale['table_send_suivi'].' 
                         SET tts=tts+"'.$tts.'",last_id_send='.$last_id_send.' 
                             WHERE list_id='.$detail_task[0]['list_id'].' 
-                                AND msg_id='.$detail_task[0]['msg_id'];
-            $cnx->query($sql_suivi);
+                                AND msg_id='.$detail_task[0]['msg_id']);
         }
         echo "begin = ".$begin += $to_send;
         sleep(1);
-    
+
+
         /*
         fin de la boucle globale, sortie de la task
         */
     }
+    
+    
     /*
     9/ on ajoute les lignes de fin d'envoi dans le log
     */
@@ -245,6 +257,8 @@ if(count($detail_task)==0){
         fwrite($handler, $errstr, strlen($errstr));
         fclose($handler);
     }
+    
+    
     /*
     10/ on supprime la tâche de la crontab :
     http://code.tutsplus.com/tutorials/managing-cron-jobs-with-php-2--net-19428
@@ -263,14 +277,16 @@ if(count($detail_task)==0){
     */
     $output = shell_exec('crontab -l');
     if (strstr($output, $detail_task[0]['command'])) {
-       echo 'found';
+        echo tr("FOUND");
     } else {
-       echo 'not found';
+        echo tr("NOT_FOUND");
     }
     $newcron = str_replace($detail_task[0]['command'],"",$output);
     echo "<pre>$newcron</pre>";
 	file_put_contents(DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import", $newcron.PHP_EOL);
 	echo exec('crontab '.DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import");
+	
+	
     /*
     10/ on update la table crontab comme quoi l'envoi est terminé : done
     */
@@ -279,9 +295,34 @@ if(count($detail_task)==0){
                         WHERE list_id='.$detail_task[0]['list_id'].' 
                             AND msg_id='.$detail_task[0]['msg_id'].'
                             AND job_id="'.$detail_task[0]['job_id'].'"');
-	
-
-    
-
 }
-?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
