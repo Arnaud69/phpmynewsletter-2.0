@@ -111,6 +111,12 @@ function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
     }
     return $hash;
 }
+function append_cronjob($command){
+	if(is_string($command)&&!empty($command)){
+		exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
+	}
+	return $output;
+}
 function build_sorter($key) {
     return function ($a, $b) use ($key) {
         return strnatcmp($a[$key], $b[$key]);
@@ -557,6 +563,26 @@ function getWaitingMsgList($hostname, $login, $pass, $database, $table_mod, $lis
         return $form;
     } else
         return false;
+}
+function is_exec_available() {
+	// SOURCE : http://stackoverflow.com/a/12980534
+    static $available;
+    if (!isset($available)) {
+        $available = true;
+        if (ini_get('safe_mode')) {
+            $available = false;
+        } else {
+            $d = ini_get('disable_functions');
+            $s = ini_get('suhosin.executor.func.blacklist');
+            if ("$d$s") {
+                $array = preg_split('/,\s*/', "$d,$s");
+                if (in_array('exec', $array)) {
+                    $available = false;
+                }
+            }
+        }
+    }
+    return $available;
 }
 function isValidNewsletter($cnx, $table_list, $list_id) {
     $cnx->query("SET NAMES UTF8");

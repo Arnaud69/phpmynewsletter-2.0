@@ -176,6 +176,7 @@ if(in_array($op,$op_true)){
                 }
                 if($tmp_subdir_writable){
                     $tx_import = 0;
+                    $tx_error  = 0;
                     while (!feof($liste)){    
                         $mail_importe = fgets($liste, 4096);
                         if(strlen($mail_importe)==2){
@@ -188,6 +189,7 @@ if(in_array($op,$op_true)){
                                 $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe);
                                 if($added==-1){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
+                                    $tx_error++;
                                 }elseif($added==2){
                                     $subscriber_op_msg .= "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
                                     $tx_import++;
@@ -196,10 +198,12 @@ if(in_array($op,$op_true)){
                                 }
                             } else {
                                 $subscriber_op_msg .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";
+                                $tx_error++;
                             }
                         }
                     }
                     $subscriber_op_msg .= "<h4 class='alert_success'><b>$tx_import ".tr("MAIL_ADDED")."</b></h4>";
+                    $subscriber_op_msg .= "<h4 class='alert_error'><b>$tx_error ".tr("MAIL_ADDED_ERROR")."</b></h4>";
                 } else{
                     $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_IMPORT_TMPDIR_NOT_WRITABLE")." !</h4>";
                 }

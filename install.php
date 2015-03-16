@@ -18,7 +18,7 @@ $step           = (isset($_POST['step'])&&in_array($_POST['step'],$stepArray) ? 
 $opArray        = array('saveConfig');
 $op             = (isset($_POST['op'])&&in_array($_POST['op'],$opArray) ? $_POST['op'] : "");
 if (empty($langfile)) {
-    include("./include/lang/francais.php");
+    include("include/lang/francais.php");
 } else {
     include_once("include/lang/" . $langfile . ".php");
 }
@@ -108,6 +108,18 @@ if (empty($langfile)) {
                 echo "<h4 class='alert_success'>".tr("INSTALL_VERSIONS_EXTENSIONS")." curl ".tr("OK_BTN")."</h4>";
             } else {
                 echo "<h4 class='alert_error'>".tr("INSTALL_VERSIONS_EXTENSIONS")." curl ".tr("INSTALL_MISSING")."</h4>";
+            }
+            if(is_exec_available()) {
+                echo "<h4 class='alert_success'>".tr("INSTALL_FUNCTION_OK", "exec")."</h4>";
+				append_cronjob('### TEST CRONTAB FOR PhpMyNewsLetter');
+				$test_cronatb_ok = exec('crontab -l | grep "###"');
+				if ($test_cronatb_ok == '### TEST CRONTAB FOR PhpMyNewsLetter') {
+					echo "<h4 class='alert_success'>".tr("INSTALL_FUNCTION_OK", "CRONTAB")."</h4>";
+				} else {
+					echo "<h4 class='alert_error'>".tr("INSTALL_FUNCTION_DOWN", "CRONTAB")."</h4>";
+				}
+            } else {
+                echo "<h4 class='alert_error'>".tr("INSTALL_FUNCTION_DOWN", "exec")."</h4>";
             }
             echo '</div>';
             echo '</article>';
@@ -274,11 +286,11 @@ if (empty($langfile)) {
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
             echo "<option value='smtp_gmail'>smtp Gmail</option>";
-			echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
-			echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
-			echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
-			echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
-			echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
+            echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
+            echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
+            echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
+            echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
+            echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
             echo "</select>";
             echo '</fieldset>';
@@ -323,7 +335,7 @@ if (empty($langfile)) {
             echo "<input type='hidden' name='mod_sub' value='0'><br>";
             echo "<input type='hidden' name='step' value=" . ($step + 1) . " />";
             echo "<div align='center'><input id='submit' type='submit' value='Go Go Go !!!'></div>";
-			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
+            echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
             echo '</div>';
             echo '</article>';
             echo '</form>';

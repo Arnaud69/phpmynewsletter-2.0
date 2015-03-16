@@ -44,12 +44,6 @@ if($continue){
     exec("crontab -l > ".__DIR__."/backup_crontab/$cronID");
     switch($action){
         case 'new':
-            function append_cronjob($command){
-                if(is_string($command)&&!empty($command)){
-                    exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
-                }
-                return $output;
-            }
             $min=(is_numeric($_POST['min'])&&$_POST['min']<60&&$_POST['min']>=0?$_POST['min']:die('min vide'));
             $hour=(is_numeric($_POST['hour'])&&$_POST['hour']<24&&$_POST['hour']>=0?$_POST['hour']:die('hour vide'));
             $day=(is_numeric($_POST['day'])&&$_POST['day']<32&&$_POST['day']>0?$_POST['day']:die('day vide'));

@@ -93,7 +93,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                     $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_join&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>" . tr("SUBSCRIPTION_I_SUB") . "</a>";
                                     $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['subscription_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['subscription_subject']));
                                     $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
-                                    $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                                    sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                                     echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_SEND_CONFIRM_MESSAGE") . "</h4>";
                                 } elseif ($add ==0)
                                     echo "<h4 class='alert_error'>" . tr("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
@@ -147,7 +147,8 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                             $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id'>".tr("SUBSCRIPTION_AGREE_UN_SUB")."</a>";
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
-                            $mail = sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                            sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Nouvel inscrit', 'Liste : '.$list_id.'<b />Nouvel inscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                         } else {
                             echo "<h4 class='alert_error'>" . tr("ERROR_UNKNOWN") . "</h4>";
@@ -158,6 +159,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                     case "confirm_leave":
                         echo '<header><h3>'.tr("SUBSCRIPTION_TITLE").'</h3></header>';
                         $rm = removeSubscriber($cnx, $row_config_globale['table_email'], $row_config_globale['table_send'], $list_id, $email_addr, $hash, $i);
+                        sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Désinscription', 'Liste : '.$list_id.'<b />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                         if ($rm == 1) {
                             echo "<h4 class='alert_success'>" . tr("UNSUBSCRIPTION_FINISHED") . ".</h4>";
                         } else if ($rm == -1) {
@@ -179,7 +181,8 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                                 $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>".tr("SUBSCRIPTION_UN_SUB")."</a>";
                                 $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                                 $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
-                                $mail = sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                                sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                                sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Nouvel inscrit', 'Liste : '.$list_id.'<b />Nouvel inscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                                 echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                             } else {
                                 echo "<h4 class='alert_error'>" . tr("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
@@ -191,7 +194,8 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                     case "leave_direct":
                         echo '<header><h3>'.tr("UNSUBSCRIPTION_TITLE").'</h3></header>';
                         if (!$row_config_globale['unsub_validation']) {
-                            $rm = removeSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr);
+                            rm = removeSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr);
+                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Désinscription', 'Liste : '.$list_id.'<b />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             if ($rm) {
                                 echo "<h4 class='alert_success'>" . tr("UNSUBSCRIPTION_FINISHED") . ".</h4>";
                             } else if ($rm == -1) {

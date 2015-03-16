@@ -289,6 +289,8 @@ $lang_array = array(
     "INSTALL_EXTENSION"=>"Extension",
 	"INSTALL_MISSING"=>"manquante",
 	"INSTALL_OBSOLETE"=>"obsolète",
+	"INSTALL_FUNCTION_OK"=>"Fonction %s OK",
+	"INSTALL_FUNCTION_DOWN"=>"Fonction %s non disponible",
 	"INSTALL_ENVIRONMENT"=>"Environnement",
 	"INSTALL_DEVELOPMENT"=>"Développement",
 	"INSTALL_PRODUCTION"=>"Production",
@@ -366,6 +368,7 @@ $lang_array = array(
 	// INDEX :
 	"ROOT_TO_FLUSH_MAIL_QUEUE"=>"Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.",
 	"MAIL_ADDED"=>"mail(s) ajouté(s)",
+	"MAIL_ADDED_ERROR"=>"mail(s) en erreur à l'import",
 	"DASHBOARD"=>"Tableau de bord",
 	"SUPPORT"=>"Support",
 	"ADMINISTRATION"=>"Administration",
@@ -493,6 +496,16 @@ $lang_array = array(
             <th></th>",
 	"SCHEDULE_TASK_NOT_FOUND"=>"Tâche non trouvée",
 	"SCHEDULE_NOT_POSSIBLE_TRANSACTION"=>"Transaction impossible",
+	"SCHEDULE_REPORT_SUBJECT"=>"Rapport d'un envoi planifié",
+	"SCHEDULE_REPORT_TITLE"=>"PhpMyNewsLetter vous informe",
+	"SCHEDULE_REPORT_LONG_DESC"=>"Compte rendu d'envoi d'une campagne planifi&eacute;e",
+	"SCHEDULE_CAMPAIGN_TITLE"=>"Nom de la campagne",
+	"SCHEDULE_CAMPAIGN_ID"=>"Identifiant de la campagne",
+	"SCHEDULE_CAMPAIGN_DATE_DONE"=>"Date d'ex&eacute;cution",
+	"SCHEDULE_CAMPAIGN_SENDED"=>"Nombre de mails envoy&eacute;s",
+	"SCHEDULE_CAMPAIGN_ERROR"=>"Nombre de mails en erreur",
+	"SCHEDULE_START_PROCESS"=>"Envoi commencé",
+	"SCHEDULE_END_PROCESS"=>"Envoi terminé",
 	"MAILS_REPORT_HEAD"=>"<th>Id</th>
                     <th>Taille</th>
                     <th>Date</th> 

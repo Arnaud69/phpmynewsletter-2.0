@@ -1,47 +1,11 @@
 <?php
-/*
-task.php : fichier appelé en tâche planifiée permettant de gérer les envois d'une campagne
-
-1/ sécurité : tester que l'on est bien lancé en shell, via tâche cron
-http://stackoverflow.com/questions/5054818/php-page-protection-for-cron-task-only?rq=1
-$allowedIps = array('127.0.0.1','::1');
-if(!in_array($_SERVER['REMOTE_ADDR'],$allowedIps)){
-    echo 'No jQuery for you';
-}else{
-    echo 'jQuery goodness to follow...';
-}
-
-ou
-
-($_SERVER['REMOTE_ADDR'] == "127.0.0.1") or die('NO ACCESS');
-
-ou 
-
-$isCLI = ( $_SERVER['REMOTE_ADDR'] == $_SERVER['SERVER_ADDR'] ); if( !$isCLI ) { die("no no guppy guppy"); } 
-*/
-
 // unset des variables
 unset($_GET);
 unset($_POST);
-if((count($_SERVER['argv'])>2)||(count($_SERVER['argv'])==1)){
-    die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
-}
-
-
-/*
-2/ on récupère l'argument du script
-$task_id = $argv[1]
-*/
-$task_id = $_SERVER['argv'][1];
-
 define('DOCROOT',dirname(dirname(__FILE__)));
 
-//echo DOCROOT.'  '.$_SERVER['argv'][1];
-
-
-
 /*
-3/ on charge les classes et autres fichiers nécessaires au déroulement du script
+1/ on charge les classes et autres fichiers nécessaires au déroulement du script
 */
 include(DOCROOT.'/include/config.php');
 include(DOCROOT.'/include/db/db_connector.inc.php');
@@ -49,18 +13,40 @@ include(DOCROOT.'/include/lib/pmn_fonctions.php');
 require(DOCROOT.'/include/lib/PHPMailerAutoload.php');
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include(DOCROOT.'/include/lang/'.$row_config_globale['language'].'.php');
 
+
+if((count($_SERVER['argv'])>2)||(count($_SERVER['argv'])==1)){
+    die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
+}
+
+if(!isset($_SERVER['SERVER_SOFTWARE']) && (php_sapi_name() == 'cli' || (is_numeric($_SERVER['argc']) && $_SERVER['argc'] > 0))) {
+    // Let's continue !
+} else {
+    die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
+}
+/*
+2/ on récupère l'argument du script
+$task_id = $argv[1]
+*/
+$task_id = $_SERVER['argv'][1];
 
 /*
-4/ on va chercher les éléments dans la table crontab
+3/ on va chercher les éléments dans la table crontab
 */
 $detail_task = $cnx->query('SELECT * FROM '.$row_config_globale['table_crontab'] .' WHERE job_id="'.$task_id.'" ORDER BY date DESC')->fetchAll(PDO::FETCH_ASSOC);
 if(count($detail_task)==0){
     echo tr("SCHEDULE_NO_SEND_SCHEDULED");
     exit;
 } else {
+    /*
+    4/ init variables d'usage
+    */
     $dat = getrusage();
-    
+    $start_task_date = date('d/m/Y H:i:s');
+    $total_send_errors = 0;
+    $motifs_send_errors = '';
     
     /*
     5/ on met l'envoi dans les archives
@@ -143,7 +129,11 @@ if(count($detail_task)==0){
     $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
     $msg        = get_message($cnx, $row_config_globale['table_archives'], $detail_task[0]['msg_id']);
     $format     = $msg['type'];
-    $list_pj    = $cnx->query('SELECT * FROM '.$row_config_globale['table_upload'].' WHERE list_id='.$detail_task[0]['list_id'].' AND msg_id='.$detail_task[0]['msg_id'].' ORDER BY id ASC')->fetchAll(PDO::FETCH_ASSOC);
+    $list_pj    = $cnx->query('SELECT * 
+        FROM '.$row_config_globale['table_upload'].' 
+            WHERE list_id='.$detail_task[0]['list_id'].' 
+            AND msg_id='.$detail_task[0]['msg_id'].' 
+        ORDER BY id ASC')->fetchAll(PDO::FETCH_ASSOC);
     if(count($list_pj)>0){
         foreach  ($list_pj as $item) {
             $mail->AddAttachment(DOCROOT.'/upload/'.$item['name']);
@@ -203,12 +193,15 @@ if(count($detail_task)==0){
             $body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
+            $mail->AltBody  =  strip_tags( str_replace( $message . $unsubLink, array( '<br>', '<br/>', '<br />' ), "\r\n" ) );
             $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$detail_task[0]['msg_id'].'&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
                 $cnx->query("UPDATE ".$row_config_globale['table_send']." SET error=error+1 WHERE id_mail='".$detail_task[0]['msg_id']."' AND id_list='".$detail_task[0]['list_id']."'");
                 $ms_err_info = $mail->ErrorInfo;
+                $motifs_send_errors .= $addr[$i]['email'] . '  --->  '. $ms_err_info.'<br />';
+                $total_send_errors++;
             } else {
                 echo "\n".'envoi a '.$addr[$i]['email'].', begin='.$begin.', total_suscriber='.$total_suscribers;
                 $cnx->query("UPDATE ".$row_config_globale['table_send']." SET cpt=cpt+1 WHERE id_mail='".$detail_task[0]['msg_id']."' AND id_list='".$detail_task[0]['list_id']."'");
@@ -261,19 +254,6 @@ if(count($detail_task)==0){
     
     /*
     10/ on supprime la tâche de la crontab :
-    http://code.tutsplus.com/tutorials/managing-cron-jobs-with-php-2--net-19428
-    public function remove_cronjob($cron_jobs=NULL){
-        if (is_null($cron_jobs)) $this->error_message("Nothing to remove!  Please specify a cron job or an array of cron jobs.");
-        $this->write_to_file();
-        $cron_array = file($this->cron_file, FILE_IGNORE_NEW_LINES);
-        if (empty($cron_array)) $this->error_message("Nothing to remove!  The cronTab is already empty.");
-        $original_count = count($cron_array);
-        if (is_array($cron_jobs))    {
-            foreach ($cron_jobs as $cron_regex) $cron_array = preg_grep($cron_regex, $cron_array, PREG_GREP_INVERT);
-        } else {
-            // rien !
-        }   
-    }
     */
     $output = shell_exec('crontab -l');
     if (strstr($output, $detail_task[0]['command'])) {
@@ -283,18 +263,44 @@ if(count($detail_task)==0){
     }
     $newcron = str_replace($detail_task[0]['command'],"",$output);
     echo "<pre>$newcron</pre>";
-	file_put_contents(DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import", $newcron.PHP_EOL);
-	echo exec('crontab '.DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import");
-	
-	
+    file_put_contents(DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import", $newcron.PHP_EOL);
+    echo exec('crontab '.DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import");
+    
+    
     /*
-    10/ on update la table crontab comme quoi l'envoi est terminé : done
+    11/ on update la table crontab comme quoi l'envoi est terminé : done
     */
     $cnx->query('UPDATE '.$row_config_globale['table_crontab'].' 
                     SET etat="done" 
                         WHERE list_id='.$detail_task[0]['list_id'].' 
                             AND msg_id='.$detail_task[0]['msg_id'].'
                             AND job_id="'.$detail_task[0]['job_id'].'"');
+    
+    /*
+    12/ on envoie un mail de compte rendu :
+    */
+    
+    $rapport_sujet = tr("SCHEDULE_REPORT_SUBJECT");
+    $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
+    $end_task_date = date('d/m/Y H:i:s');
+    $rapport = '<br /><br /><br /><br /><br />
+    <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
+    <tbody>
+    <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;font-size: 14pt;">
+        <img src="http://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png" alt="" width="123" height="72" /><br />'.tr("SCHEDULE_REPORT_TITLE").' !</td></tr>
+    <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;">'.tr("SCHEDULE_REPORT_LONG_DESC").'</span></td></tr>
+    <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_TITLE").' :</span></td>
+        <td><span style="color: #2446a2;">'.$subject.'</span></td></tr>
+    <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_ID").' :</span></td>
+        <td><span style="color: #2446a2;">'.$detail_task[0]['job_id'].'</td></tr>
+    <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_DATE_DONE").'</span></td>
+        <td><span style="color: #2446a2;">'.tr("SCHEDULE_START_PROCESS").' : '.$start_task_date.'<br />'.tr("SCHEDULE_END_PROCESS").' : '.$end_task_date.'</td></tr>
+    <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_SENDED").' :</span></td><td><span style="color: #2446a2;">'.$total_suscribers.'</span></td></tr>
+    <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_ERROR").' :</span></td><td><span style="color: #2446a2;">'.$total_send_errors.'</span></td></tr>
+    <tr><td></td><td><span style="color: #2446a2;">'.@$motifs_send_errors.'</span></td></tr>
+    </tbody>
+    </table>';
+    sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
 }
 
 
