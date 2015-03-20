@@ -12,44 +12,34 @@ if (!function_exists('iconv') && !function_exists('libiconv')) {
         return $converter->Convert($string, $input_encoding, $output_encoding);
     }
 }
-function acceptModMsg($hostname, $login, $pass, $database, $table_mod, $msg_id, $table_archive) {
-    $cnx->query("SET NAMES UTF8");
-    $msg = getWaitingMsg($hostname, $login, $pass, $database, $table_mod, $msg_id);
-    $this_id = $cnx->query("SELECT id FROM $table_archive ORDER BY id DESC")->fetch();
-    $newid = $this_id['id'] + 1;
-    $sql   = "INSERT INTO $table_archive (`id`,`date`,`type`,`subject`,`message`,`list_id`) VALUES('$newid','$msg[0]','$msg[1]','$msg[3]','$msg[4]','$msg[5]')";
-    if ($cnx->query($sql)) {
-        return deleteModMsg($cnx, $table_mod, $msg_id);
-    } else {
-        return -1;
-    }
-}
-function add_subscriber($cnx, $table_email, $list_id, $add_addr) {
+function add_subscriber($cnx, $table_email, $list_id, $add_addr, $table_email_deleted) {
     $cnx->query("SET NAMES UTF8");
     $add_addr = trim(strtolower($add_addr));
     $hash = @current($cnx->query("SELECT hash FROM $table_email WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
     if($hash==''){
-        $hash = unique_id();
-        $cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')");
-        return 2;
-        if($cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')")){
-            return 2;
-        } else {
-            return true;
-        }
+		$black_listed = @current($cnx->query("SELECT email FROM $table_email_deleted WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
+		if($black_listed==''){
+			$hash = unique_id();
+			if($cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')")){
+				return 2;
+			} else {
+				return true;
+			}
+		} else {
+			return 3;
+		}
     } else {
         return -1;
     }
 }
-function addSubscriber($cnx, $table_email, $table_temp, $list_id, $addr, $hash) {
+function addSubscriber($cnx, $table_email, $table_temp, $list_id, $addr, $hash, $table_email_deleted) {
     $cnx->query("SET NAMES UTF8");
     $addr = trim(strtolower(urldecode($addr)));
     $email = @current($cnx->query("SELECT email FROM $table_temp WHERE list_id='$list_id' AND email='$addr' AND hash='$hash'")->fetch());
     if ($email!='') {
-        $sql = "INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')";
-        $this_insert = $cnx->query($sql);
-        $sql = "DELETE FROM $table_temp WHERE email='$addr' AND list_id='$list_id' AND hash='$hash'";
-        $this_delete = $cnx->query($sql);
+        $cnx->query("INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')");
+        $cnx->query("DELETE FROM $table_temp WHERE email='$addr' AND list_id='$list_id' AND hash='$hash'");
+        $cnx->query("DELETE FROM $table_email_deleted WHERE email='$addr' AND list_id='$list_id'");
         return true;
     } else {
         return false;
@@ -66,8 +56,7 @@ function addSubscriberMod($cnx, $table_email, $ref_sub_table, $list_id, $addr) {
     if ((!$this_mail)||count($this_mail)>0) {
         return -1;
     }
-    $sql = "INSERT INTO $ref_sub_table (`email`, `list_id`) VALUES ('$addr', '$list_id')";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("INSERT INTO $ref_sub_table (`email`, `list_id`) VALUES ('$addr', '$list_id')")) {
         return -1;
     }
     return true;
@@ -80,11 +69,11 @@ function addSubscriberDirect($cnx, $table_email, $list_id, $addr) {
         return false;
     } else {
         $hash = unique_id();
-        $sql  = "INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')";
-        if (!$cnx->query($sql)) {
+        if ($cnx->query("INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')")) {
+            $cnx->query("DELETE FROM $table_email_deleted WHERE email='$addr' AND list_id='$list_id'");
+            return $hash;
+        } else
             return false;
-        }
-        return $hash;
     }
 }
 function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
@@ -105,17 +94,16 @@ function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
         date_default_timezone_set('Europe/Paris');
     }
     $date = date("Ymd");
-    $sql  = "INSERT INTO $table_temp (`email`, `list_id` , `hash` , `date`) VALUES ('$addr', '$list_id','$hash' , '$date')";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("INSERT INTO $table_temp (`email`, `list_id` , `hash` , `date`) VALUES ('$addr', '$list_id','$hash' , '$date')")) {
         return false;
     }
     return $hash;
 }
 function append_cronjob($command){
-	if(is_string($command)&&!empty($command)){
-		exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
-	}
-	return $output;
+    if(is_string($command)&&!empty($command)){
+        exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
+    }
+    return $output;
 }
 function build_sorter($key) {
     return function ($a, $b) use ($key) {
@@ -176,8 +164,10 @@ function clean_old_tmp_files(){
         }
     }
 }
-function createNewsletter($cnx,$table_listsconfig,$newsletter_name,$from,$from_name,$subject,$header,$footer, 
-                          $subscription_subject,$subscription_body,$welcome_subject,$welcome_body,$quit_subject,$quit_body,$preview_addr) {
+function createNewsletter($cnx,$table_listsconfig,$newsletter_name,$from,
+                              $from_name,$subject,$header,$footer, 
+                              $subscription_subject,$subscription_body,
+                              $welcome_subject,$welcome_body,$quit_subject,$quit_body,$preview_addr) {
     $cnx->query("SET NAMES UTF8");                          
     $sql = "SELECT list_id FROM $table_listsconfig ORDER BY list_id DESC";
     $newidTab = $cnx->SqlRow($sql);
@@ -194,19 +184,19 @@ function createNewsletter($cnx,$table_listsconfig,$newsletter_name,$from,$from_n
     $welcome_body         = escape_string($cnx,$welcome_body);
     $quit_subject         = escape_string($cnx,$quit_subject);
     $quit_body            = escape_string($cnx,$quit_body);
-    $preview_addr          = escape_string($cnx,$preview_addr);
-    $sql = "INSERT INTO $table_listsconfig (`list_id` , `newsletter_name` , `from_addr` , 
+    $preview_addr         = escape_string($cnx,$preview_addr);
+    if (!$cnx->query("INSERT INTO $table_listsconfig (`list_id` , `newsletter_name` , `from_addr` , 
                                             `from_name` , `subject` , `header` , `footer` , 
                                             `subscription_subject` , `subscription_body`, `welcome_subject` , 
                                             `welcome_body` , `quit_subject` ,`quit_body`,`preview_addr`) 
-            VALUES ($newid,$newsletter_name, $from, 
-                    $from_name, $subject, $header, $footer,
-                    $subscription_subject, $subscription_body,$welcome_subject,
-                    $welcome_body, $quit_subject, $quit_body, $preview_addr)";
-    if (!$cnx->query($sql)) {
+							VALUES ($newid,$newsletter_name, $from, 
+									$from_name, $subject, $header, $footer,
+									$subscription_subject, $subscription_body,$welcome_subject,
+									$welcome_body, $quit_subject, $quit_body, $preview_addr)")) {
         return false;
-    } else
+    } else {
         return $cnx->lastInsertId();
+	}
 }
 function CronID() {
     $len = 5;
@@ -218,74 +208,58 @@ function CronID() {
         $activatecode.=$base{mt_rand(0,$max)};
     return 'pmnl2_'.$activatecode;
 }
-function delete_subscriber($cnx, $table_email, $list_id, $del_addr) {
-    $sql = "DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'";
-    if (!$cnx->query($sql)) {
+function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted) {
+	$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'unsub')");
+    if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
         return true;
     }
 }
-function delete_error_subscriber($cnx, $table_email, $list_id) {
-    if(is_numeric($list_id)){
-        $sql = "DELETE from $table_email WHERE list_id = '$list_id' AND error='Y'";
-        if (!$cnx->query($sql)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-}
 function deleteArchive($cnx,$table_archives, $msg_id) {
-    $sql = "DELETE FROM $table_archives  WHERE id='$msg_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table_archives  WHERE id='$msg_id'")) {
         return false;
     } else {
         return true;
     }
 }
 function deleteModMsg($cnx, $table_mod, $msg_id) {
-    $sql = "DELETE FROM $table_mod WHERE id='$msg_id'";
-    if ($cnx->query($sql)) {
+    if ($cnx->query("DELETE FROM $table_mod WHERE id='$msg_id'")) {
         return true;
     } else {
         return -1;
     }
 }
 function deleteNewsletter($cnx, $table_list, $table_archives, $table_email, $table_temp, $table_send, $table_tracking, $table_autosave, $list_id) {
-    $sql = "DELETE FROM $table_list WHERE list_id='$list_id'";
-    if (!$cnx->query($sql)) {
+	if (!$cnx->query("DELETE FROM $table_list WHERE list_id='$list_id'")) {
         return false;
     }
-    $sql = "DELETE FROM $table_email WHERE list_id='$list_id'";
-    if (!$cnx->query($sql)) {
+	if (!$cnx->query("DELETE FROM $table_email WHERE list_id='$list_id'")) {
         return false;
     }
-    $sql = "DELETE FROM $table_temp WHERE list_id='$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table_temp WHERE list_id='$list_id'")) {
         return false;
     }
-    $sql = "DELETE FROM $table_archives WHERE list_id='$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table_archives WHERE list_id='$list_id'")) {
         return false;
     }
-    $sql = "DELETE $table_tracking,$table_send FROM $table_tracking INNER JOIN $table_send  WHERE $table_tracking.subject = $table_send.id_mail and $table_send.id_list = '$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE $table_tracking,$table_send 
+						FROM $table_tracking 
+							INNER JOIN $table_send  
+						WHERE $table_tracking.subject = $table_send.id_mail 
+							AND $table_send.id_list = '$list_id'")) {
         return false;
     }
-    $sql = "DELETE FROM $table_send WHERE id_list = '$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table_send WHERE id_list = '$list_id'")) {
         return false;
     }
-    $sql = "DELETE FROM $table_autosave WHERE list_id = '$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table_autosave WHERE list_id = '$list_id'")) {
         return false;
     }
     return true;
 }
 function DelMsgTemp($cnx, $list_id, $table){
-    $sql = "DELETE FROM $table WHERE list_id='$list_id'";
-    if (!$cnx->query($sql)) {
+    if (!$cnx->query("DELETE FROM $table WHERE list_id='$list_id'")) {
         return false;
     }
 }
@@ -331,16 +305,11 @@ function flushTempTable($cnx, $temp_table, $limit) {
     $d      = $elts[2];
     $before = mktime(0, 0, 0, $m, $d - $limit, $y);
     $before = date("Ymd", $before);
-    $sql = "DELETE FROM $temp_table where date < '$before'";
-    if($cnx->query($sql)){
+    if($cnx->query("DELETE FROM $temp_table where date < '$before'")){
         return true;
     } else {
         return false;
     }
-}
-function get_error_subscribers($cnx,$table_email,$list_id){
-    $cnx->query("SET NAMES UTF8");
-    return $cnx->query("SELECT email,status FROM $table_email WHERE error='Y' AND list_id=$list_id")->fetchAll(PDO::FETCH_ASSOC);
 }
 function get_first_newsletter_id($cnx,$lists_table) {
     $cnx->query("SET NAMES UTF8");
@@ -565,7 +534,7 @@ function getWaitingMsgList($hostname, $login, $pass, $database, $table_mod, $lis
         return false;
 }
 function is_exec_available() {
-	// SOURCE : http://stackoverflow.com/a/12980534
+    // SOURCE : http://stackoverflow.com/a/12980534
     static $available;
     if (!isset($available)) {
         $available = true;
@@ -645,8 +614,7 @@ function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr
         return false;
     }
     $hash = unique_id();
-    $sql  = "INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$mod_addr', '$list_id','$hash')";
-    $cnx->SqlRow($sql);
+    $cnx->SqlRow("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$mod_addr', '$list_id','$hash')");
     if ($cnx->DbError()) {
         echo $cnx->DbError();
         return false;
@@ -690,7 +658,7 @@ function readfile_chunked($filename) {
     } 
     return fclose($handle); 
 }
-function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $hash, $id_mail) {
+function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $hash, $id_mail, $table_email_deleted) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr' AND hash='$hash'")->fetch();
     if(!$x) {
@@ -702,12 +670,13 @@ function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $has
         if(!$y){
             return -2;
         } else {
-            $z = $cnx->query("UPDATE $table_send SET `leave`=`leave`+1 WHERE id_list='$list_id' AND id_mail='$id_mail'");
+            $cnx->query("UPDATE $table_send SET `leave`=`leave`+1 WHERE id_list='$list_id' AND id_mail='$id_mail'");
+            $cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$addr).",'unsub')");
             return true;
         }
     }
 }
-function removeSubscriberDirect($cnx, $table_email, $list_id, $addr) {
+function removeSubscriberDirect($cnx, $table_email, $list_id, $addr, $table_email_deleted) {
     $cnx->query("SET NAMES UTF8");
     $addr = strtolower($addr);
     $rm=$cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetch(PDO::FETCH_ASSOC);
@@ -716,18 +685,11 @@ function removeSubscriberDirect($cnx, $table_email, $list_id, $addr) {
     if($cnx->query("DELETE FROM $table_email WHERE email='$addr' AND list_id='$list_id'")){
         return true;
     } else return -2;
+    $cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$addr).",'unsub')");
 }
 function sanitize_output($buffer) {
-    $search = array(
-        '/\>[^\S ]+/s',
-        '/[^\S ]+\</s',
-        '/(\s)+/s'
-    );
-    $replace = array(
-        '>',
-        '<',
-        '\\1'
-    );
+    $search = array('/\>[^\S ]+/s','/[^\S ]+\</s','/(\s)+/s');
+    $replace = array('>','<','\\1');
     $buffer = preg_replace($search, $replace, $buffer);
     return $buffer;
 }

@@ -18,7 +18,7 @@ $step           = (isset($_POST['step'])&&in_array($_POST['step'],$stepArray) ? 
 $opArray        = array('saveConfig');
 $op             = (isset($_POST['op'])&&in_array($_POST['op'],$opArray) ? $_POST['op'] : "");
 if (empty($langfile)) {
-    include("include/lang/francais.php");
+    include("./include/lang/francais.php");
 } else {
     include_once("include/lang/" . $langfile . ".php");
 }
@@ -108,18 +108,6 @@ if (empty($langfile)) {
                 echo "<h4 class='alert_success'>".tr("INSTALL_VERSIONS_EXTENSIONS")." curl ".tr("OK_BTN")."</h4>";
             } else {
                 echo "<h4 class='alert_error'>".tr("INSTALL_VERSIONS_EXTENSIONS")." curl ".tr("INSTALL_MISSING")."</h4>";
-            }
-            if(is_exec_available()) {
-                echo "<h4 class='alert_success'>".tr("INSTALL_FUNCTION_OK", "exec")."</h4>";
-				append_cronjob('### TEST CRONTAB FOR PhpMyNewsLetter');
-				$test_cronatb_ok = exec('crontab -l | grep "###"');
-				if ($test_cronatb_ok == '### TEST CRONTAB FOR PhpMyNewsLetter') {
-					echo "<h4 class='alert_success'>".tr("INSTALL_FUNCTION_OK", "CRONTAB")."</h4>";
-				} else {
-					echo "<h4 class='alert_error'>".tr("INSTALL_FUNCTION_DOWN", "CRONTAB")."</h4>";
-				}
-            } else {
-                echo "<h4 class='alert_error'>".tr("INSTALL_FUNCTION_DOWN", "exec")."</h4>";
             }
             echo '</div>';
             echo '</article>';
@@ -286,11 +274,11 @@ if (empty($langfile)) {
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
             echo "<option value='smtp_gmail'>smtp Gmail</option>";
-            echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
-            echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
-            echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
-            echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
-            echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
+			echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
+			echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
+			echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
+			echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
+			echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
             echo "</select>";
             echo '</fieldset>';
@@ -335,7 +323,7 @@ if (empty($langfile)) {
             echo "<input type='hidden' name='mod_sub' value='0'><br>";
             echo "<input type='hidden' name='step' value=" . ($step + 1) . " />";
             echo "<div align='center'><input id='submit' type='submit' value='Go Go Go !!!'></div>";
-            echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
+			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
             echo '</div>';
             echo '</article>';
             echo '</form>';
@@ -434,6 +422,29 @@ if (empty($langfile)) {
                     }else{
                         die("<h4 class='alert_error'>" . tr("ERROR_SQL", $db->DbError()) . "<br>" . tr("QUERY") . " : " . $sql . "<br>" . tr("INSTALL_REFRESH") . " !</h4>");            
                     }
+                    $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'email_deleted (
+                                `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                                `email` VARCHAR(255) NOT NULL DEFAULT "",
+                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `hash` VARCHAR(40) NOT NULL DEFAULT "",
+                                `error` ENUM("N","Y") NOT NULL DEFAULT "N",
+                                `status` VARCHAR(255) DEFAULT NULL,
+                                `type` ENUM("autoreply","blocked","soft","hard","temporary","unsub"),
+                                `categorie` VARCHAR(255) NOT NULL DEFAULT "",
+                                `short_desc` TEXT NOT NULL,
+                                `long_desc` TEXT NOT NULL,
+                                PRIMARY KEY (`id`),
+                                UNIQUE KEY `unique_email_by_list` (`email`,`list_id`),
+                                KEY `hash` (`hash`),
+                                KEY `error` (`error`),
+                                KEY `status` (`status`),
+                                KEY `type` (`type`)
+                                ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
+                    if($cnx->Sql($sql)){
+                        echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email_deleted") .' '.tr("DONE").'</h4>';
+                    }else{
+                        die("<h4 class='alert_error'>" . tr("ERROR_SQL", $db->DbError()) . "<br>" . tr("QUERY") . " : " . $sql . "<br>" . tr("INSTALL_REFRESH") . " !</h4>");            
+                    }
                     $sql = 'CREATE TABLE IF NOT EXISTS `' . $table_prefix . 'config`(
                                 `admin_pass`        VARCHAR(64) NOT NULL DEFAULT "",
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
@@ -464,7 +475,8 @@ if (empty($langfile)) {
                                 `table_send_suivi`  VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_track_links` VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_upload`      VARCHAR(255) NOT NULL DEFAULT "",
-                                `table_crontab`     VARCHAR(255) NOT NULL DEFAULT ""
+                                `table_crontab`     VARCHAR(255) NOT NULL DEFAULT "",
+                                `table_email_deleted` VARCHAR(255) NOT NULL DEFAULT ""
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "config") .' '.tr("DONE").'</h4>';
@@ -676,7 +688,8 @@ if (empty($langfile)) {
                         '$admin_name','$mod_sub',  '" . $table_prefix . "sub',
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
-                        '" . $table_prefix . "track_links', '" . $table_prefix . "upload','" . $table_prefix . "crontab')";
+                        '" . $table_prefix . "track_links', '" . $table_prefix . "upload',
+                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG") . ' ' .tr("DONE").'</h4>';
             }else{

@@ -87,9 +87,9 @@ if(in_array($op,$op_true)){
         break;
         case 'createConfig':
             $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],
-                                          $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
-                                          $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
-                                          $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
+								  $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
+								  $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
+								  $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
             if($new_id > 0){
                 $list_id=$new_id;
                 $l='l';
@@ -114,8 +114,10 @@ if(in_array($op,$op_true)){
                 $configSaved=false;
             }
             if($_POST['file']==1){
-                $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],$_POST['db_pass'],$_POST['db_name'],
-                                                          $_POST['table_config'],$_POST['db_type'],$_POST['type_serveur'],$_POST['type_env'],$timezone);
+                $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],
+											$_POST['db_pass'],$_POST['db_name'],
+                                            $_POST['table_config'],$_POST['db_type'],
+											$_POST['type_serveur'],$_POST['type_env'],$timezone);
                 $forceUpdate=1;
                 include("include/config.php");
                 unset($forceUpdate);
@@ -139,7 +141,7 @@ if(in_array($op,$op_true)){
         break;
         case 'subscriber_del':
             $del_addr = (empty($_POST['del_addr']) ? "" : $_POST['del_addr']);
-            $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr);
+            $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr,$row_config_globale['table_email_deleted']);
             if($deleted){
                 $subscriber_op_msg = "<h4 class='alert_success'>".tr("SUBSCRIBER_DELETED")."</h4>";
             }else{
@@ -195,6 +197,8 @@ if(in_array($op,$op_true)){
                                     $tx_import++;
                                 }elseif($added==0){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_SQL", DbError())."</h4>";
+                                }elseif($added==3){
+                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("EMAIL_ON_DELETED_LIST")."</h4>";
                                 }
                             } else {
                                 $subscriber_op_msg .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";

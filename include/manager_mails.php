@@ -36,7 +36,10 @@ isset($_POST['this_mail'])?$email=escape_string($cnx,$_POST['this_mail']):$conti
 if ($continue) {
     switch($action){
         case 'delete':
-            if($cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email=$email AND list_id=$list_id AND hash=$hash")){
+			if($cnx->query("INSERT INTO ".$row_config_globale['table_email']."
+								SELECT * FROM ".$row_config_globale['table_email']." 
+									WHERE email=$email AND list_id=$list_id AND hash=$hash")) {
+				$cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email=$email AND list_id=$list_id AND hash=$hash")
                 echo '<h4 class="alert_success">'.tr("MAIL_DELETED", htmlentities($_POST['this_mail'])).'</h4>';
             } else {
                 echo '<h4 class="alert_error">'.tr("MAIL_ERROR_TO_DELETE", htmlentities($_POST['this_mail'])).'</h4>';

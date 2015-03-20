@@ -111,6 +111,7 @@ $lang_array = array(
     "SUBSCRIBER_EMPTY_LIST"=>"Pas de comptes en attente de confirmation",
     "SUBSCRIBER_ERROR_MANAGE_TITLE"=>"Gestion des adresses mails (abonnés) en erreur",
     "SUBSCRIBER_NO_ERRORS"=>"Pas d'adresse(s) e-mail incidentée(s) à traiter",
+	"EMAIL_ON_DELETED_LIST"=>"Cette adresse mail est présente sur la liste des mails supprimés !",
     "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
     //COMPOSE 
     "COMPOSE_NEW"=>"Rédiger un nouveau message",
@@ -357,7 +358,7 @@ $lang_array = array(
     "SUBSCRIPTION_AGREE_SUB"=>"Je confirme mon abonnement",
     "SUBSCRIPTION_UN_SUB"=>"Je me désabonne",
     "SUBSCRIPTION_AGREE_UN_SUB"=>"Je confirme mon désabonnement",
-    "SUBSCRIPTION_WAINTING_MODERATION"=>"Votre demande d'abonnement est bien enregistrée et est en attente de validation",//Subscription requested recorded, waiting for moderation
+    "SUBSCRIPTION_WAITING_MODERATION"=>"Votre demande d'abonnement est bien enregistrée et est en attente de validation",//Subscription requested recorded, waiting for moderation
     "CLOSE_WINDOW"=>"Vous pouvez fermer cette fenêtre",
     // V2.0.4
     // ADMIN_AUTOSVE

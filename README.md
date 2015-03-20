@@ -1,7 +1,7 @@
 phpmynewsletter-2.0
 ===================
 
-# IN DEV : 2.0.4
+# CURRENT VERSION : 2.0.3
 # CHANGELOG :
   - Schedule task to send newsletter
   - Easy attachment to send (one or more !)
