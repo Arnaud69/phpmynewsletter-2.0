@@ -53,6 +53,15 @@ if($test_pj['CPT_TABLE_PJ']==0){
 } else {
     $_CONTINUE = true;
 }
+if(!is_dir("upload")){
+    if(mkdir("upload",0700)){
+        $_CONTINUE = true;
+    } else {
+        $_CONTINUE = false;
+        die("<div class='error'>".tr("ERROR_CREATE_UPLOAD_DIRECTORY")." : '".$row_config_globale['path']."upload'.<br>"
+             .tr("CHECK_PERMISSIONS_OR_CREATE", $row_config_globale['path'])."<br>".tr("INSTALL_REFRESH")."</div>");
+    }
+}
 if($_CONTINUE){
     $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
     ?>

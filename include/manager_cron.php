@@ -38,6 +38,9 @@ $continue=true;
 if($continue){
     $cronID = cronID();
     $cnx->query("SET NAMES UTF8");
+    if(opendir(__DIR__."/backup_crontab") == false) {
+        mkdir(__DIR__."/backup_crontab", 0755, true);
+    }
     exec("crontab -l > ".__DIR__."/backup_crontab/$cronID");
     switch($action){
         case 'new':
