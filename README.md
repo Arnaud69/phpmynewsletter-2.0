@@ -2,7 +2,7 @@ phpmynewsletter-2.0
 ===================
 
 # ON DEV : 2.0.4
-Don't use if you don't know waht you do ! Just for dev !!!
+Don't use if you don't know what you do ! Just for dev !!!
 # CURRENT : 2.0.3
 # CHANGELOG :
   - Schedule task to send newsletter
