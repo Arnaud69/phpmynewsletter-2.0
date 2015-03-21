@@ -37,7 +37,3 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
 
 
 
-
-
-
-
