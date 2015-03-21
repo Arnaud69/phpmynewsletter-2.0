@@ -53,6 +53,7 @@ Official support on the forum, please go to http://www.phpmynewsletter.com/forum
 - opening geolocation
 - check suscribers with smtp
 - detect mail client
+- new send mod for scheduled tasks
 - ... What else ? Ask me !
 
 # LICENSE
