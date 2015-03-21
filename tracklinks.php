@@ -104,9 +104,9 @@ if(empty($id_mail)&&empty($list_id)){
                 <header>
                     <h3><?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
                 </header>
-                <script type="text/javascript" src="http://www.amcharts.com/lib/3/amcharts.js"></script>
-                <script type="text/javascript" src="http://www.amcharts.com/lib/3/pie.js"></script>
-                <script type="text/javascript" src="http://www.amcharts.com/lib/3/themes/none.js"></script>
+                <script type="text/javascript" src="js/amcharts/amcharts.js"></script>
+                <script type="text/javascript" src="js/amcharts/pie.js"></script>
+                <script type="text/javascript" src="js/amcharts/themes/none.js"></script>
                 <div id="chartdiv"></div>
                 <script>
                     var chart = AmCharts.makeChart("chartdiv", {"type": "pie","theme": "none","dataProvider": [<?=$chart_data;?>],"valueField": "value","titleField": "data","outlineAlpha": 0.4,"depth3D": 15,"balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle": 30

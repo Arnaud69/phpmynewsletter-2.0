@@ -17,17 +17,17 @@ function add_subscriber($cnx, $table_email, $list_id, $add_addr, $table_email_de
     $add_addr = trim(strtolower($add_addr));
     $hash = @current($cnx->query("SELECT hash FROM $table_email WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
     if($hash==''){
-		$black_listed = @current($cnx->query("SELECT email FROM $table_email_deleted WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
-		if($black_listed==''){
-			$hash = unique_id();
-			if($cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')")){
-				return 2;
-			} else {
-				return true;
-			}
-		} else {
-			return 3;
-		}
+        $black_listed = @current($cnx->query("SELECT email FROM $table_email_deleted WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
+        if($black_listed==''){
+            $hash = unique_id();
+            if($cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')")){
+                return 2;
+            } else {
+                return true;
+            }
+        } else {
+            return 3;
+        }
     } else {
         return -1;
     }
@@ -189,14 +189,14 @@ function createNewsletter($cnx,$table_listsconfig,$newsletter_name,$from,
                                             `from_name` , `subject` , `header` , `footer` , 
                                             `subscription_subject` , `subscription_body`, `welcome_subject` , 
                                             `welcome_body` , `quit_subject` ,`quit_body`,`preview_addr`) 
-							VALUES ($newid,$newsletter_name, $from, 
-									$from_name, $subject, $header, $footer,
-									$subscription_subject, $subscription_body,$welcome_subject,
-									$welcome_body, $quit_subject, $quit_body, $preview_addr)")) {
+                            VALUES ($newid,$newsletter_name, $from, 
+                                    $from_name, $subject, $header, $footer,
+                                    $subscription_subject, $subscription_body,$welcome_subject,
+                                    $welcome_body, $quit_subject, $quit_body, $preview_addr)")) {
         return false;
     } else {
         return $cnx->lastInsertId();
-	}
+    }
 }
 function CronID() {
     $len = 5;
@@ -209,7 +209,7 @@ function CronID() {
     return 'pmnl2_'.$activatecode;
 }
 function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted) {
-	$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'unsub')");
+    $cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'unsub')");
     if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
@@ -231,10 +231,10 @@ function deleteModMsg($cnx, $table_mod, $msg_id) {
     }
 }
 function deleteNewsletter($cnx, $table_list, $table_archives, $table_email, $table_temp, $table_send, $table_tracking, $table_autosave, $list_id) {
-	if (!$cnx->query("DELETE FROM $table_list WHERE list_id='$list_id'")) {
+    if (!$cnx->query("DELETE FROM $table_list WHERE list_id='$list_id'")) {
         return false;
     }
-	if (!$cnx->query("DELETE FROM $table_email WHERE list_id='$list_id'")) {
+    if (!$cnx->query("DELETE FROM $table_email WHERE list_id='$list_id'")) {
         return false;
     }
     if (!$cnx->query("DELETE FROM $table_temp WHERE list_id='$list_id'")) {
@@ -244,10 +244,10 @@ function deleteNewsletter($cnx, $table_list, $table_archives, $table_email, $tab
         return false;
     }
     if (!$cnx->query("DELETE $table_tracking,$table_send 
-						FROM $table_tracking 
-							INNER JOIN $table_send  
-						WHERE $table_tracking.subject = $table_send.id_mail 
-							AND $table_send.id_list = '$list_id'")) {
+                        FROM $table_tracking 
+                            INNER JOIN $table_send  
+                        WHERE $table_tracking.subject = $table_send.id_mail 
+                            AND $table_send.id_list = '$list_id'")) {
         return false;
     }
     if (!$cnx->query("DELETE FROM $table_send WHERE id_list = '$list_id'")) {
@@ -820,6 +820,11 @@ function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_co
     $configfile .= "\n\t$" . "type_env = \"$environnement\";";
     $configfile .= "\n\t$" . "timezone = '$timezone';";
     $configfile .= "\n\t$" . "table_global_config=\"$db_config_table\";";
+    if(is_exec_available()){
+        $configfile .= "\n\t$"."exec_available = true;";
+    }else{
+        $configfile .= "\n\t$"."exec_available = false;";
+    }
     $configfile .= "\n\t$" . "pmnl_version = \"$version\";\n\n\t}\n\n?>";
     if (is_writable("include/config.php")) {
         $fc = fopen("include/config.php", "w");
@@ -830,9 +835,6 @@ function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_co
     }
 }
 function saveDKIMFiles($dkim_htkeypublic,$dkim_htkeyprivate,$DKIM_domain,$DKIM_passphrase,$DKIM_record,$DKIM_selector,$DKIM_identity) {
-    if (!is_dir("DKIM/")) {
-        mkdir("./DKIM");
-    }
     if($dkim_htkeyprivate['name']!=''){
         move_uploaded_file($dkim_htkeyprivate['tmp_name'],'DKIM/'.$dkim_htkeyprivate['name']);
         $DKIM_private = 'DKIM/'.$dkim_htkeyprivate['name'];
@@ -890,23 +892,6 @@ function saveModele($cnx,$list_id,$table_listsconfig,$newsletter_name,$from,$fro
         return false;
     }
 }
-function saveREFConfigFile($db_host, $db_login, $db_pass, $db_name, $db_config_table, $db_type = 'mysql') {
-    $configfile = "<?php\nif (!defined( \"_CONFIG\" ))\n\t{\n\n\t\tdefine(\"_NEWSLETTER_CLASS\", 1);";
-    $configfile .= "\n\n\n\t\t$" . "db_type = \"$db_type\";";
-    $configfile .= "\n\t\t$" . "hostname = \"$db_host\";";
-    $configfile .= "\n\t\t$" . "login = \"$db_login\";";
-    $configfile .= "\n\t\t$" . "pass = \"$db_pass\";";
-    $configfile .= "\n\t\t$" . "database = \"$db_name\";";
-    $configfile .= "\n\t\t$" . "table_global_config=\"$db_config_table\";";
-    $configfile .= "\n\t\t$" . "pmnl_version =\"$version\";\n\n\t}\n\n?>";
-    if (is_writable("include/")) {
-        $fc = fopen("include/config.php", "w");
-        $w  = fwrite($fc, $configfile);
-        return true;
-    } else {
-        return -1;
-    }
-}
 function sendEmail($send_method, $to, $from, $from_name, $subject, $body, $auth = 0, $smtp_host = '', $smtp_login = '', $smtp_pass = '', $charset = 'UTF-8') {
     $mail          = new phpmailer();
     $mail->CharSet = $charset;
@@ -948,9 +933,6 @@ function sendEmail($send_method, $to, $from, $from_name, $subject, $body, $auth 
     }
     return true;
 }
-function table_footer() {
-    echo '</table>';
-}
 function tok_gen($name = ''){
     @session_start();
     if (function_exists("hash_algos") and in_array("sha512",hash_algos())){
@@ -974,6 +956,7 @@ function tok_gen($name = ''){
 function tok_val($token){
     $temps_de_connexion = 9999;
     @session_start();
+    $tok = true;
     if(isset($_SESSION['_token'])&&isset($_SESSION['_token_time'])&&isset($token)){
         if($_SESSION['_token'] == $token){
             if($_SESSION['_token_time'] >= (time() - $temps_de_connexion)){
@@ -1003,21 +986,6 @@ function tr($s, $i="") {
         return ("[Translation required] : $s");
     }
 }
-/*function tr($s, $i="") {
-    global $lang_array;
-    if (!isset($lang_array['francais'][$s])){
-        return ("[Translation required] : $s");
-    }
-    if ($lang_array['francais'][$s] != "") {
-        if($i == ""){
-            return $lang_array['francais'][$s];
-        }
-        $sprint = $lang_array['francais'][$s];
-        return sprintf("$sprint" , $i);
-    } else {
-        return ("[Translation required] : $s");
-    }
-}*/
 function unique_id() {
     mt_srand((double) microtime() * 1000000);
     return md5(mt_rand(0, 9999999));
@@ -1045,8 +1013,9 @@ function UpdateEmailSendError($cnx,$table_send,$list_id){
     }
 }
 function validEmailAddress($email) {
-    if (is_string($email) && filter_var($email, FILTER_VALIDATE_EMAIL))
+    if (is_string($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
