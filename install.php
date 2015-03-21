@@ -274,11 +274,11 @@ if (empty($langfile)) {
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
             echo "<option value='smtp_gmail'>smtp Gmail</option>";
-			echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
-			echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
-			echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
-			echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
-			echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
+            echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
+            echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
+            echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
+            echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
+            echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
             echo "</select>";
             echo '</fieldset>';
@@ -323,7 +323,7 @@ if (empty($langfile)) {
             echo "<input type='hidden' name='mod_sub' value='0'><br>";
             echo "<input type='hidden' name='step' value=" . ($step + 1) . " />";
             echo "<div align='center'><input id='submit' type='submit' value='Go Go Go !!!'></div>";
-			echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
+            echo "<script>$('#submit').click(function(){if($.trim($('#admin_pass').val())==''){alert('" . tr("INSTALL_CHOOSE_PASSWORD") . "');}})</script>";
             echo '</div>';
             echo '</article>';
             echo '</form>';
@@ -362,14 +362,45 @@ if (empty($langfile)) {
             $type_serveur      = (isset($_POST['type_serveur']) ? $_POST['type_serveur'] : "shared");
             $type_env          = (isset($_POST['type_env']) ? $_POST['type_env'] : "dev");
             if ($createdb == 1) {
-                mysql_connect($hostname, $login, $pass);
-                if(mysql_query("CREATE DATABASE $database")){
-                    echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_DB", $database).' OK</div>';
-                } else {
-                    die("<h4 class='alert_error'>" . tr("ERROR_SQL", mysql_error()) . "<br>" . tr("QUERY") . " : " . tr("INSTALL_CREATE_DB_DOWN") . " !<br>" . tr("INSTALL_REFRESH") . " !</h4>");
+                switch($db_type){
+                    case 'mysql':
+                        mysql_connect($hostname, $login, $pass);
+                        if(mysql_query("CREATE DATABASE $database")){
+                            echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_DB", $database).' OK</div>';
+                        } else {
+                            die("<h4 class='alert_error'>" . tr("ERROR_SQL", mysql_error()) . "<br>" . tr("QUERY") . " : " . tr("INSTALL_CREATE_DB_DOWN") . " !<br>" . tr("INSTALL_REFRESH") . " !</h4>");
+                        }
+                    break;
+                    case 'mssql':
+                    case 'pgsql':
+                    case 'oracle':
+                        die('Not yet available... :-(');
+                    break;
                 }
             }
             include_once("include/db/db_connector.inc.php");
+            // Built directory :
+            if(!is_dir("upload")){
+                if(mkdir("upload",0755)){
+                    echo '<h4 class="alert_success">'.tr("UPLOAD_DIRECTORY").' '.tr("DONE").'</h4>';
+                } else {
+                    die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                }
+            }
+            if(!is_dir("DKIM")){
+                if(mkdir("DKIM",0755)){
+                    echo '<h4 class="alert_success">'.tr("DKIM_DIRECTORY").' '.tr("DONE").'</h4>';
+                } else {
+                    die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'DKIM".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'DKIM" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                }
+            }
+            if(!is_dir("backup_crontab")){
+                if(mkdir("backup_crontab",0755)){
+                    echo '<h4 class="alert_success">'.tr("BK_CRONTAB_DIRECTORY").' '.tr("DONE").'</h4>';
+                } else {
+                    die('<h4 class="alert_error">'.tr("BK_CRONTAB_DIRECTORY").' : "'.$path.'backup_crontab".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'backup_crontab" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                }
+            }
             if ($db_type == "mysql") {
                 if ($createtables == 1) {
                     $sql = 'CREATE TABLE IF NOT EXISTS `' . $table_prefix . 'archives` (
@@ -617,13 +648,6 @@ if (empty($langfile)) {
                               ) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "upload") .' '.tr("DONE").'</h4>';
-                        if(!is_dir("upload")){
-                            if(mkdir("upload",0700)){
-                                echo '<h4 class="alert_success">'.tr("UPLOAD_DIRECTORY").' '.tr("DONE").'</h4>';
-                            } else {
-                                die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
-                            }
-                        }
                     }else{
                         die("<h4 class='alert_error'>" . tr("ERROR_SQL", $db->DbError()) . "<br>" . tr("QUERY") . " : " . $sql . "<br>" . tr("INSTALL_REFRESH") . " !</h4>");            
                     }
@@ -705,6 +729,11 @@ if (empty($langfile)) {
             $configfile .= "\n\t$"."type_env = '$type_env';";
             $configfile .= "\n\t$"."timezone = '$timezone';";
             $configfile .= "\n\t$"."table_global_config='" . $table_prefix . "config';";
+            if(is_exec_available()){
+                $configfile .= "\n\t$"."exec_available = true;";
+            }else{
+                $configfile .= "\n\t$"."exec_available = false;";
+            }
             $configfile .= "\n\t$"."pmnl_version ='$version';\n\n\t}\n\n?>";
             if (is_writable("include/")) {
                 $fc = fopen("include/config.php", "w");

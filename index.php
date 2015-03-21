@@ -155,24 +155,10 @@ if(in_array($op,$op_true)){
                 $tmp_subdir_writable = true;
                 $open_basedir = @ini_get('open_basedir');
                 if (!empty($open_basedir)){
-                    if(!is_dir("upload")){
-                        if(mkdir("upload",0700)){
-                            $_CONTINUE = true;
-                        } else {
-                            $_CONTINUE = false;
-                            die("<div class='error'>".tr("ERROR_CREATE_UPLOAD_DIRECTOR")." : '".$row_config_globale['path']."upload'.
-                                 <br>".tr("CHECK_PERMISSIONS_OR_CREATE")." '"
-                                .$row_config_globale['path']."upload' ".tr("MANUALLY")."<br>".tr("INSTALL_REFRESH")."</div>");
-                        }
-                    }
                     $tmp_subdir="./upload/";
-                    if(! is_writable($tmp_subdir)){
-                        $tmp_subdir_writable = false;
-                    } else{
-                        $local_filename = $tmp_subdir.basename($import_file['tmp_name']);
-                        move_uploaded_file($import_file['tmp_name'], $local_filename);
-                        $liste = fopen($local_filename, 'r');
-                    }
+					$local_filename = $tmp_subdir.basename($import_file['tmp_name']);
+					move_uploaded_file($import_file['tmp_name'], $local_filename);
+					$liste = fopen($local_filename, 'r');
                 } else{
                     $liste = fopen($import_file['tmp_name'], 'r');
                 }
