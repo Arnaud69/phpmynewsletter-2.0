@@ -17,3 +17,5 @@ $list_id     = $_POST['list_id'];
 $list_total_subscribers=get_newsletter_total_subscribers($cnx,$row_config_globale['table_email'],$list_id);
 if($list_total_subscribers>1000000)ini_set('memory_limit', '2G');
 export_subscribers($cnx, $row_config_globale['table_email'], $list_id);
+
+
