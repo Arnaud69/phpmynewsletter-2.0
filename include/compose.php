@@ -82,7 +82,7 @@ switch($op){
         } else {
             echo "<h4 class='alert_error'>".tr("STOP_ON_PREVIEW_ERROR")." !</h4>";
         }
-        if($type_serveur=='dedicated'){
+        if($type_serveur=='dedicated'&&$exec_available){
         echo "<br><br><form method='post' action=''>
             <input type='submit' value='".tr("SCHEDULE_THIS_SEND")."' />
             <input type='hidden' name='NEWTASK' value='SCHEDULE_NEW_TASK' />
@@ -134,7 +134,7 @@ switch($op){
                                 $("#ch_last").html(tts);
                                 if(pct > 99.999) {
                                     clearInterval(progresspump);
-                                    $("#send_title").text("?=tr("SEND_ENDED");?>...");
+                                    $("#send_title").text("<?=tr("SEND_ENDED");?>...");
                                     $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';

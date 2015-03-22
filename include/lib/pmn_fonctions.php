@@ -204,12 +204,16 @@ function CronID() {
     $max=strlen($base)-1;
     $activatecode='';
     mt_srand((double)microtime()*1000000);
-    while (strlen($activatecode)<$len+1)
+    while (strlen($activatecode)<$len+1){
         $activatecode.=$base{mt_rand(0,$max)};
+	}
     return 'pmnl2_'.$activatecode;
 }
-function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted) {
-    $cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'unsub')");
+function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted, $motif='') {
+    if (!$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) 
+		VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
+		retunr false;
+	}
     if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
@@ -217,7 +221,7 @@ function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email
     }
 }
 function deleteArchive($cnx,$table_archives, $msg_id) {
-    if (!$cnx->query("DELETE FROM $table_archives  WHERE id='$msg_id'")) {
+    if (!$cnx->query("DELETE FROM $table_archives WHERE id='$msg_id'")) {
         return false;
     } else {
         return true;
@@ -737,7 +741,7 @@ function saveBounceFile($bounce_host,$bounce_user,$bounce_pass,$bounce_port,$bou
         return -1;
     }
 }
-function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$path,$language,$table_email,$table_temp,$table_listsconfig,$table_archives,$sending_method,$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,$validation_period,$sub_validation,$unsub_validation,$admin_email,$admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,$table_sauvegarde,$table_upload) {
+function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$path,$language,$table_email,$table_temp,$table_listsconfig,$table_archives,$sending_method,$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,$validation_period,$sub_validation,$unsub_validation,$admin_email,$admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,$table_sauvegarde,$table_upload,$table_email_deleted) {
     $base_url          = escape_string($cnx,$base_url);
     $path              = escape_string($cnx,$path);
     $smtp_host         = escape_string($cnx,$smtp_host);
@@ -759,6 +763,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $table_send        = escape_string($cnx,$table_send);
     $table_sauvegarde  = escape_string($cnx,$table_sauvegarde);
     $table_upload      = escape_string($cnx,$table_upload);
+	$table_email_deleted= escape_string($cnx,$table_email_deleted);
     $sql = "UPDATE $config_table SET ";
     if (!empty($admin_pass)) {
         $sql .= "admin_pass='" . md5($admin_pass) . "', ";
@@ -785,7 +790,8 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $sql .= "table_tracking=$table_track, ";
     $sql .= "table_send=$table_send, ";
     $sql .= "table_sauvegarde=$table_sauvegarde, ";
-    $sql .= "table_upload=$table_upload ";
+    $sql .= "table_upload=$table_upload, ";
+	$sql .= "table_email_deleted=$table_email_deleted ";
     if($sending_method == 'mail') {
         $sql .= ", smtp_host='', ";
         $sql .= "smtp_auth='0' ";
@@ -990,13 +996,20 @@ function unique_id() {
     mt_srand((double) microtime() * 1000000);
     return md5(mt_rand(0, 9999999));
 }
-function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categorie,$short_desc,$long_desc){
+function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categorie,$short_desc,$long_desc,$campaign_id,$table_email_deleted){
     $cnx->query("SET NAMES UTF8");
-    $sql = "UPDATE $table_email SET 
-                    error='Y',status='".addslashes($status)."',type='".addslashes($type)."',
-                    categorie='".addslashes($categorie)."',short_desc='".addslashes($short_desc)."',long_desc='".addslashes($long_desc)."' 
-                WHERE email='$email' AND list_id='$list_id'";
-    if ($cnx->query($sql)){
+	
+	// on ajoute le mail dans la table des mails deleted
+	
+	// on supprime le mail de la table mail
+	
+	
+	
+    if ($cnx->query("UPDATE $table_email SET 
+                    error='Y',status='".($cnx->CleanInput($status))."',type='".($cnx->CleanInput($type))."',
+                    categorie='".($cnx->CleanInput($categorie))."',short_desc='".($cnx->CleanInput($short_desc))."',
+					long_desc='".($cnx->CleanInput($long_desc))."' 
+                WHERE email='".($cnx->CleanInput($email))."' AND list_id='$list_id'")){
         return true;
     } else {
         return false;
@@ -1004,9 +1017,7 @@ function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categ
 }
 function UpdateEmailSendError($cnx,$table_send,$list_id){
     $cnx->query("SET NAMES UTF8");
-    $this_id = $cnx->SqlRow("SELECT MAX(id_mail) AS id_mail FROM $table_send WHERE id_list=$list_id");
-    $sql = "UPDATE $table_send SET error=error+1 WHERE id_mail='".$this_id['id_mail']."'";
-    if ($cnx->query($sql)){
+    if ($cnx->query("UPDATE $table_send SET error=error+1 WHERE id_mail='".$this_id['id_mail']."'")){
         return true;
     } else {
         return false;

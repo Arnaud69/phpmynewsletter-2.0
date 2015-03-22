@@ -22,10 +22,17 @@ if($r != 'SUCCESS') {
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("lang/".$row_config_globale['language'].".php");
 $list_id  = (!empty($_POST['list_id'])) ? $_POST['list_id'] : '';
-$list_pj = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." WHERE list_id=$list_id AND msg_id=0 ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+$list_pj = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." 
+    WHERE list_id=$list_id 
+        AND msg_id=0 
+    ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
 if(count($list_pj)==0)echo '<h3>'.tr("NO_ATTACHMENTS").'.</h3>';
 foreach  ($list_pj as $item) {
-    echo '<div id="'.$item['id'].'" style="margin-bottom:5px"><span style="margin-right:5px"><input name="action" class="actionPj" title="'.tr("PJ_TO_DELETE").'" id="delete" style="background:url(css/icn_trash.png);background-repeat: no-repeat;width:16px;height:16px;border:0;cursor:pointer;" /></span><span>'.$item['name'].'</span></div>';
+    echo '<div id="'.$item['id'].
+		'" style="margin-bottom:5px"><span style="margin-right:5px"><input name="action" class="actionPj" title="'.
+		tr("PJ_TO_DELETE").'" id="delete" 
+		style="background:url(css/icn_trash.png);background-repeat: no-repeat;width:16px;height:16px;border:0;cursor:pointer;" /></span>
+		<span>'.$item['name'].'</span></div>';
 }
 ?>
 <script>

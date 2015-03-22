@@ -1,7 +1,6 @@
 <?php
-if($type_serveur=='dedicated'){
+if($type_serveur=='dedicated'&&$exec_available){
     $results = array();
-    $current_object = null;
     $newsletter = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
     $sender = $newsletter['from_addr'];
     $old_locale = getlocale(LC_ALL);
@@ -64,7 +63,7 @@ if($type_serveur=='dedicated'){
                     <td>'.$item['date'].'</td>
                     <td>'.$item['sender'].'</td> 
                     <td>'.$item['recipients'].'</td>
-                    <td><a href="?page=manager_mailq&action=delete_id_from_mailq&token='.$token.'&id_mailq='.$item['id'].'" class="tooltip" title="'.tr("MAIL_DELETE_THIS").', ID : '.$item['id'].'" onclick="return confirm(\''.tr("MAIL_REMOVE_FROM_QUEUE").' ?\')"><input type="image" src="css/icn_trash.png"></a></td>
+                    <td><a href="?page=manager_mailq&action=delete_id_from_mailq&token='.$token.'&id_mailq='.$item['id'].'&mail='.urlencode($item['recipients']).'&status='.urlencode($item['failed']).'" class="tooltip" title="'.tr("MAIL_DELETE_THIS").', ID : '.$item['id'].'" onclick="return confirm(\''.tr("MAIL_REMOVE_FROM_QUEUE").' ?\')"><input type="image" src="css/icn_trash.png"></a></td>
                 </tr>
                 <tr>
                     <td colspan="6">'.$item['failed'].'</td>

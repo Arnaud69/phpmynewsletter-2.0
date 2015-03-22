@@ -460,16 +460,18 @@ if (empty($langfile)) {
                                 `hash` VARCHAR(40) NOT NULL DEFAULT "",
                                 `error` ENUM("N","Y") NOT NULL DEFAULT "N",
                                 `status` VARCHAR(255) DEFAULT NULL,
-                                `type` ENUM("autoreply","blocked","soft","hard","temporary","unsub"),
+                                `type` ENUM("autoreply","blocked","soft","hard","temporary","unsub","by_admin"),
                                 `categorie` VARCHAR(255) NOT NULL DEFAULT "",
                                 `short_desc` TEXT NOT NULL,
                                 `long_desc` TEXT NOT NULL,
+								`campaign_id` INT(7) UNSIGNED NOT NULL DEFAULT "0"
                                 PRIMARY KEY (`id`),
                                 UNIQUE KEY `unique_email_by_list` (`email`,`list_id`),
                                 KEY `hash` (`hash`),
                                 KEY `error` (`error`),
                                 KEY `status` (`status`),
-                                KEY `type` (`type`)
+                                KEY `type` (`type`),
+								KEY `campaign_id` (`type`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email_deleted") .' '.tr("DONE").'</h4>';

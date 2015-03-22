@@ -111,6 +111,7 @@ $lang_array = array(
     "SUBSCRIBER_EMPTY_LIST"=>"Pas de comptes en attente de confirmation",
     "SUBSCRIBER_ERROR_MANAGE_TITLE"=>"Gestion des adresses mails (abonnés) en erreur",
     "SUBSCRIBER_NO_ERRORS"=>"Pas d'adresse(s) e-mail incidentée(s) à traiter",
+	"SUBSCRIBER_WITH_MAIL_DELETED"=>"Adresse mail dans la liste des mails supprimés / désabonnés / en erreur !",
     "EMAIL_ON_DELETED_LIST"=>"Cette adresse mail est présente sur la liste des mails supprimés !",
     "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
     //COMPOSE 

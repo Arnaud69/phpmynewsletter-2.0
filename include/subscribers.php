@@ -25,7 +25,7 @@ switch($t){
         <input type='hidden' name='page' value='subscribers' />
         <input type='hidden' name='list_id' value='$list_id' />
         <input type='text'class='input' placeholder='".tr("SUBSCRIBER_ADD_TITLE")."' name='add_addr' value='' maxlength='255' size='30' />
-        <input type='hidden' name='token' value='$token' />
+        <input type='hidden' name='token' value='$token' />&nbsp;
         <input type='button'  value='".tr("SUBSCRIBER_ADD_BTN")."' onclick='Submitform()' class='littlebutton' />
         </form>
         </div>";
@@ -39,7 +39,7 @@ switch($t){
         <br><div align='center'>
         <script language='javascript' type='text/javascript'>function Soumettre(){document.importform.import_file.value=document.importform.insert_file.value;document.importform.submit();}</script>
         <form action='' method='post' enctype='multipart/form-data' name='importform'>
-            <input type='file' name='import_file' class='input' />
+            <input type='file' name='import_file' class='input' />&nbsp;
             <input type='submit' value='".tr("SUBSCRIBER_IMPORT_BTN")."' class='littlebutton' />
             <input type='hidden' name='op' value='subscriber_import' />
             <input type='hidden' name='page' value='subscribers' /> 
@@ -124,10 +124,9 @@ switch($t){
     break;
     case 't':
         if($op=="subscriber_del_temp"){
-            echo "<header><h3>".tr("SUBSCRIBER_TEMP_TITLE")."</h3></header>
-            <div class='module_content'>";
+            echo "<div class='module_content'>";
             $del_tmpaddr  = (empty($_POST['del_tmpaddr']) ? "" : $_POST['del_tmpaddr']);
-            $deleted_temp = delete_subscriber($cnx,$row_config_globale['table_temp'],$list_id,$del_tmpaddr);
+            $deleted_temp = delete_subscriber($cnx,$row_config_globale['table_temp'],$list_id,$del_tmpaddr,$row_config_globale['table_email_deleted']);
             if( $deleted_temp ){
                 echo "<h4 class='alert_success'>".tr("SUBSCRIBER_TEMP_DELETED")."</h4>";
             }else{
@@ -177,8 +176,8 @@ switch($t){
                 echo '<input type="hidden" name="list_id" value="'.$list_id.'" />';
                 echo '<input type="hidden" name="hash" value="'.$row['hash'].'" />';
                 echo "<input type='hidden' name='token' value='$token' />";
-                echo '<input type="button" name="action" class="actionMail" value="'.tr("UPDATE").'" id="update" />';
-                echo '<input type="button" name="action" class="actionMail" value="'.tr("DELETE").'" id="delete" />';
+                echo '&nbsp;<input type="button" name="action" class="actionMail" value="'.tr("UPDATE").'" id="update" />';
+                echo '&nbsp;<input type="button" name="action" class="actionMail" value="'.tr("DELETE").'" id="delete" />';
                 echo '</form>';
             }
         } else {

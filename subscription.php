@@ -1,7 +1,7 @@
 <?php
 session_start();
 include("_loader.php");
-include("include/lib/class.phpmailer.php");
+require 'include/lib/PHPMailerAutoload.php';
 if (!function_exists('iconv') && function_exists('libiconv')) {
     function iconv($input_encoding, $output_encoding, $string) {
         return libiconv($input_encoding, $output_encoding, $string);
@@ -38,6 +38,7 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
 } else if ($op == "join_direct" && $row_config_globale['sub_validation']) {
     $op = "join";
 }
+$news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
 ?>
 <!DOCTYPE HTML>
 <html lang="fr">
@@ -86,7 +87,6 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         } elseif ($_POST['c']==$_SESSION['c']) {
                             if ($row_config_globale['mod_sub']=="0") {
                                 $add  = addSubscriberTemp($cnx, $row_config_globale['table_email'], $row_config_globale['table_temp'], $list_id, $email_addr);
-                                $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 if (strlen($add) > 3) {
                                     $body = $news['subscription_body'];
                                     $body .= "\n\n" . tr("SUBSCRIPTION_MAIL_BODY") . ":\n";
@@ -114,7 +114,6 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                     break;
                     case "leave":
                         echo '<header><h3>'.tr("SUBSCRIPTION_TITLE").'</h3></header>';
-                        $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                         $hash = isValidSubscriber($cnx, $row_config_globale['table_email'], $list_id, $email_addr);
                         if ($hash==$h&&!empty($hash)&&strlen($hash)==32) {
                             $body = $news['quit_body'];
@@ -141,7 +140,6 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         if ($add==false) {
                             echo "<h4 class='alert_error'>" . tr("SUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS") . "! </h4>";
                         } elseif ($add==true) {
-                            $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             $body = $news['welcome_body'];
                             $body .= "\n\n" . tr("SUBSCRIPTION_UNSUBSCRIBE_LINK") . ":\n";
                             $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$hash&list_id=$list_id'>".tr("SUBSCRIPTION_AGREE_UN_SUB")."</a>";
@@ -176,7 +174,6 @@ if ($op == "leave" && !$row_config_globale['unsub_validation']) {
                         if (!$row_config_globale['sub_validation']) {
                             $add = addSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr, $row_config_globale['table_email_deleted']);
                             if($add){
-                                $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 $body = $news['welcome_body'];
                                 $body .= "\n\n" . tr("UNSUBSCRIPTION_MAIL_BODY") . ":\n";
                                 $body .= "<a href='".$row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?op=confirm_leave&email_addr=" . urlencode($email_addr) . "&hash=$add&list_id=$list_id'>".tr("SUBSCRIPTION_UN_SUB")."</a>";

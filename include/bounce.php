@@ -33,7 +33,7 @@ if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
 
 $list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
 $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
-
+$campaign_id = $cnx->SqlRow("SELECT MAX(id_mail) AS id_mail FROM $table_send WHERE id_list=$list_id");
 
 if(file_exists("config_bounce.php")){
     include('config_bounce.php');
@@ -63,7 +63,7 @@ if(file_exists("config_bounce.php")){
             $cwsMailBounceHandler->port                 = $bounce_port;                                             // the port to access your mailbox ; default 143, other common choices are 110 (pop3), 995 (gmail)
             $cwsMailBounceHandler->service              = $bounce_service;                                          // the service to use (imap or pop3) ; default 'imap'
             $cwsMailBounceHandler->service_option       = $bounce_option;                                           // the service options (none, tls, notls, ssl) ; default 'notls'
-            break;
+        break;
     }
     $cwsMailBounceHandler->cert                 = CWSMBH_CERT_NOVALIDATE;                                           // certificates validation (CWSMBH_CERT_VALIDATE or CWSMBH_CERT_NOVALIDATE) if service_option is 'tls' or 'ssl' ;
     if ($cwsMailBounceHandler->openImapRemote()) {
@@ -81,7 +81,7 @@ if(file_exists("config_bounce.php")){
             if($item['processed']&&$item['recipients'][0]['action']=='failed'&&$type_env=='prod'){
                 UpdateEmailError($cnx,$row_config_globale['table_email'],$list_id,$item['recipients'][0]['email'],
                                  $item['recipients'][0]['status'],$item['recipients'][0]['bounce_type'],$item['recipients'][0]['bounce_cat'],
-                                 $expl['third_subcode']['title'],$expl['third_subcode']['desc']);
+                                 $expl['third_subcode']['title'],$expl['third_subcode']['desc'],$campaign_id,$row_config_globale['table_email_deleted']);
                 UpdateEmailSendError($cnx,$row_config_globale['table_send'],$list_id);
             }
         }

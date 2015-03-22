@@ -19,16 +19,13 @@ if($r != 'SUCCESS') {
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
 $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     quick_Exit();
 }
-include("include/lib/class.phpmailer.php");
+require 'include/lib/PHPMailerAutoload.php';
 $step    = (empty($_GET['step']) ? "" : $_GET['step']);
 $subject = (!empty($_POST['subject'])) ? $_POST['subject'] : '';
 $message = (!empty($_POST['message'])) ? $_POST['message'] : '';
@@ -44,7 +41,7 @@ $list_pj = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." WH
 switch ($step) {
     case "sendpreview":
         $limit         = $row_config_globale['sending_limit'];
-        $mail          = new PHPMailer();
+        $mail          = new PHPMailer;
         $mail->CharSet = $row_config_globale['charset'];
         $mail->PluginDir = "include/lib/";
         switch ($row_config_globale['sending_method']) {

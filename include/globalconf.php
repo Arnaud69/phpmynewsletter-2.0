@@ -70,7 +70,7 @@ echo '<article class="module width_3_quarter">
         echo "<fieldset><label>".tr("GCONFIG_DB_TABLE_UPLOAD")."</label>";
         echo "<input type='text' name='table_upload' value='" . htmlspecialchars($row_config_globale['table_upload']) . "' /></fieldset>";
         echo "<fieldset><label>".tr("GCONFIG_DB_TABLE_MAIL_DELETED")."</label>";
-        echo "<input type='text' name='table_upload' value='" . htmlspecialchars($row_config_globale['table_email_deleted']) . "' /></fieldset>";        
+        echo "<input type='text' name='table_email_deleted' value='" . htmlspecialchars($row_config_globale['table_email_deleted']) . "' /></fieldset>";        
         echo '</div></div><div id="tab2" class="tab_content" style="display: none;">';
         echo "<div class='module_content'>";
         echo "<h2>".tr("GCONFIG_MANAGE_ENVIRONMENT")."</h2>";

@@ -49,18 +49,76 @@ if($action=='delete'&&$page=='listes'){
                                    $row_config_globale['table_send'],$row_config_globale['table_tracking'],
                                    $row_config_globale['table_sauvegarde'],$list_id);
 }
-if($action=='purge_mailq'&&$page=='manager_mailq'){
+if($action=='purge_mailq'&&$page=='manager_mailq'&&$exec_available){
     $path_postsuper=exec('locate postsuper | grep bin');
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
-        $result = exec('sudo '.$path_postsuper.' -d ALL');
+        $newsletter = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
+        $sender = $newsletter['from_addr'];
+        $old_locale = getlocale(LC_ALL);
+        setlocale(LC_ALL, 'C');
+        $mailq_path = exec('command -v mailq');
+        $current_object = array();
+        $pipe = popen($mailq_path, 'r');
+        while($pipe) {
+            $line = fgets($pipe);
+            if(trim($line)=='Mail queue is empty'){
+                echo "<h4 class='alert_success'><b>".tr("NO_MAIL_IN_PROCESS")."</b></h4>";
+                $do_purge = false;
+                pclose($pipe);
+                setlocale(LC_ALL, $old_locale);
+                exit(1);
+            } else {
+                $do_purge = true;
+                if ($line === false)break;
+                if (strncmp($line, '-', 1) === 0)continue;
+                $line = trim($line);
+                $res = preg_match('/(\w+)\*{0,1}\s+(\d+)\s+(\w+\s+\w+\s+\d+\s+\d+:\d+:\d+)\s+([^ ]+)/', $line, $matches);
+                if ($res) {
+                    if($matches[4]==$sender){
+                        $tab_failed    = trim(fgets($pipe));
+                        $tab_recipient = trim(fgets($pipe));
+                        $current_object[] = array(
+                                'id' => $matches[1],
+                                'size' => intval($matches[2]),
+                                'date' => strftime($matches[3]),
+                                'sender' => $matches[4],
+                                'failed' => $tab_failed,
+                                'recipients' => $tab_recipient
+                        );
+                    }
+                }
+            }
+        }
+        pclose($pipe);
+        setlocale(LC_ALL, $old_locale);
+        if($do_purge){
+            $mails_en_cours = count($current_object);
+            if($mails_en_cours>0){
+                foreach($current_object as $item){
+                    if(trim($item['recipients'])!=''){
+                        $cnx->query("INSERT INTO ".$row_config_globale['table_email_deleted']." (id,email,list_id,hash,error,status,type)
+                            SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($item['failed']))."','hard'
+                                FROM ".$row_config_globale['table_email']."
+                                    WHERE email = '".($cnx->CleanInput($item['recipients']))."'");
+                        $cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email='".($cnx->CleanInput($item['recipients']))."'");
+                        exec('sudo '.$path_postsuper.' -d '.$item['id']);
+                    }
+                }
+            }
+        }
     } else {
         $alerte_purge_mailq = "<h4 class='alert_error'>".tr("ROOT_TO_FLUSH_MAIL_QUEUE")."</h4>";
     }
 }
-if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)){
+if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)&&$exec_available){
     $path_postsuper=exec('locate postsuper | grep bin');
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
         $result = exec('sudo '.$path_postsuper.' -d '.$id_mailq);
+        $cnx->query("INSERT INTO ".$row_config_globale['table_email_deleted']." (id,email,list_id,hash,error,status,type)
+                        SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput(urldecode($_GET['status'])))."','hard'
+                            FROM ".$row_config_globale['table_email']."
+                                WHERE email = '".($cnx->CleanInput(urldecode($_GET['mail'])))."'");
+        $cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email='".($cnx->CleanInput(urldecode($_GET['mail'])))."'");
     } else {
         $alerte_purge_mailq = "<h4 class='alert_error'>".tr("ROOT_TO_FLUSH_MAIL_QUEUE")."</h4>";
     }
@@ -75,7 +133,6 @@ $op_true = array(
     'subscriber_del',
     'subscriber_del_temp',
     'subscriber_import'
-    
 );
 if(in_array($op,$op_true)){
     switch($op){
@@ -87,9 +144,9 @@ if(in_array($op,$op_true)){
         break;
         case 'createConfig':
             $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],
-								  $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
-								  $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
-								  $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
+                                  $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
+                                  $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
+                                  $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
             if($new_id > 0){
                 $list_id=$new_id;
                 $l='l';
@@ -107,7 +164,7 @@ if(in_array($op,$op_true)){
                                $_POST['sending_method'],$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],
                                $_POST['validation_period'],$_POST['sub_validation'],$_POST['unsub_validation'],$_POST['admin_email'],
                                $_POST['admin_name'],$_POST['mod_sub'],$_POST['table_sub'],$_POST['charset'],$_POST['table_track'],
-                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'])){
+                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'],$_POST['table_email_deleted'])){
                 $configSaved=true;
                 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
             }else{
@@ -115,9 +172,9 @@ if(in_array($op,$op_true)){
             }
             if($_POST['file']==1){
                 $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],
-											$_POST['db_pass'],$_POST['db_name'],
+                                            $_POST['db_pass'],$_POST['db_name'],
                                             $_POST['table_config'],$_POST['db_type'],
-											$_POST['type_serveur'],$_POST['type_env'],$timezone);
+                                            $_POST['type_serveur'],$_POST['type_env'],$timezone);
                 $forceUpdate=1;
                 include("include/config.php");
                 unset($forceUpdate);
@@ -127,13 +184,15 @@ if(in_array($op,$op_true)){
         case 'subscriber_add':
             $add_addr = (empty($_POST['add_addr']) ? "" : $_POST['add_addr']);
             if(!empty($add_addr)){
-                $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$add_addr);
+                $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$add_addr,$row_config_globale['table_email_deleted']);
                 if($add_r==0){
                     $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_ADDING_SUBSCRIBER"," <b>$add_addr</b>").".</h4>";
                 }else if($add_r==-1){
                     $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$add_addr</b>").".</h4>";
                 }else if($add_r==2){
                     $subscriber_op_msg = "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$add_addr</b>").".</h4>";
+                }else if($add_r==3){
+                    $subscriber_op_msg = "<h4 class='alert_error'>".tr("SUBSCRIBER_WITH_MAIL_DELETED", "<b>$add_addr</b>")."</h4>";
                 }
             }else{
                 $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_SUPPLY_VALID_EMAIL")."</h4>";
@@ -141,7 +200,7 @@ if(in_array($op,$op_true)){
         break;
         case 'subscriber_del':
             $del_addr = (empty($_POST['del_addr']) ? "" : $_POST['del_addr']);
-            $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr,$row_config_globale['table_email_deleted']);
+            $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr,$row_config_globale['table_email_deleted'],'by_admin');
             if($deleted){
                 $subscriber_op_msg = "<h4 class='alert_success'>".tr("SUBSCRIBER_DELETED")."</h4>";
             }else{
@@ -156,9 +215,9 @@ if(in_array($op,$op_true)){
                 $open_basedir = @ini_get('open_basedir');
                 if (!empty($open_basedir)){
                     $tmp_subdir="./upload/";
-					$local_filename = $tmp_subdir.basename($import_file['tmp_name']);
-					move_uploaded_file($import_file['tmp_name'], $local_filename);
-					$liste = fopen($local_filename, 'r');
+                    $local_filename = $tmp_subdir.basename($import_file['tmp_name']);
+                    move_uploaded_file($import_file['tmp_name'], $local_filename);
+                    $liste = fopen($local_filename, 'r');
                 } else{
                     $liste = fopen($import_file['tmp_name'], 'r');
                 }
@@ -426,7 +485,7 @@ if(!$list&&$page!="config"){
         <ul class="toggle">
             <li class="icn_time"><a><?=tr("TIME_SERVER");?> : <span id='ts'></span></a></li>
             <?php
-            if($type_serveur=='dedicated'){
+            if($type_serveur=='dedicated'&&$exec_available){
                 echo '<li class="icn_queue"><span id="mailq">'.tr("LOOKING_PROGRESS_MAILS").'...</span></li>';
             }
             checkVersion();
@@ -476,7 +535,7 @@ if(!$list&&$page!="config"){
             <li class="icn_settings"><a href="?page=archives&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("MENU_ARCHIVES");?></a></li>
         </ul>
         <?php
-        if($type_serveur=='dedicated') { ?>
+        if($type_serveur=='dedicated'&&$exec_available) { ?>
             <h3><?=tr("MENU_SCHEDULE");?></h3>
             <ul class="toggle">
                 <li class="icn_settings"><a href="?page=task&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("MANAGEMENT_SCHEDULED_TASKS");?></a></li>
