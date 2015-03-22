@@ -148,7 +148,7 @@ $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Nouvel inscrit', 'Liste : '.$list_id.'<b />Nouvel inscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
-							
+                            
                         } else {
                             echo "<h4 class='alert_error'>" . tr("ERROR_UNKNOWN") . "</h4>";
                         }

@@ -543,7 +543,7 @@ $lang_array = array(
                                 <th>Catégorie</th> 
                                 <th>Titre</th>",
     "UNDISTURBED_TITLE_GRPH_AND_ERROR"=>"Graphique et répartition des erreurs du dernier envoi",
-    "UNDISTURBED_LABEL_ERROR"=>"",
+    "UNDISTURBED_LABEL_ERROR"=>"Répartiton par code erreur",
     "UNDISTURBED_LABEL_CLASS"=>"Répartiton par classe d'erreur : hard-bounce, soft-bounce",
     "UNDISTURBED_ERROR_SERVER"=>"Votre serveur n'autorise pas le traitement des retours de mail",
     // FUNCTIONS 
