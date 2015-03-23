@@ -40,7 +40,7 @@ if (!empty($msg_id) && empty($action)) {
         echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBER_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
         $js = true;
     }elseif($to_send>1){
-        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBERs_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
+        echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBERS_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
         $js = true;
     }
     if($js){ ?>

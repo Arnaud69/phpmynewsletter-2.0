@@ -30,6 +30,7 @@ if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     quick_Exit();
 }
 require 'include/lib/PHPMailerAutoload.php';
+require 'include/lib/Html2Text.php';
 $step    = (empty($_GET['step']) ? "" : $_GET['step']);
 $subject = (!empty($_SESSION['subject'])) ? $_SESSION['subject'] : '';
 $message = (!empty($_SESSION['message'])) ? $_SESSION['message'] : '';
@@ -176,6 +177,7 @@ switch ($step) {
             if ($format == "html"){
                 $message .= "<br />";
             }
+            $AltMessage = $message;
             $body = "";
             $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."'  />";
             if ($format == "html"){
@@ -195,8 +197,12 @@ switch ($step) {
                             .tr("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."' style='' target='_blank'>")
                             ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
+                $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
+                $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr[$i]['email'])."&h=" . $addr[$i]['hash'];
             }
+            $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
+            $mail->AltBody = quoted_printable_encode($AltBody->getText());
             $body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
