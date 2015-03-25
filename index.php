@@ -154,6 +154,7 @@ if(in_array($op,$op_true)){
         break;
         case 'saveGlobalconfig':
             $smtp_host =(isset($_POST['smtp_host'])?$_POST['smtp_host']:'');
+            $smtp_port =(isset($_POST['smtp_port'])?$_POST['smtp_port']:'');
             $smtp_auth =(isset($_POST['smtp_auth'])?$_POST['smtp_auth']:0);
             $smtp_login=(isset($_POST['smtp_login'])?$_POST['smtp_login']:'');
             $smtp_pass =(isset($_POST['smtp_pass'])?$_POST['smtp_pass']:'');
@@ -161,10 +162,10 @@ if(in_array($op,$op_true)){
             $timezone  =(isset($_POST['timezone'])?$_POST['timezone']:'');
             if(saveConfig($cnx,$_POST['table_config'],$_POST['admin_pass'],50,$_POST['base_url'],$_POST['path'],$_POST['language'],
                                $_POST['table_email'],$_POST['table_temp'],$_POST['table_listsconfig'],$_POST['table_archives'],
-                               $_POST['sending_method'],$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],
+                               $_POST['sending_method'],$smtp_host,$smtp_port,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],
                                $_POST['validation_period'],$_POST['sub_validation'],$_POST['unsub_validation'],$_POST['admin_email'],
                                $_POST['admin_name'],$_POST['mod_sub'],$_POST['table_sub'],$_POST['charset'],$_POST['table_track'],
-                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'],$_POST['table_email_deleted'])){
+                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'],$_POST['table_email_deleted'],$_POST['alert_sub'])){
                 $configSaved=true;
                 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
             }else{
@@ -319,18 +320,22 @@ if(!$list&&$page!="config"){
         document.newsletter_list.submit();
     }
     function checkSMTP(){
-        if(document.global_config.elements['sending_method'].selectedIndex>1){
+        if(document.global_config.elements['sending_method'].selectedIndex>2){
             document.global_config.elements['smtp_host'].disabled = true;
             document.global_config.elements['smtp_host'].value = "";
-            document.global_config.elements.smtp_auth[0].checked = "checked";
-            document.global_config.elements.smtp_auth[1].checked = '';
-            document.global_config.elements['smtp_login'].disabled = true;
-            document.global_config.elements['smtp_pass'].disabled = true;
+            document.global_config.elements.smtp_auth[0].checked = "";
+            document.global_config.elements.smtp_auth[1].checked = "checked";
+            document.global_config.elements['smtp_login'].disabled = false;
+            document.global_config.elements['smtp_pass'].disabled = false;
+            document.global_config.elements['smtp_port'].disabled = true;
         } else if (document.global_config.elements['sending_method'].selectedIndex==0){
             document.global_config.elements['smtp_host'].disabled = false;
             document.global_config.elements['smtp_host'].value = "<?=$row_config_globale['smtp_host'];?>";
+            document.global_config.elements.smtp_auth[0].checked = "checked";
+            document.global_config.elements.smtp_auth[1].checked = "";
             document.global_config.elements['smtp_login'].disabled = false;
             document.global_config.elements['smtp_pass'].disabled = false;
+            document.global_config.elements['smtp_port'].disabled = false;
         } else if (document.global_config.elements['sending_method'].selectedIndex==1){
             document.global_config.elements['smtp_host'].disabled = false;
             document.global_config.elements['smtp_host'].value = "smtp.gmail.com";
@@ -338,6 +343,15 @@ if(!$list&&$page!="config"){
             document.global_config.elements.smtp_auth[1].checked = "checked";
             document.global_config.elements['smtp_login'].disabled = false;
             document.global_config.elements['smtp_pass'].disabled = false;
+            document.global_config.elements['smtp_port'].disabled = true;
+        } else if (document.global_config.elements['sending_method'].selectedIndex==2){
+            document.global_config.elements['smtp_host'].disabled = true;
+            document.global_config.elements['smtp_host'].value = "";
+            document.global_config.elements.smtp_auth[0].checked = "checked";
+            document.global_config.elements.smtp_auth[1].checked = "";
+            document.global_config.elements['smtp_login'].disabled = true;
+            document.global_config.elements['smtp_pass'].disabled = true;
+            document.global_config.elements['smtp_port'].disabled = true;
         }
     }
     (function($){

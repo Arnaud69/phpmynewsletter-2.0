@@ -61,6 +61,7 @@ $lang_array = array(
     "NEWSLETTER_SUBJECT"=>"Sujet du message",
     "NEWSLETTER_HEADER"=>"Entête du message",
     "NEWSLETTER_FOOTER"=>"Pied du message",
+    "NEWSLETTER_MAIL_PREVIEW"=>"Adresse électronique pour preview",
     "NEWSLETTER_SUB_MSG_SUBJECT"=>"Sujet du message d'abonnement",
     "NEWSLETTER_SUB_MSG_BODY"=>"Message d'abonnement",
     "NEWSLETTER_WELCOME_MSG_SUBJECT"=>"Sujet du message de bienvenue",
@@ -178,6 +179,7 @@ $lang_array = array(
     "GCONFIG_MESSAGE_SEND_METHOD"=>"Méthode d'expédition",
     "GCONFIG_MESSAGE_SEND_METHOD_FUNCTION"=>"fonction mail() PHP",
     "GCONFIG_MESSAGE_SMTP_HOST"=>"Nom d'hôte du serveur SMTP",
+    "GCONFIG_MESSAGE_SMTP_PORT"=>"Port de connexion au serveur SMTP",
     "GCONFIG_MESSAGE_SMTP_AUTH"=>"Authentification SMTP requise ?",
     "GCONFIG_MESSAGE_SMTP_LOGIN" =>"Nom d'utilisateur SMTP",
     "GCONFIG_MESSAGE_SMTP_PASSWORD"=>"Mot de passe SMTP",
@@ -185,6 +187,7 @@ $lang_array = array(
     "GCONFIF_SUBSCRIPTION_VALIDATION_TIMEOUT"=>"Nombre de jours pour confirmer les inscriptions",
     "GCONFIG_SUBSCRIPTION_CONFIRM_SUB"=>"Les abonnés doivent-ils confirmer leur inscription ?",
     "GCONFIG_SUBSCRIPTION_CONFIRM_UNSUB"=>"Les abonnés doivent-ils confirmer leur désinscription ?",
+    "ALERT_SUB"=>"Etre averti des nouvelles inscriptions ?",
     "GCONFIG_SUBSCRIPTION_MODERATE"=>"Les inscriptions sont modérées ?",
     "GCONFIG_SAVE_BTN"=>"Enregistrer ces réglages",
     "GCONFIG_SUCCESSFULLY_SAVED"=>"Configuration globale enregistrée avec succès",
@@ -409,6 +412,7 @@ $lang_array = array(
     "ADD_ADRESS_BOOK"=>"Ajoutez %s &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !", //Please, add % to your address book to make sure you receive our news in your inbox
     "UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %sd&eacute;sinscription</a>", // No longer interested ? %s Unsubscribe
     "MAIL_PREVIEW_SEND"=>"Mail de preview",
+    "NO_SEND_DEFINITION"=>"Mode d'envoi non défini !",
     // TRACK
     "CLICKED_LINK_REPORT"=>"Compte rendu des liens cliqués",
     "CLICKED_LINK_REPORT_GRAPHIC"=>"Graphique liens cliqués",
@@ -556,9 +560,6 @@ $lang_array = array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
-
-
-
 
 
 

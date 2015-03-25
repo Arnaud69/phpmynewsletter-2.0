@@ -17,7 +17,7 @@ if (!empty($msg_id) && $action == "delete"){
     $deleted = deleteArchive($cnx, $row_config_globale['table_archives'], $msg_id);
 }
 if ($archives = getArchivesselectList($cnx, $row_config_globale['table_archives'], $msg_id,'archive_form',$list_id) != -1) {
-    echo "<input type='submit' value='" . tr("ARCHIVE_DISPLAY") . "' class='button' />
+    echo "&nbsp;<input type='submit' value='" . tr("ARCHIVE_DISPLAY") . "' class='button' />
     <input type='button' value='" . tr("ARCHIVE_DELETE") . "' onclick='deleteArchive();' />
     <input type='hidden' name='page' value='archives' />
     <input type='hidden' name='action' value='' />

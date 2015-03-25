@@ -1,9 +1,8 @@
 <?php
-// unset des variables
 unset($_GET);
 unset($_POST);
+$dat = getrusage();
 define('DOCROOT',dirname(dirname(__FILE__)));
-
 /*
 1/ on charge les classes et autres fichiers nécessaires au déroulement du script
 */
@@ -11,16 +10,14 @@ include(DOCROOT.'/include/config.php');
 include(DOCROOT.'/include/db/db_connector.inc.php');
 include(DOCROOT.'/include/lib/pmn_fonctions.php');
 require(DOCROOT.'/include/lib/PHPMailerAutoload.php');
+require(DOCROOT.'/include/lib/Html2Text.php');
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include(DOCROOT.'/include/lang/'.$row_config_globale['language'].'.php');
-
-
 if((count($_SERVER['argv'])>2)||(count($_SERVER['argv'])==1)){
     die(tr("SCHEDULE_NOT_POSSIBLE_TRANSACTION"));
 }
-
 if(!isset($_SERVER['SERVER_SOFTWARE']) && (php_sapi_name() == 'cli' || (is_numeric($_SERVER['argc']) && $_SERVER['argc'] > 0))) {
     // Let's continue !
 } else {
@@ -31,7 +28,6 @@ if(!isset($_SERVER['SERVER_SOFTWARE']) && (php_sapi_name() == 'cli' || (is_numer
 $task_id = $argv[1]
 */
 $task_id = $_SERVER['argv'][1];
-
 /*
 3/ on va chercher les éléments dans la table crontab
 */
@@ -43,11 +39,9 @@ if(count($detail_task)==0){
     /*
     4/ init variables d'usage
     */
-    $dat = getrusage();
     $start_task_date = date('d/m/Y H:i:s');
     $total_send_errors = 0;
     $motifs_send_errors = '';
-    
     /*
     5/ on met l'envoi dans les archives
     // on va mettre le message de la table sauvegarde dans la table archives :
@@ -58,15 +52,11 @@ if(count($detail_task)==0){
                         WHERE list_id = "'.$detail_task[0]['list_id'].'" AND job_id = "'.$task_id.'"');
     // on récupère le nombre total de destinataire :
     $total_suscribers    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id']);
-    
-    
     /*                  
     6/ on créée l'entrée dans la table send
     */
     $cnx->query("INSERT into ".$row_config_globale['table_send']." (id_mail, id_list, cpt) 
                     VALUES ('".$detail_task[0]['msg_id']."','".$detail_task[0]['list_id']."','0')");
-    
-    
     /*
     7/ on crée l'entrée dans la table send_suivi
     */
@@ -76,7 +66,28 @@ if(count($detail_task)==0){
     if (!$handler = @fopen(DOCROOT.'/logs/list' . $detail_task[0]['list_id'] . '-msg' . $detail_task[0]['msg_id'] . '.txt', 'a+')){
         $dontlog = 1;
     }
-    $errstr = "============================================================\r\n";
+    $errstr =  "=GLOBAL=ENVIRONNEMENT=======================================\r\n";
+    if (version_compare(PHP_VERSION, '5.3.0', '>')) {
+        $errstr .= "PHP : ".phpversion()." ".tr("OK_BTN")."\r\n";
+    } else {
+        $errstr .= "PHP : ".phpversion()." ".tr("INSTALL_OBSOLETE")."<\r\n";
+    }
+    if (extension_loaded('imap')) {
+        $errstr .= "imap ".tr("OK_BTN")."\r\n";
+    } else {
+        $errstr .= "imap ".tr("NOT_FOUND")."\r\n";
+    }
+    if (extension_loaded('curl')) {
+        $errstr .= "curl ".tr("OK_BTN")."\r\n";
+    } else {
+        $errstr .= "curl ".tr("NOT_FOUND")."\r\n";
+    }
+    if (is_exec_available()){
+        $errstr .= "exec ".tr("OK_BTN")."\r\n";
+    } else {
+        $errstr .= "exec ".tr("NOT_FOUND")."\r\n";
+    }
+    $errstr .= "============================================================\r\n";
     $errstr .= date("d M Y") . "\r\n";
     $errstr .= "Started at " . date("H:i:s") . "\r\n";
     $errstr .= "N° \t Date \t\t Time \t\t Status \t\t Recipient  \r\n";
@@ -84,8 +95,6 @@ if(count($detail_task)==0){
     if (!$dontlog){
         fwrite($handler, $errstr, strlen($errstr));
     }
-    
-    
     /*
     8/ on crée la boucle d'envoi, cadencée selon la même norme que l'envoi normal.
     */
@@ -99,32 +108,7 @@ if(count($detail_task)==0){
     $newsletter     = getConfig($cnx, $detail_task[0]['list_id'], $row_config_globale['table_listsconfig']);
     $mail->From     = $newsletter['from_addr'];
     $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
-    switch ($row_config_globale['sending_method']) {
-        case "smtp":
-            $mail->IsSMTP();
-            $mail->Host = $row_config_globale['smtp_host'];
-            if ($row_config_globale['smtp_auth']) {
-                $mail->SMTPAuth = true;
-                $mail->Username = $row_config_globale['smtp_login'];
-                $mail->Password = $row_config_globale['smtp_pass'];
-            }
-            break;
-        case "smtp_gmail":
-            $mail->IsSMTP();
-            $mail->SMTPAuth = true;
-            $mail->SMTPSecure = 'tls';
-            $mail->Host = "smtp.gmail.com";
-            $mail->Port = 587;
-            $mail->IsHTML(true);
-            $mail->Username = $row_config_globale['smtp_login'];
-            $mail->Password = $row_config_globale['smtp_pass'];
-            break;
-        case "php_mail":
-            $mail->IsMail();
-            break;
-        default:
-            break;
-    }
+    include("lib/switch_smtp.php");
     $mail->Sender = $newsletter['from_addr'];
     $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
     $msg        = get_message($cnx, $row_config_globale['table_archives'], $detail_task[0]['msg_id']);
@@ -142,9 +126,10 @@ if(count($detail_task)==0){
     $message    = stripslashes($msg['message']);
     $subject    = stripslashes($msg['subject']);
     if ($format == "html"){
-        $message_to_send = $message . "<br />";
+        $message .= "<br />";
         $mail->IsHTML(true);
     }
+    $AltMessage = $message;
     $mail->WordWrap = 70;    
     if (file_exists(DOCROOT.'/DKIM/DKIM_config.php')&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
         include(DOCROOT.'/DKIM/DKIM_config.php');
@@ -154,8 +139,6 @@ if(count($detail_task)==0){
         $mail->DKIM_passphrase = $DKIM_passphrase;
         $mail->DKIM_identity   = $DKIM_identity;
     }
-    
-    
     /*
     DEBUT DELA BOUCLE GLOBALE DES ENVOIS, DEBUT DE LA TASK
     */
@@ -172,11 +155,12 @@ if(count($detail_task)==0){
             $mail->AddAddress(trim($addr[$i]['email']));
             $mail->XMailer = ' ';
             $body = "";
-            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' />";
+            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
                 $body .= tr("READ_ON_LINE", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=".$detail_task[0]['msg_id']."&list_id=".$detail_task[0]['list_id']."&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>") . ".<br />";
+                $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$detail_task[0]['msg_id'].'&h='.$addr[$i]['hash'].'&l='.$detail_task[0]['list_id'].'&r=';
                 $message = preg_replace_callback(
@@ -188,23 +172,36 @@ if(count($detail_task)==0){
                 $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
                 . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>") ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
+                $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=" . $detail_task[0]['msg_id'] . "&list_id=".$detail_task[0]['list_id']."&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
+                $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i=' .$detail_task[0]['msg_id']. '&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . urlencode($addr[$i]['email']).'&h=' . $addr[$i]['hash'];
             }
+            $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
+            $mail->AltBody = quoted_printable_encode($AltBody->getText());
             $body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-            $mail->AltBody  =  strip_tags( str_replace( $message . $unsubLink, array( '<br>', '<br/>', '<br />' ), "\r\n" ) );
             $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$detail_task[0]['msg_id'].'&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
                 $cnx->query("UPDATE ".$row_config_globale['table_send']." SET error=error+1 WHERE id_mail='".$detail_task[0]['msg_id']."' AND id_list='".$detail_task[0]['list_id']."'");
                 $ms_err_info = $mail->ErrorInfo;
-                $motifs_send_errors .= $addr[$i]['email'] . '  --->  '. $ms_err_info.'<br />';
+                $motifs_send_errors .= $addr[$i]['email'] . '  --->  '. $ms_err_info."\r\n";
                 $total_send_errors++;
+                $cnx->query("UPDATE ".$row_config_globale['table_email']." 
+                                SET error='Y',long_desc='".$cnx->CleanInput($ms_err_info)."',campaign_id='".$detail_task[0]['msg_id']."' 
+                            WHERE email='".$addr[$i]['email']."' 
+                                AND list_id='".$detail_task[0]['list_id']."'");
             } else {
-                echo "\n".'envoi a '.$addr[$i]['email'].', begin='.$begin.', total_suscriber='.$total_suscribers;
-                $cnx->query("UPDATE ".$row_config_globale['table_send']." SET cpt=cpt+1 WHERE id_mail='".$detail_task[0]['msg_id']."' AND id_list='".$detail_task[0]['list_id']."'");
+                $cnx->query("UPDATE ".$row_config_globale['table_email']." 
+                                SET campaign_id='".$detail_task[0]['msg_id']."' 
+                            WHERE email='".$addr[$i]['email']."' 
+                                AND list_id='".$detail_task[0]['list_id']."'");
+                $cnx->query("UPDATE ".$row_config_globale['table_send']." 
+                                SET cpt=cpt+1 
+                            WHERE id_mail='".$detail_task[0]['msg_id']."' 
+                                AND id_list='".$detail_task[0]['list_id']."'");
                 $ms_err_info = 'OK';
             }
             $cnx->query('UPDATE '.$row_config_globale['table_send_suivi'].' 
@@ -217,25 +214,21 @@ if(count($detail_task)==0){
                 fwrite($handler, $errstr, strlen($errstr));
             }
             $last_id_send = $addr[$i]['id'];
+            sleep(1);
         }
         $end = microtime(true);
         $tts = substr(($end - $start),0,5);
         if ($begin < $total_suscribers) {
             $cnx->query('UPDATE '.$row_config_globale['table_send_suivi'].' 
-                        SET tts=tts+"'.$tts.'",last_id_send='.$last_id_send.' 
+                        SET tts=tts+"'.$tts.'",last_id_send='.$last_id_send.',nb_send=nb_send+'.$to_send.'
                             WHERE list_id='.$detail_task[0]['list_id'].' 
                                 AND msg_id='.$detail_task[0]['msg_id']);
         }
-        echo "begin = ".$begin += $to_send;
-        sleep(1);
-
-
+        $begin += $to_send;
         /*
         fin de la boucle globale, sortie de la task
         */
     }
-    
-    
     /*
     9/ on ajoute les lignes de fin d'envoi dans le log
     */
@@ -250,23 +243,19 @@ if(count($detail_task)==0){
         fwrite($handler, $errstr, strlen($errstr));
         fclose($handler);
     }
-    
-    
     /*
     10/ on supprime la tâche de la crontab :
     */
     $output = shell_exec('crontab -l');
-    if (strstr($output, $detail_task[0]['command'])) {
+    /*if (strstr($output, $detail_task[0]['command'])) {
         echo tr("FOUND");
     } else {
         echo tr("NOT_FOUND");
-    }
+    }*/
     $newcron = str_replace($detail_task[0]['command'],"",$output);
-    echo "<pre>$newcron</pre>";
+    //echo "<pre>$newcron</pre>";
     file_put_contents(DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import", $newcron.PHP_EOL);
-    echo exec('crontab '.DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import");
-    
-    
+    exec('crontab '.DOCROOT."/include/backup_crontab/".$detail_task[0]['job_id']."_import");
     /*
     11/ on update la table crontab comme quoi l'envoi est terminé : done
     */
@@ -275,11 +264,9 @@ if(count($detail_task)==0){
                         WHERE list_id='.$detail_task[0]['list_id'].' 
                             AND msg_id='.$detail_task[0]['msg_id'].'
                             AND job_id="'.$detail_task[0]['job_id'].'"');
-    
     /*
     12/ on envoie un mail de compte rendu :
     */
-    
     $rapport_sujet = tr("SCHEDULE_REPORT_SUBJECT");
     $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
     $end_task_date = date('d/m/Y H:i:s');
@@ -292,7 +279,7 @@ if(count($detail_task)==0){
     <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_TITLE").' :</span></td>
         <td><span style="color: #2446a2;">'.$subject.'</span></td></tr>
     <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_ID").' :</span></td>
-        <td><span style="color: #2446a2;">'.$detail_task[0]['job_id'].'</td></tr>
+        <td><span style="color: #2446a2;">'.$detail_task[0]['msg_id'].' ('.$detail_task[0]['job_id'].')</td></tr>
     <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_DATE_DONE").'</span></td>
         <td><span style="color: #2446a2;">'.tr("SCHEDULE_START_PROCESS").' : '.$start_task_date.'<br />'.tr("SCHEDULE_END_PROCESS").' : '.$end_task_date.'</td></tr>
     <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_SENDED").' :</span></td><td><span style="color: #2446a2;">'.$total_suscribers.'</span></td></tr>

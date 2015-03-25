@@ -146,9 +146,23 @@ $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                             $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                             $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                             sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
-                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Nouvel inscrit', 'Liste : '.$list_id.'<b />Nouvel inscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
-                            
+                            if($row_config_globale['alert_sub']==1){
+							    $rapport_sujet = tr("SUBSCRIPTION_TITLE");
+                                $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
+                                $rapport = '<br /><br /><br /><br /><br />
+                                <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
+                                <tbody>
+                                <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;font-size: 14pt;">
+                                    <img src="http://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png" alt="" width="123" height="72" /><br />'.tr("SUBSCRIPTION_TITLE").' !</td></tr>
+                                <tr><td><span style="color: #2446a2;">'.tr("LIST_NUMBER").' :</span></td>
+                                    <td><span style="color: #2446a2;">'.$list_id.'</span></td></tr>
+                                <tr><td><span style="color: #2446a2;">'.tr("EMAIL_ADDRESS").' :</span></td>
+                                    <td><span style="color: #2446a2;">'.$email_addr.'</td></tr>
+                                </tbody>
+                                </table>';
+                                sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                            }
                         } else {
                             echo "<h4 class='alert_error'>" . tr("ERROR_UNKNOWN") . "</h4>";
                         }
@@ -180,7 +194,23 @@ $news = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
                                 $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $news['welcome_subject'] : iconv("UTF-8", $row_config_globale['charset'], $news['welcome_subject']));
                                 $body = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $body : iconv("UTF-8", $row_config_globale['charset'], $body));
                                 sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
-                                sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Nouvel inscrit', 'Liste : '.$list_id.'<b />Nouvel inscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                                echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
+                                if($row_config_globale['alert_sub']==1){
+							        $rapport_sujet = tr("SUBSCRIPTION_TITLE");
+                                    $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
+                                    $rapport = '<br /><br /><br /><br /><br />
+                                    <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
+                                    <tbody>
+                                    <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;font-size: 14pt;">
+                                        <img src="http://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png" alt="" width="123" height="72" /><br />'.tr("SUBSCRIPTION_TITLE").' !</td></tr>
+                                    <tr><td><span style="color: #2446a2;">'.tr("LIST_NUMBER").' :</span></td>
+                                        <td><span style="color: #2446a2;">'.$list_id.'</span></td></tr>
+                                    <tr><td><span style="color: #2446a2;">'.tr("EMAIL_ADDRESS").' :</span></td>
+                                        <td><span style="color: #2446a2;">'.$email_addr.'</td></tr>
+                                    </tbody>
+                                    </table>';
+                                    sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                                }
                                 echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                             } else {
                                 echo "<h4 class='alert_error'>" . tr("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";

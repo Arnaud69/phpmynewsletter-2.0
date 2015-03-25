@@ -34,7 +34,7 @@ if(isset($list_id)&&!empty($list_id)) {
         <input type='text' name='from_name' value='".htmlspecialchars($newsletter['from_name'])."' /></fieldset>
         <fieldset><label>".tr("NEWSLETTER_FROM_ADDR")." : </label>
         <input type='text' name='from' value='".$newsletter['from_addr']."' /></fieldset>
-        <fieldset><label>Adresse électronique pour preview : </label>
+        <fieldset><label>".tr("NEWSLETTER_MAIL_PREVIEW")." : </label>
         <input type='text' name='preview_addr' value='".$newsletter['preview_addr']."' /></fieldset>
         <fieldset><label>".tr("NEWSLETTER_SUBJECT")." : </label>
         <input type='text' name='subject' value='".htmlspecialchars($newsletter['subject'])."' /></fieldset>

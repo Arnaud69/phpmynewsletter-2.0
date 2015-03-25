@@ -29,8 +29,8 @@ $form_pass = (empty($_POST['form_pass']) ? "" : $_POST['form_pass']);
 if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
     quick_Exit();
 }
-require 'include/lib/PHPMailerAutoload.php';
-require 'include/lib/Html2Text.php';
+require('include/lib/PHPMailerAutoload.php');
+require('include/lib/Html2Text.php');
 $step    = (empty($_GET['step']) ? "" : $_GET['step']);
 $subject = (!empty($_SESSION['subject'])) ? $_SESSION['subject'] : '';
 $message = (!empty($_SESSION['message'])) ? $_SESSION['message'] : '';
@@ -58,103 +58,28 @@ switch ($step) {
         $mail->From     = $newsletter['from_addr'];
         $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
         $addr           = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit);
-        switch ($row_config_globale['sending_method']) {
-            case "smtp":
-                $mail->IsSMTP();
-                $mail->Host = $row_config_globale['smtp_host'];
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            case "smtp_gmail":
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';
-                $mail->Host = "smtp.gmail.com";
-                $mail->Port = 587;
-                $mail->IsHTML(true);
-                $mail->Username = $row_config_globale['smtp_login'];
-                $mail->Password = $row_config_globale['smtp_pass'];
-                break;
-            case "php_mail":
-                $mail->IsMail();
-                break;
-            case "smtp_mutu_ovh":
-                $mail->IsSMTP();
-                $mail->Port = 587;
-                $mail->Host = 'ssl0.ovh.net';
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            case "smtp_mutu_1and1":
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';
-                $mail->Port = 465;
-                $mail->Host = 'auth.smtp.1and1.fr';
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            case "smtp_mutu_gandi":
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'tls';
-                $mail->Port = 587;
-                $mail->Host = 'mail.gandi.net';
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            case "smtp_mutu_online":
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->Port = 587;
-                $mail->Host = 'smtpauth.online.net';
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            case "smtp_mutu_infomaniak":
-                $mail->IsSMTP();
-                $mail->SMTPAuth = true;
-                $mail->SMTPSecure = 'ssl';
-                $mail->Port = 587;
-                $mail->Host = 'mail.infomaniak.ch';
-                if ($row_config_globale['smtp_auth']) {
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $row_config_globale['smtp_login'];
-                    $mail->Password = $row_config_globale['smtp_pass'];
-                }
-                break;
-            default:
-                break;
-        }
+        include("include/lib/switch_smtp.php");
         $mail->Sender = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
         $msg     = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
         $format  = $msg['type'];
-        $list_pj = $cnx->query("SELECT * FROM ".$row_config_globale['table_upload']." WHERE list_id=$list_id AND msg_id=$msg_id ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+        $list_pj = $cnx->query("SELECT * 
+            FROM ".$row_config_globale['table_upload']." 
+                WHERE list_id=$list_id 
+                AND msg_id=$msg_id 
+            ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
         if(count($list_pj)>0){
             foreach  ($list_pj as $item) {
                 $mail->AddAttachment('upload/'.$item['name']);
             }
         }
+        $message    = stripslashes($msg['message']);
         $subject    = stripslashes($msg['subject']);
         if ($format == "html"){
+            $message .= "<br />";
             $mail->IsHTML(true);
         }
+        $AltMessage = $message;
         $mail->WordWrap = 70;    
         if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
             include("DKIM/DKIM_config.php");
@@ -173,13 +98,8 @@ switch ($step) {
             $mail->ClearCustomHeaders();
             $mail->AddAddress(trim($addr[$i]['email']));
             $mail->XMailer = ' ';
-            $message    = stripslashes($msg['message']);
-            if ($format == "html"){
-                $message .= "<br />";
-            }
-            $AltMessage = $message;
             $body = "";
-            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."'  />";
+            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
@@ -212,16 +132,30 @@ switch ($step) {
             if (!$mail->Send()) {
                 $cnx->query("UPDATE ".$row_config_globale['table_send']." SET error=error+1 WHERE `id_mail`='".$msg_id."' AND `id_list`='".$list_id."'");
                 $ms_err_info = $mail->ErrorInfo;
+                $cnx->query("UPDATE ".$row_config_globale['table_email']." 
+                                SET error='Y',long_desc='".$cnx->CleanInput($ms_err_info)."',campaign_id='".$msg_id."' 
+                            WHERE email='".$addr[$i]['email']."' 
+                                AND list_id='".$list_id."'");
             } else {
-                $cnx->query("UPDATE ".$row_config_globale['table_send']." SET cpt=cpt+1 WHERE `id_mail`='".$msg_id."' AND `id_list`='".$list_id."'");
+                $cnx->query("UPDATE ".$row_config_globale['table_email']." 
+                                SET campaign_id='".$msg_id."' 
+                            WHERE email='".$addr[$i]['email']."' 
+                                AND list_id='".$list_id."'");
+                $cnx->query("UPDATE ".$row_config_globale['table_send']." 
+                                SET cpt=cpt+1 
+                            WHERE `id_mail`='".$msg_id."' 
+                                AND `id_list`='".$list_id."'");
                 $ms_err_info = 'OK';
             }
-            $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." SET nb_send=nb_send+1,last_id_send=".$addr[$i]['id']." WHERE `msg_id`='".$msg_id."' AND `list_id`='".$list_id."'");
+            $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." 
+                        SET nb_send=nb_send+1,last_id_send=".$addr[$i]['id']." 
+                            WHERE `msg_id`='".$msg_id."' AND `list_id`='".$list_id."'");
             $endtimesend = microtime(true);
             $time_info = substr(($endtimesend-$begintimesend),0,5);
             $errstr = ($begin + $i + 1) . "\t" . date("H:i:s") . "\t " . $time_info . "\t\t " .$ms_err_info. " \t" . $addr[$i]['email'] . "\r\n";
-            if (!$dontlog)
+            if (!$dontlog){
                 fwrite($handler, $errstr, strlen($errstr));
+            }
             $last_id_send = $addr[$i]['id'];
         }
         $end = microtime(true);
@@ -240,7 +174,9 @@ switch ($step) {
                         'TTS'    => $tts
                        );
             echo json_encode($arr);
-            $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'");
+            $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." 
+                        SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." 
+                            WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'");
         } else {
             $errstr = "------------------------------------------------------------\r\n";
             $errstr .= "Finished at " . date("H:i:s") . "\r\n";
@@ -279,7 +215,28 @@ switch ($step) {
         $num    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$list_id);
         $cnx->query("INSERT into ".$row_config_globale['table_send']." (`id_mail`, `id_list`, `cpt`) VALUES ('".$msg_id."','".$list_id."','0')");
         $cnx->query("INSERT into ".$row_config_globale['table_send_suivi']." (`list_id`, `msg_id`, `total_to_send`) VALUES ('".$list_id."','".$msg_id."','".$num."')");
-        $errstr = "============================================================\r\n";
+        $errstr =  "=GLOBAL=ENVIRONNEMENT=======================================\r\n";
+        if (version_compare(PHP_VERSION, '5.3.0', '>')) {
+            $errstr .= "PHP : ".phpversion()." ".tr("OK_BTN")."\r\n";
+        } else {
+            $errstr .= "PHP : ".phpversion()." ".tr("INSTALL_OBSOLETE")."<\r\n";
+        }
+        if (extension_loaded('imap')) {
+            $errstr .= "imap ".tr("OK_BTN")."\r\n";
+        } else {
+            $errstr .= "imap ".tr("NOT_FOUND")."\r\n";
+        }
+        if (extension_loaded('curl')) {
+            $errstr .= "curl ".tr("OK_BTN")."\r\n";
+        } else {
+            $errstr .= "curl ".tr("NOT_FOUND")."\r\n";
+        }
+        if (is_exec_available()){
+            $errstr .= "exec ".tr("OK_BTN")."\r\n";
+        } else {
+            $errstr .= "exec ".tr("NOT_FOUND")."\r\n";
+        }
+        $errstr .= "============================================================\r\n";
         $errstr .= date("d M Y") . "\r\n";
         $errstr .= "Started at " . date("H:i:s") . "\r\n";
         $errstr .= "N° \t Date \t\t Time \t\t Status \t\t Recipient  \r\n";

@@ -146,6 +146,8 @@ if (empty($langfile)) {
                     if(document.global_config.elements['sending_method'].selectedIndex>1){
                         document.global_config.elements['smtp_host'].disabled = true;
                         document.global_config.elements['smtp_host'].value = \"\";
+                        document.global_config.elements['smtp_port'].disabled = true;
+                        document.global_config.elements['smtp_port'].value = \"\";
                         document.global_config.elements.smtp_auth[0].checked = \"checked\";
                         document.global_config.elements.smtp_auth[1].checked = '';
                         document.global_config.elements['smtp_login'].disabled = true;
@@ -153,6 +155,8 @@ if (empty($langfile)) {
                     } else if (document.global_config.elements['sending_method'].selectedIndex==0){
                         document.global_config.elements['smtp_host'].disabled = false;
                         document.global_config.elements['smtp_host'].value = \"\";
+                        document.global_config.elements['smtp_port'].disabled = false;
+                        document.global_config.elements['smtp_port'].value = \"\";
                         document.global_config.elements.smtp_auth[0].checked = \"\";
                         document.global_config.elements.smtp_auth[1].checked = \"checked\";
                         document.global_config.elements['smtp_login'].disabled = false;
@@ -160,6 +164,8 @@ if (empty($langfile)) {
                     } else if (document.global_config.elements['sending_method'].selectedIndex==1){
                         document.global_config.elements['smtp_host'].disabled = false;
                         document.global_config.elements['smtp_host'].value = \"smtp.gmail.com\";
+                        document.global_config.elements['smtp_port'].disabled = false;
+                        document.global_config.elements['smtp_port'].value = \"\";
                         document.global_config.elements.smtp_auth[0].checked = \"\";
                         document.global_config.elements.smtp_auth[1].checked = \"checked\";
                         document.global_config.elements['smtp_login'].disabled = false;
@@ -286,6 +292,9 @@ if (empty($langfile)) {
             echo '<label>'.tr("INSTALL_SMTP_HOST").'</label>';
             echo "<input type='text' class='input' name='smtp_host' value='' disabled>";
             echo '</fieldset>';
+            echo '<label>'.tr("INSTALL_SMTP_PORT").'</label>';
+            echo "<input type='text' class='input' name='smtp_port' value='' disabled>";
+            echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_SMTP_AUTH_NEEDED").'</label>';
             echo "<input type='radio' name='smtp_auth' value='0' checked  disabled>" . tr("NO") . "&nbsp;";
@@ -317,6 +326,10 @@ if (empty($langfile)) {
             echo "<input type='radio' name='unsub_validation' value='0'> " . tr("NO");
             echo "<input type='radio' name='unsub_validation' value='1' checked> " . tr("YES");
             echo '</fieldset>';
+            echo '<label>'.tr("ALERT_SUB").'</label>';
+            echo "<input type='radio' name='alert_sub' value='0'> " . tr("NO");
+            echo "<input type='radio' name='alert_sub' value='1' checked> " . tr("YES");
+            echo '</fieldset>';
             echo "<input type='hidden' name='op' value='saveConfig'>";
             echo "<input type='hidden' name='langfile' value='$langfile'>";
             echo "<input type='hidden' name='db_type' value='$db_type'><br>";
@@ -336,6 +349,7 @@ if (empty($langfile)) {
             $createdb          = (isset($_POST['createdb']) ? $_POST['createdb'] : 0);
             $createtables      = (isset($_POST['createtables']) ? $_POST['createtables'] : 0);
             $smtp_host         = (isset($_POST['smtp_host']) ? $_POST['smtp_host'] : "");
+            $smtp_port         = (isset($_POST['smtp_port']) ? $_POST['smtp_port'] : "");
             $smtp_auth         = (isset($_POST['smtp_auth']) ? $_POST['smtp_auth'] : 0);
             $smtp_login        = (isset($_POST['smtp_login']) ? $_POST['smtp_login'] : "");
             $smtp_pass         = (isset($_POST['smtp_pass']) ? $_POST['smtp_pass'] : "");
@@ -361,6 +375,7 @@ if (empty($langfile)) {
             $sub_validation    = (isset($_POST['sub_validation']) ? $_POST['sub_validation'] : "");
             $type_serveur      = (isset($_POST['type_serveur']) ? $_POST['type_serveur'] : "shared");
             $type_env          = (isset($_POST['type_env']) ? $_POST['type_env'] : "dev");
+            $alert_sub         = (isset($_POST['alert_sub']) ? $_POST['alert_sub'] : "1");
             if ($createdb == 1) {
                 switch($db_type){
                     case 'mysql':
@@ -448,7 +463,7 @@ if (empty($langfile)) {
                                 KEY `error` (`error`),
                                 KEY `status` (`status`),
                                 KEY `type` (`type`),
-								KEY `campaign_id` (`type`)
+                                KEY `campaign_id` (`type`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email") .' '.tr("DONE").'</h4>';
@@ -466,14 +481,14 @@ if (empty($langfile)) {
                                 `categorie` VARCHAR(255) NOT NULL DEFAULT "",
                                 `short_desc` TEXT NOT NULL,
                                 `long_desc` TEXT NOT NULL,
-								`campaign_id` INT(7) UNSIGNED NOT NULL DEFAULT "0"
+                                `campaign_id` INT(7) UNSIGNED NOT NULL DEFAULT "0"
                                 PRIMARY KEY (`id`),
                                 UNIQUE KEY `unique_email_by_list` (`email`,`list_id`),
                                 KEY `hash` (`hash`),
                                 KEY `error` (`error`),
                                 KEY `status` (`status`),
                                 KEY `type` (`type`),
-								KEY `campaign_id` (`type`)
+                                KEY `campaign_id` (`type`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email_deleted") .' '.tr("DONE").'</h4>';
@@ -492,6 +507,7 @@ if (empty($langfile)) {
                                 `table_listsconfig` VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_archives`    VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_host`         VARCHAR(255) NOT NULL DEFAULT "",
+                                `smtp_port` varchar(5) NOT NULL DEFAULT '',,
                                 `smtp_auth`         ENUM("0","1") NOT NULL DEFAULT "0",
                                 `smtp_login`        VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_pass`         VARCHAR(255) NOT NULL DEFAULT "",
@@ -511,7 +527,8 @@ if (empty($langfile)) {
                                 `table_track_links` VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_upload`      VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_crontab`     VARCHAR(255) NOT NULL DEFAULT "",
-                                `table_email_deleted` VARCHAR(255) NOT NULL DEFAULT ""
+                                `table_email_deleted` VARCHAR(255) NOT NULL DEFAULT "",
+                                `alert_sub`         ENUM("0","1") NOT NULL DEFAULT "1"
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "config") .' '.tr("DONE").'</h4>';
@@ -704,6 +721,7 @@ if (empty($langfile)) {
                 $admin_email       = $cnx->CleanInput($admin_email);
                 $admin_name        = $cnx->CleanInput($admin_name);
                 $mod_sub           = $cnx->CleanInput($mod_sub);
+                $alert_sub         = $cnx->CleanInput($alert_sub);
             }
             $admin_pass = md5($admin_pass);
             $sql = "INSERT INTO " . $table_prefix . "config VALUES (
@@ -717,7 +735,7 @@ if (empty($langfile)) {
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
                         '" . $table_prefix . "track_links', '" . $table_prefix . "upload',
-                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted')";
+                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG") . ' ' .tr("DONE").'</h4>';
             }else{

@@ -108,51 +108,33 @@ echo '<article class="module width_3_quarter">
         echo "<select name='sending_method' onChange='checkSMTP()'>";
         echo "<option value='smtp' ";
         if ($row_config_globale['sending_method'] == "smtp") echo "selected='selected' ";
-        echo ">smtp</option>";
+        echo ">SMTP</option>";
         echo "<option value='smtp_gmail' ";
         if ($row_config_globale['sending_method'] == "smtp_gmail") echo "selected='selected'";
-        echo ">smtp Gmail</option>";
+        echo ">SMTP GMAIL</option>";
         echo "<option value='php_mail' ";
         if ($row_config_globale['sending_method'] == "php_mail") echo "selected='selected'";
         echo ">" . tr("GCONFIG_MESSAGE_SEND_METHOD_FUNCTION") . "</option>";
-        
-        // ajout des smtp hébergeurs
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        echo "<option value='smtp_mutu_ovh' ";
+        if ($row_config_globale['sending_method'] == "smtp_mutu_ovh") echo "selected='selected'";
+        echo ">SMTP ".tr("INSTALL_SHARED")." OVH</option>";
+        echo "<option value='smtp_mutu_1and1' ";
+        if ($row_config_globale['sending_method'] == "smtp_mutu_1and1") echo "selected='selected'";
+        echo ">SMTP ".tr("INSTALL_SHARED")." 1AND1</option>";
+        echo "<option value='smtp_mutu_gandi' ";
+        if ($row_config_globale['sending_method'] == "smtp_mutu_gandi") echo "selected='selected'";
+        echo ">SMTP ".tr("INSTALL_SHARED")." GANDI</option>";
+        echo "<option value='smtp_mutu_online' ";
+        if ($row_config_globale['sending_method'] == "smtp_mutu_online") echo "selected='selected'";
+        echo ">SMTP ".tr("INSTALL_SHARED")." ONLINE</option>";
+        echo "<option value='smtp_mutu_infomaniak' ";
+        if ($row_config_globale['sending_method'] == "smtp_mutu_infomaniak") echo "selected='selected'";
+        echo ">SMTP ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
         echo "</select></fieldset>";
         echo "<fieldset><label>".tr("GCONFIG_MESSAGE_SMTP_HOST")."</label>";
         echo "<input type='text' name='smtp_host' value='".$row_config_globale['smtp_host']."' /></fieldset>";
-        
-        
-        
-        
-        // ajouter le port de connexion si spécial : sinon, indiquer un port par défaut.
-        
-        
-        
-        
+        echo "<fieldset><label>".tr("GCONFIG_MESSAGE_SMTP_PORT")."</label>";
+        echo "<input type='text' name='smtp_port' value='".$row_config_globale['smtp_port']."' /></fieldset>";
         echo "<fieldset><label>".tr("GCONFIG_MESSAGE_SMTP_AUTH")."</label>";
         if($row_config_globale['smtp_auth']=="0"){
             echo "<input type='radio' class='radio' name='smtp_auth' value='0' checked='checked'>" . tr("NO") . "&nbsp;<input type='radio' class='radio' name='smtp_auth' value='1'>" . tr("YES")."";
@@ -216,6 +198,13 @@ echo '<article class="module width_3_quarter">
         echo " > " . tr("NO");
         echo "<input type='radio' name='unsub_validation' value='1' ";
         if ($row_config_globale['unsub_validation']) echo "checked='checked'";
+        echo " > " . tr("YES") ."</fieldset>" ;
+        echo "<fieldset><label>".tr("ALERT_SUB")."</label>";
+        echo "<input type='radio' name='alert_sub' value='0' ";
+        if (!$row_config_globale['alert_sub']) echo "checked='checked'";
+        echo " > " . tr("NO");
+        echo "<input type='radio' name='alert_sub' value='1' ";
+        if ($row_config_globale['alert_sub']) echo "checked='checked'";
         echo " > " . tr("YES") ."</fieldset>" ;
         echo '</div></div><div id="tab6" class="tab_content" style="display: none;">';
         echo "<div class='module_content'>";

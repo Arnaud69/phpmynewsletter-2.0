@@ -206,14 +206,14 @@ function CronID() {
     mt_srand((double)microtime()*1000000);
     while (strlen($activatecode)<$len+1){
         $activatecode.=$base{mt_rand(0,$max)};
-    }
+	}
     return 'pmnl2_'.$activatecode;
 }
 function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted, $motif='') {
     if (!$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) 
-        VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
-        retunr false;
-    }
+		VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
+		return false;
+	}
     if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
@@ -741,10 +741,16 @@ function saveBounceFile($bounce_host,$bounce_user,$bounce_pass,$bounce_port,$bou
         return -1;
     }
 }
-function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$path,$language,$table_email,$table_temp,$table_listsconfig,$table_archives,$sending_method,$smtp_host,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,$validation_period,$sub_validation,$unsub_validation,$admin_email,$admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,$table_sauvegarde,$table_upload,$table_email_deleted) {
+function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$path,$language,
+                    $table_email,$table_temp,$table_listsconfig,$table_archives,$sending_method,
+                    $smtp_host,$smtp_port,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,
+                    $validation_period,$sub_validation,$unsub_validation,$admin_email,
+                    $admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,
+                    $table_sauvegarde,$table_upload,$table_email_deleted,$alert_sub) {
     $base_url          = escape_string($cnx,$base_url);
     $path              = escape_string($cnx,$path);
     $smtp_host         = escape_string($cnx,$smtp_host);
+	$smtp_port         = escape_string($cnx,$smtp_port);
     $smtp_login        = escape_string($cnx,$smtp_login);
     $smtp_pass         = escape_string($cnx,$smtp_pass);
     $sending_limit     = escape_string($cnx,$sending_limit);
@@ -763,7 +769,8 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $table_send        = escape_string($cnx,$table_send);
     $table_sauvegarde  = escape_string($cnx,$table_sauvegarde);
     $table_upload      = escape_string($cnx,$table_upload);
-    $table_email_deleted= escape_string($cnx,$table_email_deleted);
+	$table_email_deleted= escape_string($cnx,$table_email_deleted);
+	$alert_sub         = escape_string($cnx,$alert_sub);
     $sql = "UPDATE $config_table SET ";
     if (!empty($admin_pass)) {
         $sql .= "admin_pass='" . md5($admin_pass) . "', ";
@@ -791,7 +798,8 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $sql .= "table_send=$table_send, ";
     $sql .= "table_sauvegarde=$table_sauvegarde, ";
     $sql .= "table_upload=$table_upload, ";
-    $sql .= "table_email_deleted=$table_email_deleted ";
+    $sql .= "alert_sub='$alert_sub', ";
+	$sql .= "table_email_deleted=$table_email_deleted ";
     if($sending_method == 'mail') {
         $sql .= ", smtp_host='', ";
         $sql .= "smtp_auth='0' ";
@@ -799,6 +807,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
         $sql .= "smtp_pass=''";
     } else {
         $sql .= ", smtp_host=$smtp_host, ";
+		$sql .= "smtp_port=$smtp_port, ";
         $sql .= "smtp_auth='$smtp_auth' ";
         if ($smtp_auth == 1) {
             $sql .= ", smtp_login=$smtp_login, ";
@@ -924,6 +933,66 @@ function sendEmail($send_method, $to, $from, $from_name, $subject, $body, $auth 
         case "php_mail":
             $mail->IsMail();
             break;
+        case "smtp_mutu_ovh":
+            $mail->IsSMTP();
+            $mail->Port = 587;
+            $mail->Host = 'ssl0.ovh.net';
+            if ($auth) {
+                $mail->SMTPAuth = true;
+                $mail->Username = $smtp_login;
+                $mail->Password = $smtp_pass;
+            }
+            break;
+        case "smtp_mutu_1and1":
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 465;
+            $mail->Host = 'auth.smtp.1and1.fr';
+            if ($auth) {
+                $mail->SMTPAuth = true;
+                $mail->Username = $smtp_login;
+                $mail->Password = $smtp_pass;
+            }
+            break;
+        case "smtp_mutu_gandi":
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'tls';
+            $mail->Port = 587;
+            $mail->Host = 'mail.gandi.net';
+            if ($auth) {
+                $mail->SMTPAuth = true;
+                $mail->Username = $smtp_login;
+                $mail->Password = $smtp_pass;
+            }
+            break;
+        case "smtp_mutu_online":
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->Port = 587;
+            $mail->Host = 'smtpauth.online.net';
+            if ($auth) {
+                $mail->SMTPAuth = true;
+                $mail->Username = $smtp_login;
+                $mail->Password = $smtp_pass;
+            }
+            break;
+        case "smtp_mutu_infomaniak":
+            $mail->IsSMTP();
+            $mail->SMTPAuth = true;
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 587;
+            $mail->Host = 'mail.infomaniak.ch';
+            if ($auth) {
+                $mail->SMTPAuth = true;
+                $mail->Username = $smtp_login;
+                $mail->Password = $smtp_pass;
+            }
+            break;
+        default:
+            die(tr("NO_SEND_DEFINITION"));
+            break;
         default:
             break;
     }
@@ -998,26 +1067,26 @@ function unique_id() {
 }
 function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categorie,$short_desc,$long_desc,$campaign_id,$table_email_deleted,$table_send){
     $cnx->query("SET NAMES UTF8");
-    if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
+	if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
                         SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
-                                '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
-                                '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."
+								'".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
+								'".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."
                             FROM ".$table_email."
                                 WHERE email = '".($cnx->CleanInput($email))."' 
-                                    AND list_id='".($cnx->CleanInput($list_id))."'")){
-        if ($cnx->query("DELETE from ".$table_email." 
-                            WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
-                                AND email='".($cnx->CleanInput($email))."'")) {
-            if ($cnx->query("UPDATE $table_send 
-                                SET error=error+1 
-                                    WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+									AND list_id='".($cnx->CleanInput($list_id))."'")){
+		if ($cnx->query("DELETE from ".$table_email." 
+							WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
+								AND email='".($cnx->CleanInput($email))."'")) {
+			if ($cnx->query("UPDATE $table_send 
+								SET error=error+1 
+									WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
     } else {
         return false;
     }

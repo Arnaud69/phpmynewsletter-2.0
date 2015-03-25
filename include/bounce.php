@@ -33,7 +33,7 @@ if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
 
 $list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
 $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
-$campaign_id = $cnx->SqlRow("SELECT MAX(id_mail) AS id_mail FROM $table_send WHERE id_list=$list_id");
+$campaign_id = $cnx->SqlRow("SELECT MAX(id_mail) AS id_mail FROM ".$row_config_globale['table_send']." WHERE id_list=$list_id");
 
 if(file_exists("config_bounce.php")){
     include('config_bounce.php');
@@ -82,7 +82,7 @@ if(file_exists("config_bounce.php")){
                 UpdateEmailError($cnx,$row_config_globale['table_email'],$list_id,$item['recipients'][0]['email'],
                                  $item['recipients'][0]['status'],$item['recipients'][0]['bounce_type'],$item['recipients'][0]['bounce_cat'],
                                  $expl['third_subcode']['title'],$expl['third_subcode']['desc'],$campaign_id,
-								 $row_config_globale['table_email_deleted'],$row_config_globale['table_send']);
+                                 $row_config_globale['table_email_deleted'],$row_config_globale['table_send']);
             }
         }
     }
