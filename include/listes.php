@@ -10,10 +10,13 @@ switch($l){
             echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
                     <tr> 
-                        <th>'.tr("LIST_NUMBER").'</th>
-                        <th>'.tr("LIST_NAME").'</th>
-                        <th>'.tr("LIST_COUNT_SUSCRIBERS").'</th> 
-                        <th>'.tr("DELETE").'</th> 
+                        <th style="text-align:center">'.tr("LIST_NUMBER").'</th>
+                        <th style="text-align:center">'.tr("LIST_NAME").'</th>
+                        <th style="text-align:center">'.tr("LIST_COUNT_SUSCRIBERS").'</th>
+						<th style="text-align:center">'.tr("LIST_LAST_CAMPAIGN").'</th>
+						<th style="text-align:center">'.tr("LIST_DUPLICATE").'</th>
+						<th style="text-align:center">'.tr("LIST_MIX").'</th>
+                        <th style="text-align:center">'.tr("DELETE").'</th> 
                     </tr> 
                 </thead> 
                 <tbody>';
@@ -21,14 +24,23 @@ switch($l){
                 echo '<tr>';
                 echo '<td>'. ($item['list_id']==$list_id?"<b>$list_id</b>":$item['list_id']) .'</td>';
                 echo ($item['list_id']==$list_id?
-                    '<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" style="padding-left:4px;padding-right:6px;color:rgb(255,255,255);background-color:rgb(22,167,101);font:12px arial,sans-serif;" class="tooltip" title="'.tr("LIST_SELECTED").'"
+                    '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" style="padding-left:4px;padding-right:6px;color:rgb(255,255,255);background-color:rgb(22,167,101);font:12px arial,sans-serif;" class="tooltip" title="'.tr("LIST_SELECTED").'"
                     >'.$item['newsletter_name'].'</a></td>':
-                    '<td><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_SELECTED").'">'.$item['newsletter_name'].'</a></td>');
-                echo '<td>'. getSubscribersNumbers($cnx,$row_config_globale['table_email'],$item['list_id']).'</td>';
-                echo '<td><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("DELETE_THIS_LIST").' ?" onclick="return confirm(\''.tr("WARNING_DELETE_LIST").' !\')"><input type="image" src="css/icn_trash.png"></a></td>';
+                    '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_SELECTED").'">'.$item['newsletter_name'].'</a></td>');
+                echo '<td style="text-align:center">'. getSubscribersNumbers($cnx,$row_config_globale['table_email'],$item['list_id']).'</td>';
+				// last campaign
+				echo '<td style="text-align:center"></td>';
+				// list duplicate, copy and go ton newsletter conf
+				echo '<td style="text-align:center"></td>';
+				// list mix in a new list : check it and in bottom, put a button to commit and go to newsletter conf
+				echo '<td style="text-align:center"></td>';
+				// td to delete
+                echo '<td style="text-align:center"><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("DELETE_THIS_LIST").' ?" onclick="return confirm(\''.tr("WARNING_DELETE_LIST").' !\')"><input type="image" src="css/icn_trash.png"></a></td>';
                 echo '</tr>';
             }
             echo '</table>';
+			// faire appraitre ce bouton si 2 listes au moins sont sélectionnées
+			//<input type="button" value="MIX IT">
         } elseif($list_name == -1) {
             $error_list = true;
         } elseif(empty($list) && $page != "newsletterconf" && $page != "config") {

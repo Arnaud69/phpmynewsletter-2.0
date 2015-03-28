@@ -4,6 +4,39 @@ header('Access-Control-Allow-Origin: *');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 header('Content-type: application/json');
+function quotedPrintableEncode($input , $line_max = 76) {
+      $lines = preg_split("/\r\n|\r|\n/", $input);
+      $eol = "\r\n"; //Modifier cette partie en fonction de votre configuration CRLF/LF
+      $escape = '=';
+      $output = '';
+      while (list(, $line) = each($lines)) {
+        $linlen = strlen($line);
+        $newline = '';
+        for ($i = 0; $i < $linlen; $i++) {
+          $char = substr($line, $i, 1);
+          $dec = ord($char);
+// convert space at eol only
+          if ( ($dec == 32) && ($i == ($linlen - 1)) ) {
+            $char = '=20';
+          } elseif ($dec == 9) {
+// Do nothing if a tab.
+          } elseif ( ($dec == 61) || ($dec < 32 ) || ($dec > 126) ) {
+            $char = $escape . strtoupper(sprintf('%02s', dechex($dec)));
+          }
+// $this->lf is not counted
+          if ((strlen($newline) + strlen($char)) >= $line_max) {
+// soft line break; " =\r\n" is okay
+            $output .= $newline . $escape . $eol;
+            $newline = '';
+          }
+          $newline .= $char;
+        }
+        $output .= $newline . $eol;
+      }
+// Don't want last crlf
+      $output = substr($output, 0, -1 * strlen($eol));
+      return $output;
+    }
 if(!file_exists("include/config.php")) {
     header("Location:install.php");
     exit;
@@ -53,6 +86,8 @@ switch ($step) {
         $limit          = $row_config_globale['sending_limit'];
         $mail           = new PHPMailer();
         $mail->CharSet  = $row_config_globale['charset'];
+		$mail->ContentType="text/html";
+		$mail->Encoding = "quoted-printable";
         $mail->PluginDir= "include/lib/";
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
@@ -112,7 +147,7 @@ switch ($step) {
                     function($matches) {
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
-                    },$message);
+                    },$AltMessage);
                 $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
                             .tr("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."' style='' target='_blank'>")
                             ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
@@ -123,7 +158,7 @@ switch ($step) {
             }
             $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
             $mail->AltBody = quoted_printable_encode($AltBody->getText());
-            $body .= $trac . $message . $unsubLink;
+			$body .= $trac . $message . $unsubLink;
             $mail->Subject = $subject;
             $mail->Body    = $body;
             $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');

@@ -155,7 +155,7 @@ if(count($detail_task)==0){
             $mail->AddAddress(trim($addr[$i]['email']));
             $mail->XMailer = ' ';
             $body = "";
-            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' alt='".$list_id."' />";
+            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
@@ -168,7 +168,7 @@ if(count($detail_task)==0){
                     function($matches) {
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
-                    },$message_to_send);
+                    },$AltMessage);
                 $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
                 . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>") ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
