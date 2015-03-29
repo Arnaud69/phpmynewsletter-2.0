@@ -601,7 +601,7 @@ function list_bounce_error_chart_data_by_type($cnx, $table_email,$list_id) {
                 WHERE list_id=$list_id AND error='Y'")->fetchAll(PDO::FETCH_ASSOC);
     return $x;
 }
-function list_newsletter($cnx, $lists_table, $email_table) {
+function list_newsletter($cnx, $lists_table) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT list_id,newsletter_name FROM $lists_table ORDER BY list_id ASC")->fetchAll(PDO::FETCH_ASSOC);
     if (count($x) == 0){
@@ -609,6 +609,11 @@ function list_newsletter($cnx, $lists_table, $email_table) {
     } else {
         return $x;
     }
+}
+function list_newsletter_last_id_send($cnx, $table_send, $list_id) {
+    $cnx->query("SET NAMES UTF8");
+    $x = $cnx->SqlRow("SELECT MAX(id_mail) AS LAST_CAMPAIGN_ID FROM $table_send WHERE id_list='$list_id'");
+    return $x['LAST_CAMPAIGN_ID'];
 }
 function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr) {
     $cnx->query("SET NAMES UTF8");

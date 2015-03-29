@@ -155,7 +155,7 @@ if(count($detail_task)==0){
             $mail->AddAddress(trim($addr[$i]['email']));
             $mail->XMailer = ' ';
             $body = "";
-            $trac = "<img src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' />";
+            $trac = "<img style='border:0' src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' height='1' alt='" .$detail_task[0]['list_id']. "' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
@@ -178,7 +178,7 @@ if(count($detail_task)==0){
             }
             $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
             $mail->AltBody = quoted_printable_encode($AltBody->getText());
-            $body .= $trac . $message . $unsubLink;
+            $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
             $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$detail_task[0]['msg_id'].'&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');

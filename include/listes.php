@@ -7,6 +7,7 @@ switch($l){
         if($page != "config"){
             echo '<article class="module width_full">';
             echo '<header><h3>'.tr("LIST_OF_LISTS").'</h3></header>';
+			echo '<form action="" method="post">';
             echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
                     <tr> 
@@ -14,33 +15,37 @@ switch($l){
                         <th style="text-align:center">'.tr("LIST_NAME").'</th>
                         <th style="text-align:center">'.tr("LIST_COUNT_SUSCRIBERS").'</th>
 						<th style="text-align:center">'.tr("LIST_LAST_CAMPAIGN").'</th>
-						<th style="text-align:center">'.tr("LIST_DUPLICATE").'</th>
-						<th style="text-align:center">'.tr("LIST_MIX").'</th>
+						<th style="text-align:center">&nbsp; </th>
+						<th style="text-align:center">'.tr("LIST_MIX_TITLE").'</th>
                         <th style="text-align:center">'.tr("DELETE").'</th> 
                     </tr> 
                 </thead> 
                 <tbody>';
             foreach  ($list as $item){
                 echo '<tr>';
-                echo '<td>'. ($item['list_id']==$list_id?"<b>$list_id</b>":$item['list_id']) .'</td>';
+                echo '<td style="text-align:center">'. ($item['list_id']==$list_id?"<b>$list_id</b>":$item['list_id']) .'</td>';
                 echo ($item['list_id']==$list_id?
                     '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" style="padding-left:4px;padding-right:6px;color:rgb(255,255,255);background-color:rgb(22,167,101);font:12px arial,sans-serif;" class="tooltip" title="'.tr("LIST_SELECTED").'"
                     >'.$item['newsletter_name'].'</a></td>':
-                    '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_SELECTED").'">'.$item['newsletter_name'].'</a></td>');
+                    '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("CHOOSE_THIS_LIST").'">'.$item['newsletter_name'].'</a></td>');
                 echo '<td style="text-align:center">'. getSubscribersNumbers($cnx,$row_config_globale['table_email'],$item['list_id']).'</td>';
-				// last campaign
-				echo '<td style="text-align:center"></td>';
-				// list duplicate, copy and go ton newsletter conf
-				echo '<td style="text-align:center"></td>';
-				// list mix in a new list : check it and in bottom, put a button to commit and go to newsletter conf
-				echo '<td style="text-align:center"></td>';
-				// td to delete
-                echo '<td style="text-align:center"><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("DELETE_THIS_LIST").' ?" onclick="return confirm(\''.tr("WARNING_DELETE_LIST").' !\')"><input type="image" src="css/icn_trash.png"></a></td>';
+				echo '<td style="text-align:center">'. list_newsletter_last_id_send($cnx,$row_config_globale['table_send'],$item['list_id']).'</td>';
+				echo '<td style="text-align:center"><a href="?page=listes&l=l&action=duplicate&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_DUPLICATE").' ?" onclick="return confirm(\''.tr("LIST_DUPLICATE").' ?\')"><img src="css/icn_copy.png" /></a></td>';
+				echo '<td style="text-align:center"><input type="checkbox" class="tooltip mx" title="'.tr("LIST_MIX_DETAIL").'" name="mix_list_id[]" value="'.$item['list_id'].'" /></td>';
+                echo '<td style="text-align:center"><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("DELETE_THIS_LIST").' ?" onclick="return confirm(\''.tr("WARNING_DELETE_LIST").' ?\')"><img src="css/icn_trash.png" /></a></td>';
                 echo '</tr>';
             }
             echo '</table>';
-			// faire appraitre ce bouton si 2 listes au moins sont sélectionnées
-			//<input type="button" value="MIX IT">
+			?>
+            <script>$('input[type=checkbox].mx').change(function(){if($('input.mx:checked').size()>1){$("div#submitMix").show("slow");$("input#sbmix").removeAttr('disabled');}else{$('div#submitMix').hide("slow");}})</script>
+            <?php
+			echo '<div id="submitMix" style="display:none;margin-bottom:10px;margin-top:10px;" align="center">';
+			echo '<input type="submit" id="sbmix" value="'.tr("LIST_MIX_TITLE").'" disabled>';
+			echo '<input type="hidden" name="action" value="mix">';
+			echo '<input type="hidden" name="l" value="l">';
+			echo '<input type="hidden" name="page" value="listes">';
+			echo '<input type="hidden" name="token" value="'.$token.'">';
+			echo '</div></form>';
         } elseif($list_name == -1) {
             $error_list = true;
         } elseif(empty($list) && $page != "newsletterconf" && $page != "config") {

@@ -43,12 +43,6 @@ $t         =(empty($_GET['t'])?"":$_GET['t']);
 $t         =(empty($_POST['t'])?$t:$_POST['t']);
 $error_list=false;
 $subscriber_op_msg = '';
-if($action=='delete'&&$page=='listes'){
-    $deleted=deleteNewsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_globale['table_archives'],
-                                   $row_config_globale['table_email'],$row_config_globale['table_temp'],
-                                   $row_config_globale['table_send'],$row_config_globale['table_tracking'],
-                                   $row_config_globale['table_sauvegarde'],$list_id);
-}
 if($action=='purge_mailq'&&$page=='manager_mailq'&&$exec_available){
     $path_postsuper=exec('locate postsuper | grep bin');
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
@@ -121,6 +115,47 @@ if($action=='delete_id_from_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)&&$
         $cnx->query("DELETE FROM ".$row_config_globale['table_email']." WHERE email='".($cnx->CleanInput(urldecode($_GET['mail'])))."'");
     } else {
         $alerte_purge_mailq = "<h4 class='alert_error'>".tr("ROOT_TO_FLUSH_MAIL_QUEUE")."</h4>";
+    }
+}
+if($page=='listes'){
+    switch($action){
+        case 'delete':
+            $deleted=deleteNewsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_globale['table_archives'],
+                                   $row_config_globale['table_email'],$row_config_globale['table_temp'],
+                                   $row_config_globale['table_send'],$row_config_globale['table_tracking'],
+                                   $row_config_globale['table_sauvegarde'],$list_id);
+        break;
+        case 'duplicate':
+            $newsletter_modele = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
+            $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],tr("NEWSLETTER_NEW_LETTER"),$newsletter_modele['from'],
+                                  $newsletter_modele['from_name'],$newsletter_modele['subject'],$newsletter_modele['header'],$newsletter_modele['footer'],
+                                  $newsletter_modele['subscription_subject'],$newsletter_modele['subscription_body'],$newsletter_modele['welcome_subject'],
+                                  $newsletter_modele['welcome_body'],$newsletter_modele['quit_subject'],$newsletter_modele['quit_body'],$newsletter_modele['preview_addr']);
+			$subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$list_id);
+			foreach ($subscribers as $row) {
+				$add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
+			}
+            $list_id=$new_id;
+        break;
+        case 'mix':
+			if(!empty($_POST['mix_list_id'])&&is_array($_POST['mix_list_id'])){
+				$list_id_to_duplicate = $_POST['mix_list_id'][0];
+				$newsletter_modele = getConfig($cnx, $list_id_to_duplicate, $row_config_globale['table_listsconfig']);
+				$new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],tr("NEWSLETTER_NEW_LETTER"),$newsletter_modele['from'],
+									  $newsletter_modele['from_name'],$newsletter_modele['subject'],$newsletter_modele['header'],$newsletter_modele['footer'],
+									  $newsletter_modele['subscription_subject'],$newsletter_modele['subscription_body'],$newsletter_modele['welcome_subject'],
+									  $newsletter_modele['welcome_body'],$newsletter_modele['quit_subject'],$newsletter_modele['quit_body'],$newsletter_modele['preview_addr']);
+				foreach($_POST['mix_list_id'] as $id_to_load){
+					$subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$id_to_load);
+					foreach ($subscribers as $row) {
+						$add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
+					}
+				}
+				$list_id=$new_id;
+			}
+        break;
+        default:
+        break;
     }
 }
 $op_true = array(
@@ -278,7 +313,7 @@ if(!empty($list_id)){
     $list_name=get_newsletter_name($cnx,$row_config_globale['table_listsconfig'],$list_id);
     if($list_name==-1)unset($list_id);
 }
-$list=list_newsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_globale['table_email']);
+$list=list_newsletter($cnx,$row_config_globale['table_listsconfig']);
 
 if(!$list&&$page!="config"){
     $page  ="listes";
