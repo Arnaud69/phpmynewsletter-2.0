@@ -1,6 +1,8 @@
 <?php
 error_reporting(E_ALL);
 ini_set("display_errors",1);
+$version        = '2.0.4';
+$timezone       = '';
 if(file_exists("include/config.php")) {
     header("Location:index.php");
     exit;
@@ -8,7 +10,6 @@ if(file_exists("include/config.php")) {
     include('include/lib/pmn_fonctions.php');
     include('include/lib/constantes.php');
 }
-$version        = '2.0.4';
 $langfileArray  = array('castellano','dansk','deutsch','english','francais','italiano','nederlands',',norwsegian','portugues','portugues_do_Brazil','romana','svenska');
 $langfile       = (isset($_POST['langfile'])&&in_array($_POST['langfile'],$langfileArray) ? $_POST['langfile'] :"");
 $db_typeArray   = array('mysql','mssql','pgsql','oracle');
@@ -36,6 +37,7 @@ if (empty($langfile)) {
     <script src="js/jquery.min.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/jquery.colorbox.js"></script>
+    <script src="js/jsclock-0.8.min.js"></script>
     <script src="js/strength.min.js"></script>
     <style>.strength_meter{}.strength_meter div{width:100%;height:45px;text-align:center;color:black;font-weight:bold;line-height:45px;}.veryweak{background-color: #FFA0A0;border-color: #F04040!important}.weak{background-color: #FFB78C;border-color: #FF853C!important;}.medium{background-color: #FFEC8B;border-color: #FC0!important;}.strong{background-color: #C3FF88;border-color: #8DFF1C!important;}</style>
 </head>
@@ -67,7 +69,6 @@ if (empty($langfile)) {
         <ul class="toggle">
             <li class="icn_time"><a><?=tr("TIME_SERVER");?> : <span id='ts'></span></a></li>
         </ul>
-        <script>$(function(){function ts(){$.ajax({url:"datetime.php",success:function(data){$('#ts').html(data);}});setTimeout(ts,1000);}ts();});</script>
         <hr>
         <h3>Installation</h3>
         <ul>
@@ -507,7 +508,7 @@ if (empty($langfile)) {
                                 `table_listsconfig` VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_archives`    VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_host`         VARCHAR(255) NOT NULL DEFAULT "",
-                                `smtp_port` varchar(5) NOT NULL DEFAULT '',,
+                                `smtp_port`         VARCHAR(5) NOT NULL DEFAULT "",
                                 `smtp_auth`         ENUM("0","1") NOT NULL DEFAULT "0",
                                 `smtp_login`        VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_pass`         VARCHAR(255) NOT NULL DEFAULT "",
@@ -808,5 +809,6 @@ if (empty($langfile)) {
         ?>
         <div class="spacer"></div>
     </section>
+    <script type="text/javascript">$('#ts').jsclock('<?=date('H:i:s');?>');</script>
 </body>
 </html>
