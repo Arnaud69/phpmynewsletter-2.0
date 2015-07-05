@@ -482,7 +482,7 @@ if (empty($langfile)) {
                                 `categorie` VARCHAR(255) NOT NULL DEFAULT "",
                                 `short_desc` TEXT NOT NULL,
                                 `long_desc` TEXT NOT NULL,
-                                `campaign_id` INT(7) UNSIGNED NOT NULL DEFAULT "0"
+                                `campaign_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 PRIMARY KEY (`id`),
                                 UNIQUE KEY `unique_email_by_list` (`email`,`list_id`),
                                 KEY `hash` (`hash`),
