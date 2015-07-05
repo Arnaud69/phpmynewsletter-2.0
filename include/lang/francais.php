@@ -280,6 +280,7 @@ $lang_array = array(
     "INSTALL_SMTP_AUTH_NEEDED"=>"Authentification SMTP requise ?",
     "INSTALL_SMTP_USERNAME"=>"Nom d'utilisateur SMTP",
     "INSTALL_SMTP_PASSWORD"=>"Mot de passe SMTP",
+    "INSTALL_SMTP_PORT"=>"Port SMTP",
     "INSTALL_SUBSCRIPTION_TITLE"=>"Abonnement / Désabonnement",
     "INSTALL_SUB_CONFIRM"=>"Les abonnés doivent confirmer leur inscription ?",
     "INSTALL_UNSUB_CONFIRM"=>"Les abonnés doivent confirmer leur désinscription ?",
