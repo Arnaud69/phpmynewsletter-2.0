@@ -246,14 +246,14 @@ if (empty($langfile)) {
             echo '<label>'.tr("INSTALL_ADMIN_PASS").'</label>';
             echo "<input type='password' id='admin_pass' name='admin_pass' value=''>";
             echo '</fieldset>';
-            echo '<script>$(document).ready(function ($) { $("#admin_pass").strength({strengthButtonText: \' (Show password)\'}); });</script>';
+            echo '<label style="text-transform: lowercase;"><script>$(document).ready(function ($) { $("#admin_pass").strength({strengthButtonText: \' (Show password)\'}); });</script></label>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_ADMIN_BASEURL").'</label>';
-            echo "<input type='text' class='input' name='base_url' size='30' value='http://" . $_SERVER['HTTP_HOST'] . "/'><br>(" . tr("EXAMPLE") . " : http://www.mydomain.com/)";
+            echo "<input type='text' class='input' name='base_url' size='30' value='http://" . $_SERVER['HTTP_HOST'] . "/'><label style='text-transform: lowercase;'>(" . tr("EXAMPLE") . " : http://www.mydomain.com/)</label>";
             echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_ADMIN_PATH_TO_PMNL").'</label>';
-            echo "<input type='text' class='input' name='path' size='30' value='".str_replace($_SERVER['DOCUMENT_ROOT'].'/', "",(__DIR__))."/'><br>(" . tr("EXAMPLE") . " : tools/newsletter/)";
+            echo "<input type='text' class='input' name='path' size='30' value='".str_replace($_SERVER['DOCUMENT_ROOT'].'/', "",(__DIR__))."/'><label style='text-transform: lowercase;'>(" . tr("EXAMPLE") . " : tools/newsletter/)</label>";
             echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_LANGUAGE").'</label>';
@@ -274,7 +274,7 @@ if (empty($langfile)) {
             echo '<div class="module_content">';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_MESSAGE_SENDING_LOOP").'</label>';
-            echo "<input type='text' class='input' name='sending_limit' size='3' value='50'>";
+            echo "<input type='text' class='input' name='sending_limit' size='3' value='10'>";
             echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_SENDING_METHOD").'</label>';
@@ -293,6 +293,7 @@ if (empty($langfile)) {
             echo '<label>'.tr("INSTALL_SMTP_HOST").'</label>';
             echo "<input type='text' class='input' name='smtp_host' value='' disabled>";
             echo '</fieldset>';
+			echo '<fieldset>';
             echo '<label>'.tr("INSTALL_SMTP_PORT").'</label>';
             echo "<input type='text' class='input' name='smtp_port' value='' disabled>";
             echo '</fieldset>';
@@ -501,7 +502,7 @@ if (empty($langfile)) {
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak",) NOT NULL DEFAULT "php_mail",
+                                `sending_method`    ENUM("smtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak") NOT NULL DEFAULT "php_mail",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `table_email`       VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_temp`        VARCHAR(255) NOT NULL DEFAULT "",
@@ -715,6 +716,7 @@ if (empty($langfile)) {
                 $smtp_host         = $cnx->CleanInput($smtp_host);
                 $smtp_login        = $cnx->CleanInput($smtp_login);
                 $smtp_pass         = $cnx->CleanInput($smtp_pass);
+				$smtp_port         = $cnx->CleanInput($smtp_port);
                 $sending_limit     = $cnx->CleanInput($sending_limit);
                 $validation_period = $cnx->CleanInput($validation_period);
                 $sub_validation    = $cnx->CleanInput($sub_validation);
@@ -725,11 +727,11 @@ if (empty($langfile)) {
                 $alert_sub         = $cnx->CleanInput($alert_sub);
             }
             $admin_pass = md5($admin_pass);
-            $sql = "INSERT INTO " . $table_prefix . "config VALUES (
+            echo $sql = "INSERT INTO " . $table_prefix . "config VALUES (
                         '$admin_pass', '30', '$base_url', '$path',
                         '$sending_method', '$language', '" . $table_prefix . "email',
                         '" . $table_prefix . "temp','". $table_prefix . "listsconfig', '" . $table_prefix . "archives',
-                        '$smtp_host', '$smtp_auth','$smtp_login',
+                        '$smtp_host', '$smtp_port', '$smtp_auth','$smtp_login',
                         '$smtp_pass', '$sending_limit', '$validation_period',
                         '$sub_validation', '$unsub_validation', '$admin_email',
                         '$admin_name','$mod_sub',  '" . $table_prefix . "sub',

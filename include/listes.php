@@ -97,7 +97,7 @@ switch($l){
                 'searchreplace visualblocks code fullscreen textcolor emoticons',
                 'insertdatetime media table contextmenu paste filemanager colorpicker'
             ],
-            toolbar1: 'insertfile undo redo | bold italic | colorpicker forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+            toolbar1: 'insertfile undo redo | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
             toolbar2: 'styleselect | fontselect fontsizeselect | emoticons | link image | filemanager',
             style_formats: [
                {title: 'Open Sans', inline: 'span', styles:{ 'font-family':'Open Sans'}},
