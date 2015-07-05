@@ -727,7 +727,7 @@ if (empty($langfile)) {
                 $alert_sub         = $cnx->CleanInput($alert_sub);
             }
             $admin_pass = md5($admin_pass);
-            echo $sql = "INSERT INTO " . $table_prefix . "config VALUES (
+            $sql = "INSERT INTO " . $table_prefix . "config VALUES (
                         '$admin_pass', '30', '$base_url', '$path',
                         '$sending_method', '$language', '" . $table_prefix . "email',
                         '" . $table_prefix . "temp','". $table_prefix . "listsconfig', '" . $table_prefix . "archives',
