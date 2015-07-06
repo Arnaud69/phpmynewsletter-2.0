@@ -1,25 +1,13 @@
-<?PHP
-
-/********************************/
-/* MSSQL Class for Visiteurs    */
-/*                              */
-/* Last modified : 07/06/2001   */
-/* Author : François BAUD       */
-/********************************/
-
-if (!defined( "_DB_MYSQL_LAYER" ))
-{
+<?php
+if (!defined( "_DB_MYSQL_LAYER" )){
     define("_DB_MYSQL_LAYER", 1);
-
-    CLASS Db
-    {
+    class Db{
         var $ConnectionID;
         var $DatabaseName;
         var $Result;
         var $Row;
 
-        function DbConnect($host, $user, $passwd, $database)
-        {
+        function DbConnect($host, $user, $passwd, $database){
             $this->ConnectionID = @mssql_connect($host, $user, $passwd);
 
             if (!$this->ConnectionID)
@@ -30,9 +18,7 @@ if (!defined( "_DB_MYSQL_LAYER" ))
 
             return (true);
         }
-
-        function DbSelectDatabase($database)
-        {
+        function DbSelectDatabase($database){
             $this->DatabaseName = $database;
 
             if ($this->ConnectionID)
@@ -40,36 +26,24 @@ if (!defined( "_DB_MYSQL_LAYER" ))
             else
                 return false;
         }
-
-        function DbQuery($query, $start = '', $limit = '')
-        {
-            if ($start != '' || $limit != '')
-            {
+        function DbQuery($query, $start = '', $limit = ''){
+            if ($start != '' || $limit != ''){
                 $query .= ' LIMIT '.$start.','.$limit;
             }
-
             $this->Result = @mssql_query ($query, $this->ConnectionID);
             return ($this->Result);
         }
-
-        function DbNumRows()
-        {
+        function DbNumRows(){
             $count = @mssql_num_rows ($this->Result);
             return ($count);
         }
-
-        function DbNextRow()
-        {
+        function DbNextRow(){
             $this->Row = @mssql_fetch_array ($this->Result);
             return ($this->Row);
         }
-
-	function DbAffectedRows()
-	{
+	function DbAffectedRows(){
 	  return @mssql_rows_affected($this->ConnectionID);
 	}
-
-
     }
 }
 

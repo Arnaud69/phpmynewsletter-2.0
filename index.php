@@ -6,6 +6,7 @@ if(!file_exists("include/config.php")){
 } else{
     include("_loader.php");
 }
+
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
@@ -15,6 +16,7 @@ if($r != 'SUCCESS'){
     echo "</div>";
     exit;
 }
+
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("include/lang/".$row_config_globale['language'].".php");
 $form_pass=(empty($_POST['form_pass'])?"":$_POST['form_pass']);
@@ -131,28 +133,28 @@ if($page=='listes'){
                                   $newsletter_modele['from_name'],$newsletter_modele['subject'],$newsletter_modele['header'],$newsletter_modele['footer'],
                                   $newsletter_modele['subscription_subject'],$newsletter_modele['subscription_body'],$newsletter_modele['welcome_subject'],
                                   $newsletter_modele['welcome_body'],$newsletter_modele['quit_subject'],$newsletter_modele['quit_body'],$newsletter_modele['preview_addr']);
-			$subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$list_id);
-			foreach ($subscribers as $row) {
-				$add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
-			}
+            $subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$list_id);
+            foreach ($subscribers as $row) {
+                $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
+            }
             $list_id=$new_id;
         break;
         case 'mix':
-			if(!empty($_POST['mix_list_id'])&&is_array($_POST['mix_list_id'])){
-				$list_id_to_duplicate = $_POST['mix_list_id'][0];
-				$newsletter_modele = getConfig($cnx, $list_id_to_duplicate, $row_config_globale['table_listsconfig']);
-				$new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],tr("NEWSLETTER_NEW_LETTER"),$newsletter_modele['from'],
-									  $newsletter_modele['from_name'],$newsletter_modele['subject'],$newsletter_modele['header'],$newsletter_modele['footer'],
-									  $newsletter_modele['subscription_subject'],$newsletter_modele['subscription_body'],$newsletter_modele['welcome_subject'],
-									  $newsletter_modele['welcome_body'],$newsletter_modele['quit_subject'],$newsletter_modele['quit_body'],$newsletter_modele['preview_addr']);
-				foreach($_POST['mix_list_id'] as $id_to_load){
-					$subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$id_to_load);
-					foreach ($subscribers as $row) {
-						$add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
-					}
-				}
-				$list_id=$new_id;
-			}
+            if(!empty($_POST['mix_list_id'])&&is_array($_POST['mix_list_id'])){
+                $list_id_to_duplicate = $_POST['mix_list_id'][0];
+                $newsletter_modele = getConfig($cnx, $list_id_to_duplicate, $row_config_globale['table_listsconfig']);
+                $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],tr("NEWSLETTER_NEW_LETTER"),$newsletter_modele['from'],
+                                      $newsletter_modele['from_name'],$newsletter_modele['subject'],$newsletter_modele['header'],$newsletter_modele['footer'],
+                                      $newsletter_modele['subscription_subject'],$newsletter_modele['subscription_body'],$newsletter_modele['welcome_subject'],
+                                      $newsletter_modele['welcome_body'],$newsletter_modele['quit_subject'],$newsletter_modele['quit_body'],$newsletter_modele['preview_addr']);
+                foreach($_POST['mix_list_id'] as $id_to_load){
+                    $subscribers=get_subscribers($cnx,$row_config_globale['table_email'],$id_to_load);
+                    foreach ($subscribers as $row) {
+                        $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$new_id,$row['email'],$row_config_globale['table_email_deleted']);
+                    }
+                }
+                $list_id=$new_id;
+            }
         break;
         default:
         break;
@@ -178,6 +180,8 @@ if(in_array($op,$op_true)){
                                   $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
         break;
         case 'createConfig':
+            var_dump($_POST);
+            die();
             $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],
                                   $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
                                   $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],

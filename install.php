@@ -381,11 +381,11 @@ if (empty($langfile)) {
             if ($createdb == 1) {
                 switch($db_type){
                     case 'mysql':
-                        mysql_connect($hostname, $login, $pass);
-                        if(mysql_query("CREATE DATABASE $database")){
+                        $link_create_db = mysqli_connect($hostname, $login, $pass,$database);
+                        if(mysqli_query("CREATE DATABASE $database")){
                             echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_DB", $database).' OK</div>';
                         } else {
-                            die("<h4 class='alert_error'>" . tr("ERROR_SQL", mysql_error()) . "<br>" . tr("QUERY") . " : " . tr("INSTALL_CREATE_DB_DOWN") . " !<br>" . tr("INSTALL_REFRESH") . " !</h4>");
+                            die("<h4 class='alert_error'>" . tr("ERROR_SQL", mysqli_error($link_create_db)) . "<br>" . tr("QUERY") . " : " . tr("INSTALL_CREATE_DB_DOWN") . " !<br>" . tr("INSTALL_REFRESH") . " !</h4>");
                         }
                     break;
                     case 'mssql':
@@ -727,7 +727,7 @@ if (empty($langfile)) {
                 $alert_sub         = $cnx->CleanInput($alert_sub);
             }
             $admin_pass = md5($admin_pass);
-            $sql = "INSERT INTO " . $table_prefix . "config VALUES (
+            echo $sql = "INSERT INTO " . $table_prefix . "config VALUES (
                         '$admin_pass', '30', '$base_url', '$path',
                         '$sending_method', '$language', '" . $table_prefix . "email',
                         '" . $table_prefix . "temp','". $table_prefix . "listsconfig', '" . $table_prefix . "archives',

@@ -206,14 +206,14 @@ function CronID() {
     mt_srand((double)microtime()*1000000);
     while (strlen($activatecode)<$len+1){
         $activatecode.=$base{mt_rand(0,$max)};
-	}
+    }
     return 'pmnl2_'.$activatecode;
 }
 function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted, $motif='') {
     if (!$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) 
-		VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
-		return false;
-	}
+        VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
+        return false;
+    }
     if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
@@ -755,7 +755,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $base_url          = escape_string($cnx,$base_url);
     $path              = escape_string($cnx,$path);
     $smtp_host         = escape_string($cnx,$smtp_host);
-	$smtp_port         = escape_string($cnx,$smtp_port);
+    $smtp_port         = escape_string($cnx,$smtp_port);
     $smtp_login        = escape_string($cnx,$smtp_login);
     $smtp_pass         = escape_string($cnx,$smtp_pass);
     $sending_limit     = escape_string($cnx,$sending_limit);
@@ -774,8 +774,8 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $table_send        = escape_string($cnx,$table_send);
     $table_sauvegarde  = escape_string($cnx,$table_sauvegarde);
     $table_upload      = escape_string($cnx,$table_upload);
-	$table_email_deleted= escape_string($cnx,$table_email_deleted);
-	$alert_sub         = escape_string($cnx,$alert_sub);
+    $table_email_deleted= escape_string($cnx,$table_email_deleted);
+    $alert_sub         = escape_string($cnx,$alert_sub);
     $sql = "UPDATE $config_table SET ";
     if (!empty($admin_pass)) {
         $sql .= "admin_pass='" . md5($admin_pass) . "', ";
@@ -804,7 +804,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $sql .= "table_sauvegarde=$table_sauvegarde, ";
     $sql .= "table_upload=$table_upload, ";
     $sql .= "alert_sub='$alert_sub', ";
-	$sql .= "table_email_deleted=$table_email_deleted ";
+    $sql .= "table_email_deleted=$table_email_deleted ";
     if($sending_method == 'mail') {
         $sql .= ", smtp_host='', ";
         $sql .= "smtp_auth='0' ";
@@ -812,7 +812,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
         $sql .= "smtp_pass=''";
     } else {
         $sql .= ", smtp_host=$smtp_host, ";
-		$sql .= "smtp_port=$smtp_port, ";
+        $sql .= "smtp_port=$smtp_port, ";
         $sql .= "smtp_auth='$smtp_auth' ";
         if ($smtp_auth == 1) {
             $sql .= ", smtp_login=$smtp_login, ";
@@ -1072,26 +1072,26 @@ function unique_id() {
 }
 function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categorie,$short_desc,$long_desc,$campaign_id,$table_email_deleted,$table_send){
     $cnx->query("SET NAMES UTF8");
-	if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
+    if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
                         SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
-								'".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
-								'".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."
+                                '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
+                                '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."
                             FROM ".$table_email."
                                 WHERE email = '".($cnx->CleanInput($email))."' 
-									AND list_id='".($cnx->CleanInput($list_id))."'")){
-		if ($cnx->query("DELETE from ".$table_email." 
-							WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
-								AND email='".($cnx->CleanInput($email))."'")) {
-			if ($cnx->query("UPDATE $table_send 
-								SET error=error+1 
-									WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
+                                    AND list_id='".($cnx->CleanInput($list_id))."'")){
+        if ($cnx->query("DELETE from ".$table_email." 
+                            WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
+                                AND email='".($cnx->CleanInput($email))."'")) {
+            if ($cnx->query("UPDATE $table_send 
+                                SET error=error+1 
+                                    WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     } else {
         return false;
     }
