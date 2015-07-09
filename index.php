@@ -1,12 +1,12 @@
 <?php
 session_start();
+date_default_timezone_set('Europe/Berlin');
 if(!file_exists("include/config.php")){
     header("Location:install.php");
     exit;
 } else{
     include("_loader.php");
 }
-
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
@@ -16,7 +16,6 @@ if($r != 'SUCCESS'){
     echo "</div>";
     exit;
 }
-
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("include/lang/".$row_config_globale['language'].".php");
 $form_pass=(empty($_POST['form_pass'])?"":$_POST['form_pass']);
@@ -180,8 +179,6 @@ if(in_array($op,$op_true)){
                                   $_POST['welcome_body'],$_POST['quit_subject'],$_POST['quit_body'],$_POST['preview_addr']);
         break;
         case 'createConfig':
-            var_dump($_POST);
-            die();
             $new_id=createNewsletter($cnx,$row_config_globale['table_listsconfig'],$_POST['newsletter_name'],$_POST['from'],
                                   $_POST['from_name'],$_POST['subject'],$_POST['header'],$_POST['footer'],
                                   $_POST['subscription_subject'],$_POST['subscription_body'],$_POST['welcome_subject'],
@@ -273,7 +270,7 @@ if(in_array($op,$op_true)){
                             $mail_importe = str_replace('"',"",$mail_importe);
                             $mail_importe = strtolower(trim($mail_importe));
                             if(!empty($mail_importe)&&validEmailAddress($mail_importe)){
-                                $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe);
+                                $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe,$row_config_globale['table_email_deleted']);
                                 if($added==-1){
                                     $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
                                     $tx_error++;
