@@ -998,8 +998,6 @@ function sendEmail($send_method, $to, $from, $from_name, $subject, $body, $auth 
         default:
             die(tr("NO_SEND_DEFINITION"));
             break;
-        default:
-            break;
     }
     $mail->IsHTML(true);
     $mail->From     = $from;
