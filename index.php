@@ -44,6 +44,7 @@ $t         =(empty($_GET['t'])?"":$_GET['t']);
 $t         =(empty($_POST['t'])?$t:$_POST['t']);
 $error_list=false;
 $subscriber_op_msg = '';
+$smtp_manage_msg   = '';
 if($action=='purge_mailq'&&$page=='manager_mailq'&&$exec_available){
     $path_postsuper=exec('locate postsuper | grep bin');
     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
@@ -168,7 +169,10 @@ $op_true = array(
     'subscriber_add',
     'subscriber_del',
     'subscriber_del_temp',
-    'subscriber_import'
+    'subscriber_import',
+    'smtp_add',
+    'smtp_del',
+    'smtp_mod'
 );
 if(in_array($op,$op_true)){
     switch($op){
@@ -297,6 +301,40 @@ if(in_array($op,$op_true)){
                 $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_IMPORT_FILE_MISSING")." !</h4>";
             }
         break;
+        case 'smtp_add':
+            $smtp_name   =(isset($_POST['smtp_name'])?$cnx->CleanInput($_POST['smtp_name']):'');
+            $smtp_url    =(isset($_POST['smtp_url'])?$cnx->CleanInput($_POST['smtp_url']):'');
+            $smtp_user   =(isset($_POST['smtp_user'])?$cnx->CleanInput($_POST['smtp_user']):'');
+            $smtp_pass   =(isset($_POST['smtp_pass'])?$cnx->CleanInput($_POST['smtp_pass']):'');
+            $smtp_port   =(isset($_POST['smtp_port'])?$cnx->CleanInput($_POST['smtp_port']):'');
+            $smtp_limite =(isset($_POST['smtp_limite'])?$cnx->CleanInput($_POST['smtp_limite']):'');
+            // on vérifie que le couple url/port n'existe pas pour éviter les doublons d'insert (controle sur clé unique)
+            $cpt_already_exist = $cnx->SqlRow('SELECT * FROM '.$row_config_globale['table_smtp'].' 
+                                                WHERE smtp_url="'.$smtp_url.'" 
+                                                    AND smtp_port="'.$smtp_port.'"');
+            if($cpt_already_exist==0){
+            	if($cnx->query("INSERT INTO ".$row_config_globale['table_smtp']." (smtp_name,smtp_url,smtp_user,smtp_pass,smtp_port,smtp_limite,smtp_used,smtp_date_create)
+                            VALUES ( '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_limite',0,NOW() )")){
+					$smtp_manage_msg = "<h4 class='alert_success'>Serveur smtp ajouté correctement !</h4>";
+					// création du log et ajout de la ligne de création
+				} else {
+					$smtp_manage_msg = "<h4 class='alert_error'>Ajout du serveur smtp en erreur !</h4>";
+				}
+			} else {
+				$smtp_manage_msg = "<h4 class='alert_error'>Serveur smtp déjà connu !</h4>";
+			}
+        break;
+        case 'smtp_del':
+			$smtp_id   =(isset($_GET['smtp_id'])?$cnx->CleanInput($_GET['smtp_id']):'');
+			if($cnx->query("DELETE FROM ".$row_config_globale['table_smtp']." WHERE smtp_id=$smtp_id")){
+				$smtp_manage_msg = "<h4 class='alert_success'>Suppression correcte du serveur smtp !</h4>";
+				// ajout dans la ligne de log de la suppression du serveur
+			} else {
+				$smtp_manage_msg = "<h4 class='alert_error'>Suppression du serveur smtp en erreur !</h4>";
+			}
+        break;
+        case 'smtp_mod':
+        break;
         default:
         break;
     }
@@ -356,7 +394,7 @@ if(!$list&&$page!="config"){
         document.newsletter_list.submit();
     }
     function checkSMTP(){
-        if(document.global_config.elements['sending_method'].selectedIndex>2){
+        if(document.global_config.elements['sending_method'].selectedIndex>3){
             document.global_config.elements['smtp_host'].disabled = true;
             document.global_config.elements['smtp_host'].value = "";
             document.global_config.elements.smtp_auth[0].checked = "";
@@ -364,15 +402,18 @@ if(!$list&&$page!="config"){
             document.global_config.elements['smtp_login'].disabled = false;
             document.global_config.elements['smtp_pass'].disabled = false;
             document.global_config.elements['smtp_port'].disabled = true;
-        } else if (document.global_config.elements['sending_method'].selectedIndex==0){
-            document.global_config.elements['smtp_host'].disabled = false;
-            document.global_config.elements['smtp_host'].value = "<?=$row_config_globale['smtp_host'];?>";
+        } else if (document.global_config.elements['sending_method'].selectedIndex==1){
+            document.global_config.elements['smtp_host'].disabled = true;
+            document.global_config.elements['smtp_host'].value = "";
             document.global_config.elements.smtp_auth[0].checked = "checked";
             document.global_config.elements.smtp_auth[1].checked = "";
-            document.global_config.elements['smtp_login'].disabled = false;
-            document.global_config.elements['smtp_pass'].disabled = false;
-            document.global_config.elements['smtp_port'].disabled = false;
-        } else if (document.global_config.elements['sending_method'].selectedIndex==1){
+            document.global_config.elements['smtp_login'].disabled = true;
+            document.global_config.elements['smtp_login'].value = "";
+            document.global_config.elements['smtp_pass'].disabled = true;
+            document.global_config.elements['smtp_pass'].value = "";
+            document.global_config.elements['smtp_port'].disabled = true;
+            document.global_config.elements['smtp_port'].value = "";
+        } else if (document.global_config.elements['sending_method'].selectedIndex==2){
             document.global_config.elements['smtp_host'].disabled = false;
             document.global_config.elements['smtp_host'].value = "smtp.gmail.com";
             document.global_config.elements.smtp_auth[0].checked = "";
@@ -380,7 +421,7 @@ if(!$list&&$page!="config"){
             document.global_config.elements['smtp_login'].disabled = false;
             document.global_config.elements['smtp_pass'].disabled = false;
             document.global_config.elements['smtp_port'].disabled = true;
-        } else if (document.global_config.elements['sending_method'].selectedIndex==2){
+        } else if (document.global_config.elements['sending_method'].selectedIndex==3){
             document.global_config.elements['smtp_host'].disabled = true;
             document.global_config.elements['smtp_host'].value = "";
             document.global_config.elements.smtp_auth[0].checked = "checked";
@@ -527,6 +568,9 @@ if(!$list&&$page!="config"){
             if($page == "manager_mailq") {
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("PENDING_MAILS").'</a><div class="breadcrumb_divider"></div> <a class="current">'.tr("PENDING_MAILS_MANAGEMENT").'</a>';
             }
+            if($page == "configsmtp") {
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("GCONFIG_SMTP_LB_TITLE").'</a>';
+            }
             ?>
             </article>
         </div>
@@ -596,6 +640,11 @@ if(!$list&&$page!="config"){
         <h3><?=tr("MENU_CONFIG");?></h3>
         <ul class="toggle">
             <li class="icn_settings"><a href="?page=config&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("GCONFIG_TITLE");?></a></li>
+            <?php
+                if($row_config_globale['sending_method']=='lbsmtp'){
+                    echo '<li class="icn_settings"><a href="?page=configsmtp&token='.$token.'&list_id='.$list_id.'">'.tr("GCONFIG_SMTP_LB_TITLE").'</a></li>';
+                }
+            ?>
             <li class="icn_jump_back"><a href="logout.php"><?=tr("MENU_LOGOUT");?></a></li>
         </ul>
         
@@ -649,6 +698,9 @@ if(!$list&&$page!="config"){
                 break;
                 case "manager_mailq":
                     require("include/manager_mailq.php");
+                break;
+                case "configsmtp":
+                    require("include/manager_smtp.php");
                 break;
             }
         ?>

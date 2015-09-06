@@ -215,6 +215,8 @@ $lang_array = array(
     "GCONFIG_SERVICE"=>"Service : pop3 ou imap<br> Par défaut : pop3",
     "GCONFIG_SERVICE_OPTION"=>"Option du service : none, tls, notls, ssl<br> Par défaut : notls",
     "GCONFIG_TEST_BOUNCE"=>"Tester ces paramètres",
+    // SMTP CONFIGURATION :
+    "GCONFIG_SMTP_LB_TITLE"=>"Gestion Load Balancing SMTP",
     //ERROR
     "ERROR_SQL"=>"Erreur de la base de donnée :<br>%s<br>",
     "ERROR_SQL2"=>"Erreur SQL :<br>%s<br>",
@@ -280,7 +282,6 @@ $lang_array = array(
     "INSTALL_SMTP_AUTH_NEEDED"=>"Authentification SMTP requise ?",
     "INSTALL_SMTP_USERNAME"=>"Nom d'utilisateur SMTP",
     "INSTALL_SMTP_PASSWORD"=>"Mot de passe SMTP",
-    "INSTALL_SMTP_PORT"=>"Port SMTP",
     "INSTALL_SUBSCRIPTION_TITLE"=>"Abonnement / Désabonnement",
     "INSTALL_SUB_CONFIRM"=>"Les abonnés doivent confirmer leur inscription ?",
     "INSTALL_UNSUB_CONFIRM"=>"Les abonnés doivent confirmer leur désinscription ?",
@@ -309,7 +310,7 @@ $lang_array = array(
     "INSTALL_SHARED"=>"mutualisé",
     "INSTALL_CHOOSE_PASSWORD"=>"Merci de saisir un mot de passe",
     "INSTALL_RESULT_INSTALLATION"=>"Résultat de l'installation",
-    "INSTALL_CREATE_DB_DOWN"=>"Database create down",
+    "INSTALL_CREATE_DB_DOWN"=>"La création de la base de données a échoué",
     "QUERY"=>"Requête",
     "UPLOAD_DIRECTORY"=>"Répertoire d'upload",
     "DKIM_DIRECTORY"=>"Répertoire des certificats DKIM",
@@ -412,14 +413,14 @@ $lang_array = array(
     // ONLINE, SEND
     "READ_ON_LINE"=>"Si cet e-mail ne s'affiche pas correctement, veuillez %scliquer ici</a>", // If you can’t view this message correctly, click here
     "ADD_ADRESS_BOOK"=>"Ajoutez %s &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !", //Please, add % to your address book to make sure you receive our news in your inbox
-    "UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %sd&eacute;sinscription</a>", // No longer interested ? %s Unsubscribe
+    "UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %sdésinscription</a>", // No longer interested ? %s Unsubscribe
     "MAIL_PREVIEW_SEND"=>"Mail de preview",
     "NO_SEND_DEFINITION"=>"Mode d'envoi non défini !",
     // TRACK
     "CLICKED_LINK_REPORT"=>"Compte rendu des liens cliqués",
     "CLICKED_LINK_REPORT_GRAPHIC"=>"Graphique liens cliqués",
     "CLICKED_LINK"=>"Liens cliqués",
-    "CLICKED_LINK_COUNT"=>"Count",
+    "CLICKED_COUNT"=>"Nombre de clics",
     "CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
     // UPLOAD
     "ATTACHMENTS"=>"Pièces jointes",
@@ -512,11 +513,11 @@ $lang_array = array(
     "SCHEDULE_NOT_POSSIBLE_TRANSACTION"=>"Transaction impossible",
     "SCHEDULE_REPORT_SUBJECT"=>"Rapport d'un envoi planifié",
     "SCHEDULE_REPORT_TITLE"=>"PhpMyNewsLetter vous informe",
-    "SCHEDULE_REPORT_LONG_DESC"=>"Compte rendu d'envoi d'une campagne planifi&eacute;e",
+    "SCHEDULE_REPORT_LONG_DESC"=>"Compte rendu d'envoi d'une campagne planifiée",
     "SCHEDULE_CAMPAIGN_TITLE"=>"Nom de la campagne",
     "SCHEDULE_CAMPAIGN_ID"=>"Identifiant de la campagne",
-    "SCHEDULE_CAMPAIGN_DATE_DONE"=>"Date d'ex&eacute;cution",
-    "SCHEDULE_CAMPAIGN_SENDED"=>"Nombre de mails envoy&eacute;s",
+    "SCHEDULE_CAMPAIGN_DATE_DONE"=>"Date d'exécution",
+    "SCHEDULE_CAMPAIGN_SENDED"=>"Nombre de mails envoyés",
     "SCHEDULE_CAMPAIGN_ERROR"=>"Nombre de mails en erreur",
     "SCHEDULE_START_PROCESS"=>"Envoi commencé",
     "SCHEDULE_END_PROCESS"=>"Envoi terminé",
@@ -566,7 +567,6 @@ $lang_array = array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
-
 
 
 

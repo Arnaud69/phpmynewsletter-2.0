@@ -109,6 +109,9 @@ echo '<article class="module width_3_quarter">
         echo "<option value='smtp' ";
         if ($row_config_globale['sending_method'] == "smtp") echo "selected='selected' ";
         echo ">SMTP</option>";
+		echo "<option value='lbsmtp' ";
+        if ($row_config_globale['sending_method'] == "lbsmtp") echo "selected='selected' ";
+        echo ">Load Balancing SMTP</option>";
         echo "<option value='smtp_gmail' ";
         if ($row_config_globale['sending_method'] == "smtp_gmail") echo "selected='selected'";
         echo ">SMTP GMAIL</option>";
