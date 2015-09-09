@@ -1,10 +1,11 @@
 <?php
-/* 
+/*------------------------------------------------------------------------
 
-For a new smtp service, please ask it on forum www.phpmynewsletter.com/forum/
+For a new smtp service, please ask it on www.phpmynewsletter.com/forum/
+--------------------------------------------------------------------------
+Please, don't touch after this line, or phpmynewsletter won't work anymore.
 
-*/
-
+------------------------------------------------------------------------*/
 if(!isset($send_method)){
     $send_method = $row_config_globale['sending_method'];
 }
@@ -19,6 +20,46 @@ switch ($send_method) {
             $mail->Password = $row_config_globale['smtp_pass'];
         }
         break;
+    case 'lbsmtp':
+        // on sélectionne le dernier id_use activé :
+        $CURRENT_ID = @current($cnx->query("SELECT MAX( id_use ) AS CURRENT_ID FROM ".$row_config_globale['table_smtp'])->fetch());
+        // On va chercher un serveur qui n'a pas atteint sa limite qui a moins de 24 heures :
+        // SELECT * FROM test_smtp WHERE smtp_date_update > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+        $info_smtp_lb = $cnx->SqlRow("SELECT * 
+            FROM ".$row_config_globale['table_smtp']." 
+                WHERE smtp_used<smtp_limite                                /* quota disponible    */
+                AND smtp_date_update > DATE_SUB(CURDATE(), INTERVAL 1 DAY) /* moins de 24 heures  */
+            ORDER BY id_use ASC LIMIT 1");     /* le id_use le plus petit */
+        // Déclaration smtp :
+        $mail->IsSMTP();
+        // si on a de l'authentification :
+        if($info_smtp_lb['smtp_user']!=''){
+            $mail->SMTPAuth = true;
+            $mail->Username = $info_smtp_lb['smtp_user'];
+            $mail->Password = $info_smtp_lb['smtp_pass'];
+        }
+        // si on a du secure :
+        if($info_smtp_lb['smtp_secure']!=''){
+            $mail->SMTPSecure = $info_smtp_lb['smtp_secure'];
+        }
+        $mail->Host = $info_smtp_lb['smtp_url'];
+        // le port
+        if($info_smtp_lb['smtp_port']!=''){
+            $mail->Port = $info_smtp_lb['smtp_port'];
+        }else{
+            $mail->Port = 25;
+        }
+        // on update le id_use à $CURRENT_ID+1 de l'article sélectionné et +1 au compteur smtp_used
+        $cnx->query('UPDATE '.$row_config_globale['table_smtp'].' 
+                         SET 
+                            smtp_used=smtp_used+1, id_use='.(intval($CURRENT_ID)+1).' /* update des champs dernier id_use et smtp_used */
+                     WHERE 
+                        smtp_id='.$info_smtp_lb['smtp_id']);
+        $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+        $daylogmsg= date("Y-m-d H:i:s") . " : envoi à $dest_adresse sur serveur ".$info_smtp_lb['smtp_name']."\n";
+        fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+        fclose($daylog);
+    break;
     case "smtp_gmail":
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
@@ -31,14 +72,7 @@ switch ($send_method) {
         break;
     case "php_mail":
         $mail->IsMail();
-        break;
-    /*------------------------------------------------------------------------*/
-    
-    /*
-    Please, don't touch before this line, or phpmynewsletter won't work anymore.
-    */    
-        
-        
+        break;  
     case "smtp_mutu_ovh":
         $mail->IsSMTP();
         $mail->Port = 587;
@@ -100,13 +134,6 @@ switch ($send_method) {
         die(tr("NO_SEND_DEFINITION"));
         break;
 }
-
-
-
-
-
-
-
 
 
 

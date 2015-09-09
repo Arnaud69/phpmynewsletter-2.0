@@ -8,7 +8,7 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
             AND subject = (SELECT id FROM ".$row_config_globale['table_archives']." WHERE id='".$_GET['i']."')";
     $row_id = $cnx->query($sql)->fetchAll();
     $nb_result=count($row_id);
-    $graphic_http=$row_config_globale['base_url'].'pmn/blank.gif';
+    $graphic_http=$row_config_globale['base_url'].$row_config_globale['path'].'blank.gif';
     $filesize=filesize('blank.gif');
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
@@ -18,9 +18,12 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
         $ip = $_SERVER['REMOTE_ADDR'];
     }
     if($nb_result==0){
-        $cnx->query("INSERT INTO ".$row_config_globale['table_tracking']."(hash,subject,date,open_count,ip) VALUES ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."')");
+        $cnx->query("INSERT INTO ".$row_config_globale['table_tracking']."(hash,subject,date,open_count,ip) 
+            VALUES ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."')");
     }elseif($nb_result==1){
-        $cnx->query("UPDATE ".$row_config_globale['table_tracking']." SET date=NOW(),open_count=open_count+1,ip='".$ip."' WHERE hash='".$_GET['h']."' AND subject='".$_GET['i']."'");
+        $cnx->query("UPDATE ".$row_config_globale['table_tracking']." 
+            SET date=NOW(),open_count=open_count+1,ip='".$ip."' 
+                WHERE hash='".$_GET['h']."' AND subject='".$_GET['i']."'");
     }else{
         // dumb issue...
     }
@@ -33,7 +36,6 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     header('Content-Length:'.$filesize);
     readfile($graphic_http);
 }
-
 
 
 

@@ -307,31 +307,41 @@ if(in_array($op,$op_true)){
             $smtp_user   =(isset($_POST['smtp_user'])?$cnx->CleanInput($_POST['smtp_user']):'');
             $smtp_pass   =(isset($_POST['smtp_pass'])?$cnx->CleanInput($_POST['smtp_pass']):'');
             $smtp_port   =(isset($_POST['smtp_port'])?$cnx->CleanInput($_POST['smtp_port']):'');
+            $smtp_secure =(isset($_POST['smtp_secure'])?$cnx->CleanInput($_POST['smtp_secure']):'');
             $smtp_limite =(isset($_POST['smtp_limite'])?$cnx->CleanInput($_POST['smtp_limite']):'');
-            // on vérifie que le couple url/port n'existe pas pour éviter les doublons d'insert (controle sur clé unique)
+            if($smtp_limite==0 || $smtp_limite==''){
+                $smtp_limite=1800;
+            }
             $cpt_already_exist = $cnx->SqlRow('SELECT * FROM '.$row_config_globale['table_smtp'].' 
                                                 WHERE smtp_url="'.$smtp_url.'" 
                                                     AND smtp_port="'.$smtp_port.'"');
             if($cpt_already_exist==0){
-            	if($cnx->query("INSERT INTO ".$row_config_globale['table_smtp']." (smtp_name,smtp_url,smtp_user,smtp_pass,smtp_port,smtp_limite,smtp_used,smtp_date_create)
-                            VALUES ( '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_limite',0,NOW() )")){
-					$smtp_manage_msg = "<h4 class='alert_success'>Serveur smtp ajouté correctement !</h4>";
-					// création du log et ajout de la ligne de création
-				} else {
-					$smtp_manage_msg = "<h4 class='alert_error'>Ajout du serveur smtp en erreur !</h4>";
-				}
-			} else {
-				$smtp_manage_msg = "<h4 class='alert_error'>Serveur smtp déjà connu !</h4>";
-			}
+                if($cnx->query("INSERT INTO ".$row_config_globale['table_smtp']." (smtp_name,smtp_url,smtp_user,smtp_pass,smtp_port,smtp_secure,smtp_limite,smtp_used,smtp_date_create,smtp_date_update)
+                            VALUES ( '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_secure','$smtp_limite',0,NOW(),NOW() )")){
+                    $smtp_manage_msg = "<h4 class='alert_success'>Serveur smtp ajouté correctement !</h4>";
+                    $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+                    $daylogmsg= date("Y-m-d H:i:s") . " : ajout serveur smtp : '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_secure','$smtp_limite'\n";
+                    fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+                    fclose($daylog);
+                } else {
+                    $smtp_manage_msg = "<h4 class='alert_error'>Ajout du serveur smtp en erreur !</h4>";
+                }
+            } else {
+                $smtp_manage_msg = "<h4 class='alert_error'>Serveur smtp déjà connu !</h4>";
+            }
         break;
         case 'smtp_del':
-			$smtp_id   =(isset($_GET['smtp_id'])?$cnx->CleanInput($_GET['smtp_id']):'');
-			if($cnx->query("DELETE FROM ".$row_config_globale['table_smtp']." WHERE smtp_id=$smtp_id")){
-				$smtp_manage_msg = "<h4 class='alert_success'>Suppression correcte du serveur smtp !</h4>";
-				// ajout dans la ligne de log de la suppression du serveur
-			} else {
-				$smtp_manage_msg = "<h4 class='alert_error'>Suppression du serveur smtp en erreur !</h4>";
-			}
+            $smtp_id   =(isset($_GET['smtp_id'])?$cnx->CleanInput($_GET['smtp_id']):'');
+            if($cnx->query("DELETE FROM ".$row_config_globale['table_smtp']." WHERE smtp_id=$smtp_id")){
+                $smtp_manage_msg = "<h4 class='alert_success'>Suppression correcte du serveur smtp !</h4>";
+                $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+                $daylogmsg= date("Y-m-d H:i:s") . " : suppression du serveur smtp $smtp_id\n";
+                fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+                fclose($daylog);
+                @unlink('logs/smtp-'.$smtp_id.'.txt');
+            } else {
+                $smtp_manage_msg = "<h4 class='alert_error'>Suppression du serveur smtp en erreur !</h4>";
+            }
         break;
         case 'smtp_mod':
         break;

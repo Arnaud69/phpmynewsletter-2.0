@@ -366,7 +366,7 @@ function get_relative_path($filename) {
 }
 function get_stats_send($cnx,$list_id,$param_global){
     $cnx->query("SET NAMES UTF8");
-    return $cnx->query("SELECT a.id, a.date, a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
+    return $cnx->query("SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d') as dt, a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
                 (SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject=a.id) AS TID,
                 (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id) AS TOPEN
             FROM ".$param_global['table_send']." s
@@ -1073,7 +1073,7 @@ function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categ
     if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
                         SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
                                 '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
-                                '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."
+                                '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."'
                             FROM ".$table_email."
                                 WHERE email = '".($cnx->CleanInput($email))."' 
                                     AND list_id='".($cnx->CleanInput($list_id))."'")){

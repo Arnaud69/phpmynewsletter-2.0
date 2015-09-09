@@ -1,85 +1,115 @@
 <article class="module width_full">
     <header><h3><?=tr("TRACKING_TITLE");?></h3></header>
     <?php
-    $row_cnt = get_id_send($cnx,$list_id,$row_config_globale['table_send']);
+    $row_cnt = get_id_send($cnx,$list_id,$row_config_globale['table_send']); // le nombre d'envoi pour une liste
     if($row_cnt['CPTID'] > 0){
-        $array_stats = get_stats_send($cnx,$list_id,$row_config_globale);
+        $array_stats_tmp = get_stats_send($cnx,$list_id,$row_config_globale); // les stats complètes par envoi dans une liste
+        /* exemple :
+        
+        SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d'),a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
+                (SELECT COUNT(id) FROM test_track WHERE subject=a.id) AS TID,
+                (SELECT SUM(open_count) FROM test_send WHERE id_mail=a.id) AS TOPEN
+            FROM test_send s
+                LEFT JOIN test_archives a ON a.id=s.id_mail 
+                LEFT JOIN test_track t ON a.id=t.subject
+            WHERE a.list_id=6
+                GROUP BY a.id
+            ORDER BY a.id DESC LIMIT 15
+            
+        Voir si modification à la hausse de la limite du nombre d'articles
+        
+        */
         switch($data){
             case 'co':
                 echo '<div class="module_content">';
-                reset($array_stats);
-                usort($array_stats, build_sorter('date'));
-                $tableau_sujet = array();
-                $tableau_cpt   = array();
-                $tableau_error = array();
-                $tableau_TID   = array();
-                $tableau_TOPEN = array();
-                $tableau_leave = array();
-                $TickLabels    = array();
-                define('PREFIX_DIR', 'tracking_graphs');
-                define('PREFIX', 'jpgraph');
-                define('TIME_LIMIT', 3 * 60);
-                $tmpfname = tempnam(PREFIX_DIR, PREFIX);
-                foreach($array_stats as $row){
-                    $tableau_sujet[] =($row['subject']  !=''?$row['subject']:0);
-                    $tableau_cpt[]   =($row['cpt']      !=''?$row['cpt']    :0);
-                    $tableau_error[] =($row['error']    !=''?$row['error']  :0);
-                    $tableau_TID[]   =($row['TID']      !=''?$row['TID']    :0);
-                    $tableau_TOPEN[] =($row['TOPEN']    !=''?$row['TOPEN']  :0);
-                    $tableau_leave[] =($row['leave']    !=''?$row['leave']  :0);
-                    $TickLabels[]    =$row['date'];
-                }
-                @$_GET['tg']=='l'?$typ_graph='line':$typ_graph='bar';
-                require_once("include/lib/jpgraph/src/jpgraph.php");
-                $graph = new Graph(860,640,'auto');
-                $graph->SetScale("textlin");
-                $theme_class=new UniversalTheme;
-                $graph->SetTheme($theme_class);
-                $graph->img->SetAntiAliasing(false);
-                $graph->title->Set(tr("TRACKING_STATS_GRAPHICS_REPORT"));
-                $graph->SetBox(false);
-                $graph->img->SetAntiAliasing(false);   
-                require_once("include/lib/jpgraph/src/jpgraph_bar.php");
-                $graph->yaxis->HideZeroLabel();
-                $graph->yaxis->HideLine(false);
-                $graph->yaxis->HideTicks(false,false);
-                $graph->xgrid->Show();
-                $graph->ygrid->SetFill(false);
-                $graph->xaxis->SetTickLabels($TickLabels);
-                $graph->xaxis->SetLabelAngle(75);
-                $b1plot = new BarPlot($tableau_cpt);
-                $b2plot = new BarPlot($tableau_error);
-                $b3plot = new BarPlot($tableau_TID);
-                $b4plot = new BarPlot($tableau_TOPEN);
-                $b5plot = new BarPlot($tableau_leave);
-                $gbplot = new GroupBarPlot(array($b1plot,$b2plot,$b3plot,$b4plot,$b5plot));
-                $graph->Add($gbplot);
-                $b1plot->SetColor("green");
-                $b1plot->SetFillColor("green");
-                $b1plot->SetLegend('Envois');
-                $b2plot->SetColor("red");
-                $b2plot->SetFillColor("red");
-                $b2plot->SetLegend('Erreurs');
-                $b3plot->SetColor("blue");
-                $b3plot->SetFillColor("blue");
-                $b3plot->SetLegend('Ouvertures');
-                $b4plot->SetColor("#FBE32A");
-                $b4plot->SetFillColor("#FBE32A");
-                $b4plot->SetLegend('Lectures');
-                $b5plot->SetColor("#000");
-                $b5plot->SetFillColor("#000");
-                $b5plot->SetLegend('Abandon');
-                $graph->legend->SetColumns(5);
-                $graph->legend->SetFrameWeight(2);
-                $graph->legend->SetShadow();
-                $graph->legend->Pos(0.5,0.99,'center','bottom'); 
-                $graph->legend->SetLayout(LEGEND_HOR);
-                $graph->Stroke($tmpfname);
-                clean_old_tmp_files();
+                $array_stats=array_reverse($array_stats_tmp);
                 ?>
-                <article class="stats_graph">
-                    <img src="<?php echo get_relative_path($tmpfname); ?>">
-                </article>
+                <script type="text/javascript" src="//www.amcharts.com/lib/3/amcharts.js"></script>
+                <script type="text/javascript" src="//www.amcharts.com/lib/3/serial.js"></script>
+                <script type="text/javascript">
+                    AmCharts.makeChart("chartdiv",
+                        {
+                            "type": "serial",
+                            "categoryField": "date",
+                            "dataDateFormat": "YYYY-MM-DD",
+                            "categoryAxis": {
+                                "parseDates": true
+                            },
+                            "chartCursor": {},
+                            "chartScrollbar": {},
+                            "trendLines": [],
+                            "graphs": [
+                                {
+                                    "bullet": "round",
+                                    "id": "envois",
+                                    "title": "Envois",
+                                    "valueField": "c1"
+                                },
+                                {
+                                    "bullet": "square",
+                                    "id": "erreurs",
+                                    "title": "Erreurs",
+                                    "valueField": "c2"
+                                },
+                                {
+                                    "bullet": "square",
+                                    "id": "ouvertures",
+                                    "title": "Ouvertures",
+                                    "valueField": "c3"
+                                },
+                                {
+                                    "bullet": "square",
+                                    "id": "lectures",
+                                    "title": "Lectures",
+                                    "valueField": "c4"
+                                },
+                                {
+                                    "bullet": "square",
+                                    "id": "abandons",
+                                    "title": "Abandons",
+                                    "valueField": "c5"
+                                }
+                            ],
+                            "guides": [],
+                            "valueAxes": [
+                                {
+                                    "id": "ValueAxis-1",
+                                    "title": "Nombre"
+                                }
+                            ],
+                            "allLabels": [],
+                            "balloon": {},
+                            "legend": {
+                                "useGraphSettings": true
+                            },
+                            "titles": [
+                                {
+                                    "id": "Title-1",
+                                    "size": 15,
+                                    "text": "<?=tr("TRACKING_STATS_GRAPHICS_REPORT");?>"
+                                }
+                            ],
+                            "dataProvider": [
+                                <?php
+                                foreach($array_stats as $row){
+                                    echo '
+                                    {
+                                        "date":"'.$row['dt'].'",
+                                        "c1":'.($row['cpt']      !=''?$row['cpt']    :0).',
+                                        "c2":'.($row['error']    !=''?$row['error']  :0).',
+                                        "c3":'.($row['TOPEN']    !=''?$row['TOPEN']  :0).',
+                                        "c4":'.($row['TID']      !=''?$row['TID']    :0).',
+                                        "c5":'.($row['leave']    !=''?$row['leave']  :0).'
+                                    },';
+                                    //$tableau_sujet[] =($row['subject']  !=''?$row['subject']:0);
+                                }
+                                ?>
+                            ]
+                        }
+                    );
+                </script>
+                <div id="chartdiv" style="width: 100%; height: 500px; background-color: #FFFFFF;" ></div>
+                <?php // full editor : http://live.amcharts.com/new/edit/ ; ?>
                 <?php
             break;
             
@@ -114,7 +144,7 @@
                     echo '<td>'. $row['cpt'].                           '</td>';
                     echo '<td>'. ($row['TOPEN']!=''?$row['TOPEN']:0).   '</td>';
                     echo '<td>'. $row['TID'].                           '</td>';
-                    echo '<td>'. $row['error'].                         '</td>';
+                    echo '<td>'.$row['error'].                          '</td>';
                     echo '<td>'. $row['leave'].                         '</td>';
                     if(is_file("logs/list$list_id-msg".$row['id_mail'].".txt")){
                         echo '<td><a href="dl.php?log=logs/list'.$list_id.'-msg'.$row['id_mail'].'.txt&token='.$token.'" title="Télécharger le fichier log"><img src="css/icn_download.png" /></a></td>';

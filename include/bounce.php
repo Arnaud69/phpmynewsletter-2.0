@@ -34,7 +34,7 @@ if (!checkAdminAccess($row_config_globale['admin_pass'], $form_pass)) {
 $list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
 $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
 $campaign_id = $cnx->SqlRow("SELECT MAX(id_mail) AS id_mail FROM ".$row_config_globale['table_send']." WHERE id_list=$list_id");
-
+var_dump($campaign_id);
 if(file_exists("config_bounce.php")){
     include('config_bounce.php');
     include('lib/class.cws.mbh.php');
@@ -53,7 +53,7 @@ if(file_exists("config_bounce.php")){
             $cwsMailBounceHandler->port                 = 993;                                                      // the port to access your mailbox ; default 143, other common choices are 110 (pop3), 995 (gmail)
             $cwsMailBounceHandler->service              = 'imap';                                                   // the service to use (imap or pop3) ; default 'imap'
             $cwsMailBounceHandler->service_option       = 'ssl';                                                    // the service options (none, tls, notls, ssl) ; default 'notls'
-            $cwsMailBounceHandler->boxname               = 'bounce';
+            $cwsMailBounceHandler->boxname              = 'bounce';
             break;
         default:
             $cwsMailBounceHandler->disable_delete       = ($type_env=='prod' ? false : true);                       // on supprime les messages en erreur du serveur:false, on supprime rien : true. !!! Si test_mode=true alors disable_delete=true
@@ -81,7 +81,7 @@ if(file_exists("config_bounce.php")){
             if($item['processed']&&$item['recipients'][0]['action']=='failed'&&$type_env=='prod'){
                 UpdateEmailError($cnx,$row_config_globale['table_email'],$list_id,$item['recipients'][0]['email'],
                                  $item['recipients'][0]['status'],$item['recipients'][0]['bounce_type'],$item['recipients'][0]['bounce_cat'],
-                                 $expl['third_subcode']['title'],$expl['third_subcode']['desc'],$campaign_id,
+                                 $expl['third_subcode']['title'],$expl['third_subcode']['desc'],$campaign_id['id_mail'],
                                  $row_config_globale['table_email_deleted'],$row_config_globale['table_send']);
             }
         }

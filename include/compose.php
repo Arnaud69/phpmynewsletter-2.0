@@ -66,7 +66,8 @@ switch($op){
         echo '<div class="archmsg">';
         if($error==""){
             echo "<div align='center'><h4 class='alert_success'>".tr("PREVIEW_SEND_OK").".</h4>";
-            echo "<h4 class='advt alert_info' align='center'>".tr("PREVIEW_OK")." ?<br>".tr("CLICK_TO_SEND", tr("COMPOSE_SEND")).", sinon cliquez sur '".tr("COMPOSE_BACK")."'</h4></div>";
+            echo "<h4 class='advt alert_info' align='center'>".tr("PREVIEW_OK")." ?<br>"
+                .tr("CLICK_TO_SEND", tr("COMPOSE_SEND")).", sinon cliquez sur '".tr("COMPOSE_BACK")."'</h4></div>";
         } else {
             echo "<div align='center'><h4 class='alert_error'>Attention ! Le message de preview est en erreur. Motif : $error ! Merci de corriger, puis relancer le message de preview en cliquant ici : <a href='".$_SERVER['PHP_SELF']."?page=compose&op=init&list_id=$list_id&token=$token'>".tr("RE_SEND_PREVIEW")."</a></h4></div>";
         }
@@ -142,7 +143,7 @@ switch($op){
                                 }
                             }
                         });
-                        setTimeout(progresspump,10000);
+                        setTimeout(progresspump,3000);
                     }progresspump();
                 });
             });

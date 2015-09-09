@@ -1,4 +1,3 @@
-//function ts(){ $.ajax({url:"datetime.php",success:function(data){ $('#ts').html(data);}});setTimeout(ts,1000);}ts();
 function mq(){ $.ajax({url:"include/mailq.php",success:function(data){ $('#mailq').html(data);}});setTimeout(mq,10000);}mq();
 (function($){
     // add a new method to JQuery

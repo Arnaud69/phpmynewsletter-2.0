@@ -48,7 +48,7 @@ switch ($step) {
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
         $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
-        $addr           = $newsletter['preview_addr'];
+        $addr = $dest_adresse = $newsletter['preview_addr'];
         include("include/lib/switch_smtp.php");
         $mail->Sender = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
