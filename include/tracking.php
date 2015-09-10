@@ -109,12 +109,13 @@
                     );
                 </script>
                 <div id="chartdiv" style="width: 100%; height: 500px; background-color: #FFFFFF;" ></div>
-                <?php // full editor : http://live.amcharts.com/new/edit/ ; ?>
-                <?php
-            break;
+                <?php 
+                    // full editor : http://live.amcharts.com/new/edit/ ;
+            /*break;
             
             default:
-            case 'ch':
+            case 'ch':               */
+                reset($array_stats_tmp);
                 echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
                     <tr> 
@@ -130,8 +131,8 @@
                     </tr> 
                 </thead> 
                 <tbody>';
-                foreach($array_stats as $row){
-                    echo '<tr><td>'.    $row['date'].    '</td>';
+                foreach($array_stats_tmp as $row){
+                    echo '<tr><td>'.    $row['dt'].    '</td>';
                     echo '<td>'. $row['id_mail'].                       '</td>';
                     $links = $cnx->query("SELECT * FROM ".$row_config_globale['table_track_links']." WHERE list_id=$list_id AND msg_id=".$row['id_mail']." ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
                     echo '<td>';
