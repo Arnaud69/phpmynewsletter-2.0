@@ -60,7 +60,7 @@ switch ($step) {
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
         $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
-        $addr           = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit);
+        $addr           = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
         // include("include/lib/switch_smtp.php");  //  basculer en ligne 96 pour load balncing smtp
         $mail->Sender = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
@@ -93,6 +93,7 @@ switch ($step) {
             $mail->DKIM_identity   = $DKIM_identity;
         }
         $to_send = count($addr);
+        var_dump($addr);
         for ($i = 0; $i < $to_send; $i++) {
             $dest_adresse = trim($addr[$i]['email']);
             include("include/lib/switch_smtp.php"); // vient de la ligne 63 pour load balancing smtp
@@ -140,7 +141,9 @@ switch ($step) {
             $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
+            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] 
+                  . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] 
+                  . '>, <mailto:'.$newsletter['from_addr'].'>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
@@ -236,19 +239,9 @@ switch ($step) {
         $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
         $daylogmsg=$date. " : initialisation envoi message $msg_id liste $list_id\n";
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
-        $num    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$list_id);
+        $num    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$list_id,$msg_id);
         $cnx->query("INSERT into ".$row_config_globale['table_send']." (`id_mail`, `id_list`, `cpt`) VALUES ('".$msg_id."','".$list_id."','0')");
         $cnx->query("INSERT into ".$row_config_globale['table_send_suivi']." (`list_id`, `msg_id`, `total_to_send`) VALUES ('".$list_id."','".$msg_id."','".$num."')");
-        /* 
-        on réinitilaise les compteurs de load_balancing si on a un $row_config_globale['sending_method']=lbsmtp :
-        */
-        if($row_config_globale['sending_method']=='lbsmtp'){
-            $cnx->query("UPDATE ".$row_config_globale['table_smtp']." 
-                SET smtp_date_update=NOW(),smtp_used=0 
-                    WHERE smtp_date_update < DATE_SUB(CURDATE(), INTERVAL 1 DAY)");
-            $daylogmsg=$date. " : RAZ compteurs load_balancing SMTP, initialisation envoi message $msg_id liste $list_id\n";
-            fwrite($daylog, $daylogmsg, strlen($daylogmsg));
-        }
         $errstr =  "=GLOBAL=ENVIRONNEMENT=======================================\r\n";
         if (version_compare(PHP_VERSION, '5.3.0', '>')) {
             $errstr .= "PHP : ".phpversion()." ".tr("OK_BTN")."\r\n";

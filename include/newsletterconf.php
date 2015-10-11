@@ -29,7 +29,7 @@ if(isset($list_id)&&!empty($list_id)) {
         echo "<input type='hidden' name='op' value='SaveConfig' /><input type='hidden' name='token' value='$token' />";
         echo "<input type='hidden' name='list_id' value='$list_id' />
         <fieldset><label>".tr("NEWSLETTER_NAME")." : </label>
-        <input type='text' name='newsletter_name' value='".htmlspecialchars(@$newsletter['newsletter_name'])."' /></fieldset>
+        <input type='text' name='newsletter_name' value=\"".htmlspecialchars(@$newsletter['newsletter_name'])."\" /></fieldset>
         <fieldset><label>".tr("NEWSLETTER_FROM_NAME")." : </label>
         <input type='text' name='from_name' value='".htmlspecialchars($newsletter['from_name'])."' /></fieldset>
         <fieldset><label>".tr("NEWSLETTER_FROM_ADDR")." : </label>

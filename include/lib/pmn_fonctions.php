@@ -130,7 +130,8 @@ function checkVersion(){
         $header=checkVersionCurl();
         $Vcurrent=intval(str_replace('.','',$VL));
         $Vdisponible=intval(trim(str_replace('.','',$header['content'])));
-        echo ($Vdisponible>$Vcurrent?'<li class="icn_alert"><a href="http://www.phpmynewsletter.com/telechargement.html" target="_blank">Version '.$header['content'].' disponible !</a></li>':'');
+        echo ($Vdisponible>$Vcurrent?'<li class="icn_alert"><a href="http://www.phpmynewsletter.com/telechargement.html" target="_blank">Version '
+              .$header['content'].' disponible !</a></li>':'');
     }
 }
 function checkVersionCurl(){
@@ -214,7 +215,7 @@ function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email
         VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
         return false;
     }
-    if (!$cnx->query("DELETE from $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
+    if (!$cnx->query("DELETE FROM $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
         return false;
     } else {
         return true;
@@ -340,7 +341,9 @@ function get_message($cnx, $table_archive, $msg_id) {
 }
 function get_message_preview($cnx, $table_autosave, $list_id) {
     $cnx->query("SET NAMES UTF8");
-    $x = $cnx->query("SELECT type, subject, textarea FROM $table_autosave WHERE list_id='$list_id'")->fetch(PDO::FETCH_ASSOC);
+    $x = $cnx->query("SELECT type, subject, textarea 
+                          FROM $table_autosave 
+                      WHERE list_id='$list_id'")->fetch(PDO::FETCH_ASSOC);
     if(!$x){
         return -1;
     } else {
@@ -349,16 +352,22 @@ function get_message_preview($cnx, $table_autosave, $list_id) {
 }
 function get_newsletter_name($cnx, $lists_table, $list_id) {
     $cnx->query("SET NAMES UTF8");
-    $this_name = $cnx->query("SELECT newsletter_name FROM $lists_table WHERE list_id = '$list_id'")->fetch();
+    $this_name = $cnx->query("SELECT newsletter_name 
+                                  FROM $lists_table 
+                              WHERE list_id = '$list_id'")->fetch();
     if (count($this_name) == 0){
         return -1;
     } else {
         return $name = $this_name['newsletter_name'];
     }
 }
-function get_newsletter_total_subscribers($cnx, $email_table, $list_id) {
+function get_newsletter_total_subscribers($cnx, $email_table, $list_id, $msg_id) {
     $cnx->query("SET NAMES UTF8");
-    $row = $cnx->query("SELECT COUNT( email ) AS CPT FROM $email_table WHERE list_id ='$list_id' AND ERROR ='N'")->fetch();
+    $row = $cnx->query("SELECT COUNT( email ) AS CPT 
+                            FROM $email_table 
+                        WHERE list_id ='$list_id' 
+                            AND ERROR ='N'
+                            AND campaign_id != '$msg_id'")->fetch();
     return $row['CPT'];
 }
 function get_relative_path($filename) {
@@ -367,34 +376,58 @@ function get_relative_path($filename) {
 function get_stats_send($cnx,$list_id,$param_global){
     $cnx->query("SET NAMES UTF8");
     return $cnx->query("SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d') as dt, a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
-                (SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject=a.id) AS TID,
-                (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id) AS TOPEN
+                (SELECT COUNT(id) 
+                     FROM ".$param_global['table_tracking']."
+                 WHERE subject=a.id) AS TID,
+                (SELECT SUM(open_count) 
+                     FROM ".$param_global['table_send']."
+                 WHERE id_mail=a.id) AS TOPEN
             FROM ".$param_global['table_send']." s
-                LEFT JOIN ".$param_global['table_archives']." a ON a.id=s.id_mail 
-                LEFT JOIN ".$param_global['table_tracking']." t ON a.id=t.subject
+                LEFT JOIN ".$param_global['table_archives']." a 
+                    ON a.id=s.id_mail 
+                LEFT JOIN ".$param_global['table_tracking']." t 
+                    ON a.id=t.subject
             WHERE a.list_id='".$list_id."'
                 GROUP BY a.id
             ORDER BY a.id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
 }
 function get_subscribers($cnx, $table_email, $list_id) {
-    return $subscribers = $cnx->query("SELECT email from $table_email WHERE list_id = '$list_id' ORDER BY email ASC")->fetchAll(PDO::FETCH_ASSOC);
+    return $subscribers = $cnx->query("SELECT email 
+                                           FROM $table_email 
+                                       WHERE list_id = '$list_id' 
+                                       ORDER BY email ASC")->fetchAll(PDO::FETCH_ASSOC);
 }
-function getAddress($cnx,$table_email,$list_id,$begin='',$limit='') {
+function getAddress($cnx,$table_email,$list_id,$begin='',$limit='',$msg_id) {
     $cnx->query("SET NAMES UTF8");
     $limite=(isset($begin)&&isset($limit))?" LIMIT $begin,$limit":"";
-    return $Addr = $cnx->query("SELECT id,email,hash from $table_email WHERE list_id = '$list_id' AND error='N' $limite")->fetchAll(PDO::FETCH_ASSOC);
+    echo "SELECT id,email,hash 
+                                    FROM $table_email 
+                                WHERE list_id = '$list_id' 
+                                    AND error='N' 
+                                    AND campaign_id != '$msg_id'
+                                $limite";
+    return $Addr = $cnx->query("SELECT id,email,hash 
+                                    FROM $table_email 
+                                WHERE list_id = '$list_id' 
+                                    AND error='N' 
+                                    AND campaign_id != '$msg_id'
+                                $limite")->fetchAll(PDO::FETCH_ASSOC);
 }
 function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list) {
     $cnx->query("SET NAMES UTF8");
     if (empty($offset)) $offset = 0;
-    $row = $cnx->query("SELECT id, date, type, subject, message, list_id FROM $table_archives WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
+    $row = $cnx->query("SELECT id, date, type, subject, message, list_id 
+                            FROM $table_archives 
+                        WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
     if (count($row) == 0){
         return -1;
     } else {
         $subject = htmlspecialchars($row['subject']);
         $subject = stripslashes($subject);
         echo "<h4>Sujet : " . $subject . "</h4><h4>Envoyé le : " . $row['date'] . "</h4><h4>format : ". $row['type'] ."</h4><br>";
-        echo "<div class='archmsg'><iframe src='preview.php?list_id=". $row['list_id'] ."&token=$token&id=". $row['id'] ."' width='100%' height='400px' style='border:2px solid #e0e0e3;'><p>Oups ! Your browser does not support iframes.</p></iframe></div>";
+        echo "<div class='archmsg'><iframe src='preview.php?list_id=". $row['list_id'] 
+              ."&token=$token&id=". $row['id'] ."' width='100%' height='400px' 
+              style='border:2px solid #e0e0e3;'><p>Oups ! Your browser does not support iframes.</p></iframe></div>";
         echo "<br>";
         echo "<div class='archmsg' style='padding-bottom:15px;text-align:center;'><form action='".$_SERVER['PHP_SELF']."' method='post' name='selected_newsletter'>";
         echo "<br>Utiliser ce message comme modèle pour nouvelle rédaction avec la liste : <select name='list_id' class='input'>";
@@ -506,7 +539,8 @@ function getSubscribersEmail($cnx, $table_config, $email, $from, $from_name, $li
     while ($a = $db->DbNextRow()) {
         $body .= $a[0] . "\n";
     }
-    return sendEmail($conf->sending_method, $email, $from, $from_name, "Liste des adresses", $body, $conf->smtp_auth, $conf->smtp_host = '', $conf->smtp_login = '', $conf->smtp_pass);
+    return sendEmail($conf->sending_method, $email, $from, $from_name, "Liste des adresses", $body, 
+                     $conf->smtp_auth, $conf->smtp_host = '', $conf->smtp_login = '', $conf->smtp_pass);
 }
 function getSubscribersNumbers($cnx,$table_email,$list_id) {
     $cnx->query("SET NAMES UTF8");
@@ -584,12 +618,21 @@ function leaveAdmin() {
 }
 function list_bounce_error($cnx, $table_email,$list_id) {
     $cnx->query("SET NAMES UTF8");
-    $x = $cnx->query("SELECT * FROM $table_email WHERE list_id=$list_id AND error='Y' AND status IS NOT NULL ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $x = $cnx->query("SELECT * 
+                          FROM $table_email 
+                      WHERE list_id=$list_id 
+                          AND error='Y' 
+                          AND status IS NOT NULL 
+                      ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
     return $x;
 }
 function list_bounce_error_chart_data($cnx, $table_email,$list_id) {
     $cnx->query("SET NAMES UTF8");
-    $x = $cnx->query("SELECT count(*) AS NB_ERROR, status FROM $table_email WHERE list_id=$list_id AND error='Y' AND status IS NOT NULL GROUP BY status")->fetchAll(PDO::FETCH_ASSOC);
+    $x = $cnx->query("SELECT count(*) AS NB_ERROR, status 
+                          FROM $table_email 
+                      WHERE list_id=$list_id AND error='Y' 
+                          AND status IS NOT NULL 
+                      GROUP BY status")->fetchAll(PDO::FETCH_ASSOC);
     return $x;
 }
 function list_bounce_error_chart_data_by_type($cnx, $table_email,$list_id) {
@@ -617,7 +660,7 @@ function list_newsletter_last_id_send($cnx, $table_send, $list_id) {
 }
 function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr) {
     $cnx->query("SET NAMES UTF8");
-    $cnx->SqlRow("DELETE from $table_moderation WHERE list_id = '$list_id' AND email='$mod_addr'");
+    $cnx->SqlRow("DELETE FROM $table_moderation WHERE list_id = '$list_id' AND email='$mod_addr'");
     if ($cnx->DbError()) {
         echo $cnx->DbError();
         return false;
@@ -719,7 +762,8 @@ function save_mod_message($hostname, $login, $pass, $database, $table_mod, $subj
     $this_id = $cnx->SqlRow($sql);
     $id    = $this_id['id'];
     $newid = $id[0] + 1;
-    $sql   = "INSERT into $table_mod (`id`, `date`,`type`, `subject` , `message`, `list_id` , `email_from`) VALUES ('$newid', '$date','$format','$subject','$body', '$list_id', '$from')";
+    $sql   = "INSERT into $table_mod (`id`, `date`,`type`, `subject` , `message`, `list_id` , `email_from`) 
+              VALUES ('$newid', '$date','$format','$subject','$body', '$list_id', '$from')";
     if ($cnx->query($sql)) {
         return -1;
     }
@@ -1077,7 +1121,7 @@ function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categ
                             FROM ".$table_email."
                                 WHERE email = '".($cnx->CleanInput($email))."' 
                                     AND list_id='".($cnx->CleanInput($list_id))."'")){
-        if ($cnx->query("DELETE from ".$table_email." 
+        if ($cnx->query("DELETE FROM ".$table_email." 
                             WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
                                 AND email='".($cnx->CleanInput($email))."'")) {
             if ($cnx->query("UPDATE $table_send 

@@ -139,7 +139,7 @@ switch($op){
                                     $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';
-                                    },3000);
+                                    },10000);
                                 }
                             }
                         });

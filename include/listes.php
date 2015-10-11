@@ -7,16 +7,17 @@ switch($l){
         if($page != "config"){
             echo '<article class="module width_full">';
             echo '<header><h3>'.tr("LIST_OF_LISTS").'</h3></header>';
-			echo '<form action="" method="post">';
+            echo '<form action="" method="post">';
             echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
                     <tr> 
                         <th style="text-align:center">'.tr("LIST_NUMBER").'</th>
                         <th style="text-align:center">'.tr("LIST_NAME").'</th>
                         <th style="text-align:center">'.tr("LIST_COUNT_SUSCRIBERS").'</th>
-						<th style="text-align:center">'.tr("LIST_LAST_CAMPAIGN").'</th>
-						<th style="text-align:center">&nbsp; </th>
-						<th style="text-align:center">'.tr("LIST_MIX_TITLE").'</th>
+                        <th style="text-align:center">'.tr("LIST_LAST_CAMPAIGN").'</th>
+                        <th style="text-align:center">&nbsp; </th>
+                        <th style="text-align:center">'.tr("LIST_MIX_TITLE").'</th>
+                        <th></th>
                         <th style="text-align:center">'.tr("DELETE").'</th> 
                     </tr> 
                 </thead> 
@@ -29,23 +30,24 @@ switch($l){
                     >'.$item['newsletter_name'].'</a></td>':
                     '<td style="text-align:center"><a href="?list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("CHOOSE_THIS_LIST").'">'.$item['newsletter_name'].'</a></td>');
                 echo '<td style="text-align:center">'. getSubscribersNumbers($cnx,$row_config_globale['table_email'],$item['list_id']).'</td>';
-				echo '<td style="text-align:center">'. list_newsletter_last_id_send($cnx,$row_config_globale['table_send'],$item['list_id']).'</td>';
-				echo '<td style="text-align:center"><a href="?page=listes&l=l&action=duplicate&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_DUPLICATE").' ?" onclick="return confirm(\''.tr("LIST_DUPLICATE").' ?\')"><img src="css/icn_copy.png" /></a></td>';
-				echo '<td style="text-align:center"><input type="checkbox" class="tooltip mx" title="'.tr("LIST_MIX_DETAIL").'" name="mix_list_id[]" value="'.$item['list_id'].'" /></td>';
+                echo '<td style="text-align:center">'. list_newsletter_last_id_send($cnx,$row_config_globale['table_send'],$item['list_id']).'</td>';
+                echo '<td style="text-align:center"><a href="?page=listes&l=l&action=duplicate&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("LIST_DUPLICATE").' ?" onclick="return confirm(\''.tr("LIST_DUPLICATE").' ?\')"><img src="css/icn_copy.png" /></a></td>';
+                echo '<td style="text-align:center"><input type="checkbox" class="tooltip mx" title="'.tr("LIST_MIX_DETAIL").'" name="mix_list_id[]" value="'.$item['list_id'].'" /></td>';
+                echo '<td style="text-align:center"><a href="?page=listes&l=l&action=empty&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="Vider cette liste ?" onclick="return confirm(\'Voulez-vous vraiment vider cette liste ?\')">vider</a></td>';
                 echo '<td style="text-align:center"><a href="?page=listes&l=l&action=delete&list_id='.$item['list_id'].'&token='.$token.'" class="tooltip" title="'.tr("DELETE_THIS_LIST").' ?" onclick="return confirm(\''.tr("WARNING_DELETE_LIST").' ?\')"><img src="css/icn_trash.png" /></a></td>';
                 echo '</tr>';
             }
             echo '</table>';
-			?>
+            ?>
             <script>$('input[type=checkbox].mx').change(function(){if($('input.mx:checked').size()>1){$("div#submitMix").show("slow");$("input#sbmix").removeAttr('disabled');}else{$('div#submitMix').hide("slow");}})</script>
             <?php
-			echo '<div id="submitMix" style="display:none;margin-bottom:10px;margin-top:10px;" align="center">';
-			echo '<input type="submit" id="sbmix" value="'.tr("LIST_MIX_TITLE").'" disabled>';
-			echo '<input type="hidden" name="action" value="mix">';
-			echo '<input type="hidden" name="l" value="l">';
-			echo '<input type="hidden" name="page" value="listes">';
-			echo '<input type="hidden" name="token" value="'.$token.'">';
-			echo '</div></form>';
+            echo '<div id="submitMix" style="display:none;margin-bottom:10px;margin-top:10px;" align="center">';
+            echo '<input type="submit" id="sbmix" value="'.tr("LIST_MIX_TITLE").'" disabled>';
+            echo '<input type="hidden" name="action" value="mix">';
+            echo '<input type="hidden" name="l" value="l">';
+            echo '<input type="hidden" name="page" value="listes">';
+            echo '<input type="hidden" name="token" value="'.$token.'">';
+            echo '</div></form>';
         } elseif($list_name == -1) {
             $error_list = true;
         } elseif(empty($list) && $page != "newsletterconf" && $page != "config") {
@@ -134,6 +136,5 @@ switch($l){
     break;
 }
 echo '</article>';
-
 
 

@@ -128,10 +128,12 @@ switch ($step) {
         if (!$mail->Send()) {
             die(tr("ERROR_SENDING"));
         }else{
+            if(!isset($dontlog)) $dontlog='';
             header("location:index.php?page=compose&op=send_preview&error=$error&list_id=$list_id&errorlog=$dontlog&token=$token");
         }
         break;
     default:
+        if(!isset($num)) $num='';
         header("location:send_preview.php?step=sendpreview&begin=0&list_id=$list_id&msg_id=$msg_id&sn=$num&error=0&token=$token");
         break;
 }

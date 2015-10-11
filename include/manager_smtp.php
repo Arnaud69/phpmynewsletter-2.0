@@ -79,7 +79,7 @@
         </thead> 
         <tbody>
             <tr>
-                <td><input type="text" name="smtp_name" maxlength="10" size="12" /></td>
+                <td><input type="text" name="smtp_name" size="12" /></td>
                 <td><input type="text" name="smtp_url" /></td>
                 <td><input type="text" name="smtp_user" /></td>
                 <td><input type="text" name="smtp_pass" /></td>

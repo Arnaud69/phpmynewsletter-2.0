@@ -280,6 +280,7 @@ if (empty($langfile)) {
             echo '<label>'.tr("INSTALL_SENDING_METHOD").'</label>';
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
+            echo "<option value='lbsmtp'>Load Balancing SMTP</option>";
             echo "<option value='smtp_gmail'>smtp Gmail</option>";
             echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
             echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
@@ -293,7 +294,7 @@ if (empty($langfile)) {
             echo '<label>'.tr("INSTALL_SMTP_HOST").'</label>';
             echo "<input type='text' class='input' name='smtp_host' value='' disabled>";
             echo '</fieldset>';
-			echo '<fieldset>';
+            echo '<fieldset>';
             echo '<label>'.tr("INSTALL_SMTP_PORT").'</label>';
             echo "<input type='text' class='input' name='smtp_port' value='' disabled>";
             echo '</fieldset>';
@@ -502,7 +503,7 @@ if (empty($langfile)) {
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak") NOT NULL DEFAULT "php_mail",
+                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak") NOT NULL DEFAULT "php_mail",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `table_email`       VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_temp`        VARCHAR(255) NOT NULL DEFAULT "",
@@ -590,12 +591,13 @@ if (empty($langfile)) {
                                 `subject` int(9) NOT NULL,
                                 `date` datetime NOT NULL,
                                 `open_count` smallint(3) NOT NULL,
-                                `ip` VARCHAR(255) NOT NULL,
+                                `ip` VARCHAR(20) NOT NULL,
                                 PRIMARY KEY (`id`), 
                                 KEY `hash` (`hash`), 
                                 KEY `subject` (`subject`), 
                                 KEY `date` (`date`), 
-                                KEY `open_count` (`open_count`)
+                                KEY `open_count` (`open_count`),
+                                KEY `ip` (`ip`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track") .' '.tr("DONE").'</h4>';
@@ -716,7 +718,7 @@ if (empty($langfile)) {
                 $smtp_host         = $cnx->CleanInput($smtp_host);
                 $smtp_login        = $cnx->CleanInput($smtp_login);
                 $smtp_pass         = $cnx->CleanInput($smtp_pass);
-				$smtp_port         = $cnx->CleanInput($smtp_port);
+                $smtp_port         = $cnx->CleanInput($smtp_port);
                 $sending_limit     = $cnx->CleanInput($sending_limit);
                 $validation_period = $cnx->CleanInput($validation_period);
                 $sub_validation    = $cnx->CleanInput($sub_validation);

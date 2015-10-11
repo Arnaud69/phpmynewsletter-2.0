@@ -21,6 +21,3 @@ if(!empty($_GET['m'])&&!empty($_GET['h'])&&!empty($_GET['l'])&&!empty($_GET['r']
 }
 $redirect = urldecode(htmlspecialchars_decode($_GET['r']));
 header("Location:$redirect");
-
-
-

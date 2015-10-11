@@ -9,7 +9,19 @@ Please, don't touch after this line, or phpmynewsletter won't work anymore.
 if(!isset($send_method)){
     $send_method = $row_config_globale['sending_method'];
 }
-
+/* 
+on réinitialise les compteurs de load_balancing si on a un $row_config_globale['sending_method']=lbsmtp :
+*/
+if($row_config_globale['sending_method']=='lbsmtp'){
+    $cnx->query("UPDATE ".$row_config_globale['table_smtp']." 
+        SET smtp_date_update=NOW(),smtp_used=0 
+            WHERE smtp_date_update < DATE_SUB(CURDATE(), INTERVAL 1 DAY)");
+    $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+    $date    = date("Y-m-d H:i:s");
+    $daylogmsg=$date. " : RAZ compteurs load_balancing SMTP\n";
+    fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+    fclose($daylog);
+}
 switch ($send_method) {
     case "smtp":
         $mail->IsSMTP();
@@ -22,12 +34,12 @@ switch ($send_method) {
         break;
     case 'lbsmtp':
         // on sélectionne le dernier id_use activé :
-        $CURRENT_ID = @current($cnx->query("SELECT MAX( id_use ) AS CURRENT_ID FROM ".$row_config_globale['table_smtp'])->fetch());
+        echo '<br>'.$CURRENT_ID = @current($cnx->query("SELECT MAX( id_use ) AS CURRENT_ID FROM ".$row_config_globale['table_smtp'])->fetch());
         // On va chercher un serveur qui n'a pas atteint sa limite qui a moins de 24 heures :
         // SELECT * FROM test_smtp WHERE smtp_date_update > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
         $info_smtp_lb = $cnx->SqlRow("SELECT * 
             FROM ".$row_config_globale['table_smtp']." 
-                WHERE smtp_used<smtp_limite                                /* quota disponible    */
+                WHERE smtp_used < smtp_limite                                /* quota disponible    */
                 AND smtp_date_update > DATE_SUB(CURDATE(), INTERVAL 1 DAY) /* moins de 24 heures  */
             ORDER BY id_use ASC LIMIT 1");     /* le id_use le plus petit */
         // Déclaration smtp :
@@ -49,12 +61,13 @@ switch ($send_method) {
         }else{
             $mail->Port = 25;
         }
+        var_dump($info_smtp_lb);
         // on update le id_use à $CURRENT_ID+1 de l'article sélectionné et +1 au compteur smtp_used
         $cnx->query('UPDATE '.$row_config_globale['table_smtp'].' 
                          SET 
                             smtp_used=smtp_used+1, id_use='.(intval($CURRENT_ID)+1).' /* update des champs dernier id_use et smtp_used */
                      WHERE 
-                        smtp_id='.$info_smtp_lb['smtp_id']);
+                         smtp_id='.$info_smtp_lb['smtp_id']);
         $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
         $daylogmsg= date("Y-m-d H:i:s") . " : envoi à $dest_adresse sur serveur ".$info_smtp_lb['smtp_name']."\n";
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
@@ -134,11 +147,6 @@ switch ($send_method) {
         die(tr("NO_SEND_DEFINITION"));
         break;
 }
-
-
-
-
-
 
 
 

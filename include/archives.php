@@ -24,7 +24,7 @@ if ($archives = getArchivesselectList($cnx, $row_config_globale['table_archives'
     <input type='hidden' name='list_id' value='$list_id' />
     <input type='hidden' name='token' value='$token' />";
 } else {
-    echo info_msg(tr("NO_ARCHIVE"));
+    echo '<div class="module_content">'.tr("NO_ARCHIVE").'<h4 class="alert_info">...</h4></div>';
 }
 echo "</form>";
 if (!empty($msg_id) && empty($action)) {
@@ -108,7 +108,6 @@ if (!empty($msg_id) && $action == "delete") {
     }
 }
 echo "</div></article>";
-
 
 
 

@@ -49,12 +49,16 @@ if(empty($id_mail)&&empty($list_id)){
         <script type="text/javascript">
         $(document).ready(function() { $(".tablesorter").tablesorter(); } );
         </script>
+        <script type="text/javascript" src="//www.amcharts.com/lib/3/amcharts.js"></script>
+        <script type="text/javascript" src="//www.amcharts.com/lib/3/pie.js"></script>
+        <script type="text/javascript" src="//www.amcharts.com/lib/3/themes/light.js"></script>
+        <script type="text/javascript" src="//www.amcharts.com/lib/3/themes/none.js"></script>
     </head>
     <body>
         <section class="column">
             <article class="module width_full">
                 <header>
-                    <h3><?=tr("CLICKED_LINK_REPORT");?></h3>
+                    <h3> <?=tr("CLICKED_LINK_REPORT");?></h3>
                 </header>
                 <?php
                 $count_clicked_links = $cnx->query("SELECT SUM(cpt) AS CPT 
@@ -102,18 +106,92 @@ if(empty($id_mail)&&empty($list_id)){
         <section>                                                                            
             <article class="module width_full">
                 <header>
-                    <h3><?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
+                    <h3> <?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
                 </header>
-                <script type="text/javascript" src="js/amcharts/amcharts.js"></script>
-                <script type="text/javascript" src="js/amcharts/pie.js"></script>
-                <script type="text/javascript" src="js/amcharts/themes/none.js"></script>
                 <div id="chartdiv"></div>
                 <script>
-                    var chart = AmCharts.makeChart("chartdiv", {"type": "pie","theme": "none","dataProvider": [<?=$chart_data;?>],"valueField": "value","titleField": "data","outlineAlpha": 0.4,"depth3D": 15,"balloonText": "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle": 30
-                    });
+                    var chartLinks = AmCharts.makeChart("chartdiv",{"type":"pie","theme":"none","dataProvider":[<?=$chart_data;?>],"valueField":"value",
+                    "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
                 </script>
             </article>
         </section>
+        <?php
+        $env = $cnx->query("SELECT COUNT(CONCAT(browser,' ', version)) AS CPT,CONCAT(browser,' ',version) AS VERS
+                                FROM ".$row_config_globale['table_tracking']." 
+                                    WHERE subject=$id_mail
+                                        AND (CONCAT(browser,' ',version))!=''
+                                    GROUP BY VERS")->fetchAll(PDO::FETCH_ASSOC);
+        if(count($env)>0){
+            $chart_env='';
+            foreach($env as $row){
+                $chart_env.='{"data": "'.$row['VERS'].'", "value": '.$row['CPT'].'},';
+            }
+            ?>
+            <section>                                                                            
+                <article class="module width_full">
+                    <header>
+                        <h3> <?=tr("CLICKED_LINK_REPORT_ENVIRONMENT");?></h3>
+                    </header>
+                    <div id="chartdiv1"></div>
+                    <script>
+                        var chartEnv=AmCharts.makeChart("chartdiv1",{"type":"pie","theme":"light","dataProvider":[<?=$chart_env;?>],"valueField":"value",
+                        "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
+                    </script>
+                </article>
+            </section>
+        <?php
+        }
+        $env = $cnx->query("SELECT COUNT(platform) AS CPT,platform
+                                FROM ".$row_config_globale['table_tracking']." 
+                                    WHERE subject=$id_mail
+                                        AND platform!=''
+                                    GROUP BY platform")->fetchAll(PDO::FETCH_ASSOC);
+        if(count($env)>0){
+            $chart_env='';
+            foreach($env as $row){
+                $chart_env.='{"data": "'.$row['platform'].'", "value": '.$row['CPT'].'},';
+            }
+            ?>
+            <section>                                                                            
+                <article class="module width_full">
+                    <header>
+                        <h3> <?=tr("CLICKED_LINK_REPORT_OS");?></h3>
+                    </header>
+                    <div id="chartdiv2"></div>
+                    <script>
+                        var chartEnv=AmCharts.makeChart("chartdiv2",{"type":"pie","theme":"light","dataProvider":[<?=$chart_env;?>],"valueField":"value",
+                        "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
+                    </script>
+                </article>
+            </section>
+        <?php
+        }
+        $env = $cnx->query("SELECT COUNT(devicetype) AS CPT,devicetype
+                                FROM ".$row_config_globale['table_tracking']." 
+                                    WHERE subject=$id_mail
+                                        AND devicetype!=''
+                                    GROUP BY devicetype")->fetchAll(PDO::FETCH_ASSOC);
+        if(count($env)>0){
+            $chart_env='';
+            foreach($env as $row){
+                $chart_env.='{"data": "'.$row['devicetype'].'", "value": '.$row['CPT'].'},';
+            }
+            ?>
+            <section>                                                                            
+                <article class="module width_full">
+                    <header>
+                        <h3> <?=tr("CLICKED_LINK_REPORT_SUPPORT");?></h3>
+                    </header>
+                    <div id="chartdiv3"></div>
+                    <script>
+                        var chartEnv=AmCharts.makeChart("chartdiv3",{"type":"pie","theme":"light","dataProvider":[<?=$chart_env;?>],"valueField":"value",
+                        "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
+                    </script>
+                </article>
+            </section>
+        <?php
+        }
+        ?>        
     </body>
 </html>
 

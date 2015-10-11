@@ -156,6 +156,9 @@ if($page=='listes'){
                 $list_id=$new_id;
             }
         break;
+        case 'empty':
+            $cnx->query('DELETE FROM '.$row_config_globale['table_email'].' WHERE list_id='.$list_id.'');
+        break;
         default:
         break;
     }
@@ -267,28 +270,31 @@ if(in_array($op,$op_true)){
                     $tx_error  = 0;
                     while (!feof($liste)){    
                         $mail_importe = fgets($liste, 4096);
-                        if(strlen($mail_importe)==2){
-                            // dummy and pretty function ;-) yeah !
-                        }else{
-                            $mail_importe = str_replace("'","",$mail_importe);
-                            $mail_importe = str_replace('"',"",$mail_importe);
-                            $mail_importe = strtolower(trim($mail_importe));
-                            if(!empty($mail_importe)&&validEmailAddress($mail_importe)){
-                                $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe,$row_config_globale['table_email_deleted']);
-                                if($added==-1){
-                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
+                        preg_match_all('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}/i', $mail_importe, $found_mails);
+                        foreach ($found_mails[0] as $mail_importe){
+                            if(strlen($mail_importe)==2){
+                                // dummy and pretty function ;-) yeah !
+                            }else{
+                                $mail_importe = str_replace("'","",$mail_importe);
+                                $mail_importe = str_replace('"',"",$mail_importe);
+                                $mail_importe = strtolower(trim($mail_importe));
+                                if(!empty($mail_importe)&&validEmailAddress($mail_importe)){
+                                    $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe,$row_config_globale['table_email_deleted']);
+                                    if($added==-1){
+                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
+                                        $tx_error++;
+                                    }elseif($added==2){
+                                        $subscriber_op_msg .= "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
+                                        $tx_import++;
+                                    }elseif($added==0){
+                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_SQL", DbError())."</h4>";
+                                    }elseif($added==3){
+                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("EMAIL_ON_DELETED_LIST")."</h4>";
+                                    }
+                                } else {
+                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";
                                     $tx_error++;
-                                }elseif($added==2){
-                                    $subscriber_op_msg .= "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
-                                    $tx_import++;
-                                }elseif($added==0){
-                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_SQL", DbError())."</h4>";
-                                }elseif($added==3){
-                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("EMAIL_ON_DELETED_LIST")."</h4>";
                                 }
-                            } else {
-                                $subscriber_op_msg .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";
-                                $tx_error++;
                             }
                         }
                     }
@@ -316,11 +322,12 @@ if(in_array($op,$op_true)){
                                                 WHERE smtp_url="'.$smtp_url.'" 
                                                     AND smtp_port="'.$smtp_port.'"');
             if($cpt_already_exist==0){
-                if($cnx->query("INSERT INTO ".$row_config_globale['table_smtp']." (smtp_name,smtp_url,smtp_user,smtp_pass,smtp_port,smtp_secure,smtp_limite,smtp_used,smtp_date_create,smtp_date_update)
+                if($cnx->query("INSERT INTO ".$row_config_globale['table_smtp']
+                           ." (smtp_name,smtp_url,smtp_user,smtp_pass,smtp_port,smtp_secure,smtp_limite,smtp_used,smtp_date_create,smtp_date_update)
                             VALUES ( '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_secure','$smtp_limite',0,NOW(),NOW() )")){
                     $smtp_manage_msg = "<h4 class='alert_success'>Serveur smtp ajouté correctement !</h4>";
                     $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
-                    $daylogmsg= date("Y-m-d H:i:s") . " : ajout serveur smtp : '$smtp_name','$smtp_url','$smtp_user','$smtp_pass','$smtp_port','$smtp_secure','$smtp_limite'\n";
+                    $daylogmsg= date("Y-m-d H:i:s") . " : ajout serveur smtp : '$smtp_name','$smtp_url','$smtp_limite'\n";
                     fwrite($daylog, $daylogmsg, strlen($daylogmsg));
                     fclose($daylog);
                 } else {
@@ -503,7 +510,7 @@ if(!$list&&$page!="config"){
 <body>
     <header id="header">
         <hgroup>
-            <h1 class="site_title"><a href="http://www.phpmynewsletter.com" target="_blank">PhpMyNewsLetter</a></h1>
+            <h1 class="site_title"><a href="http://www.phpmynewsletter.com" target="_blank">PhpMyNewsLetter</a> v.<?=$PMNL_VERSION;?></h1>
             <h2 class="section_title"><?=tr("DASHBOARD");?> : <?=($list_name==-1||trim($list_name)=='' ? tr("NEWSLETTER_CREATE") : $list_name);?></h2><div class="btn_view_site"><a href="http://www.phpmynewsletter.com/forum/" target="_blank"><?=tr("SUPPORT");?></a></div>
         </hgroup>
     </header>
@@ -559,9 +566,7 @@ if(!$list&&$page!="config"){
                     );
             }
             if($page == "tracking"){
-                echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("TRACKING").'</a>';
-                echo ($data=='ch' ? '<div class="breadcrumb_divider"></div> <a class="current">'.tr("STATS_NUMBER").'</a>' : 
-                                    '<div class="breadcrumb_divider"></div> <a class="current">'.tr("STATS_GRAPHICS").'</a>');
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("TRACKING").'</a><div class="breadcrumb_divider"></div> <a class="current">'.tr("RESULTS").'</a>';
             }
             if($page == "undisturbed") {
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("MANAGEMENT_UNDISTRIBUTED").'</a><div class="breadcrumb_divider"></div> <a class="current">'.tr("ANALYSIS_OF_RETURNS").'</a>';
@@ -621,8 +626,7 @@ if(!$list&&$page!="config"){
         </ul>
         <h3><?=tr("TRACKING");?></h3>
         <ul class="toggle">
-            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=ch"><?=tr("STATS_NUMBER");?></a></li>
-            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=co"><?=tr("STATS_GRAPHICS");?></a></li>
+            <li class="icn_track"><a href="?page=tracking&token=<?=$token;?>&list_id=<?=$list_id;?>&data=ch"><?=tr("STATS_NUMBER_AND GRAPHICS");?></a></li>
         </ul>
         <?php
         if($type_serveur=='dedicated') {

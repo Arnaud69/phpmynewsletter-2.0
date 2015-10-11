@@ -3,11 +3,6 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     include("_loader.php");
     $cnx->query("SET NAMES UTF8");
     $row_config_globale = $cnx->SqlRow("SELECT * FROM ".$table_global_config);
-    $sql="SELECT id FROM ".$row_config_globale['table_tracking']." 
-        WHERE hash='".$_GET['h']."' 
-            AND subject = (SELECT id FROM ".$row_config_globale['table_archives']." WHERE id='".$_GET['i']."')";
-    $row_id = $cnx->query($sql)->fetchAll();
-    $nb_result=count($row_id);
     $graphic_http=$row_config_globale['base_url'].$row_config_globale['path'].'blank.gif';
     $filesize=filesize('blank.gif');
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -17,15 +12,38 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     } else {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
-    if($nb_result==0){
-        $cnx->query("INSERT INTO ".$row_config_globale['table_tracking']."(hash,subject,date,open_count,ip) 
-            VALUES ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."')");
-    }elseif($nb_result==1){
+    include('include/lib/class.browser.php');
+    $this_browser = new Browser();
+    $browser          = $this_browser->getBrowser();
+    $browser_version  = $this_browser->getVersion();
+    $browser_platform = $this_browser->getPlatform();
+    $browser_user_agent=$this_browser->getUserAgent();
+    $sql="SELECT id FROM ".$row_config_globale['table_tracking']." 
+        WHERE hash='".$_GET['h']."'
+            AND ip = '".$ip."'
+            AND subject = (
+                SELECT id FROM ".$row_config_globale['table_archives']." 
+                    WHERE id='".$_GET['i']."'
+            )";
+    $row_id = $cnx->query($sql)->fetchAll();
+    $nb_result=count($row_id);
+    if( $nb_result==0 ) {
+        $cnx->query("INSERT INTO ".$row_config_globale['table_tracking']."
+                         (hash,subject,date,open_count,ip,
+                          browser,version,platform,useragent) 
+                     VALUES 
+                         ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."',
+                          '".$browser."','".$browser_version."','".$browser_platform."','".$browser_user_agent."')");
+    } elseif( $nb_result==1 ) {
         $cnx->query("UPDATE ".$row_config_globale['table_tracking']." 
-            SET date=NOW(),open_count=open_count+1,ip='".$ip."' 
+                        SET date = NOW(),
+                            open_count = open_count+1,
+                            ip = '".$ip."',
+                            browser = '".$browser."',
+                            version = '".$browser_version."',
+                            platform = '".$browser_platform."',,
+                            useragent = '".$browser_user_agent."'
                 WHERE hash='".$_GET['h']."' AND subject='".$_GET['i']."'");
-    }else{
-        // dumb issue...
     }
     header('Pragma:public');
     header('Expires:0');
@@ -36,6 +54,4 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     header('Content-Length:'.$filesize);
     readfile($graphic_http);
 }
-
-
 

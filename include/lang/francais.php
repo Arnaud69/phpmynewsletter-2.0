@@ -393,8 +393,7 @@ $lang_array = array(
     "SCREEN_PREVIEW"=>"Prévisualisation à l'écran",
     "SENDING_TEST_MAIL"=>"Prévisualisation par envoi du mail de test",
     "TRACKING"=>"Tracking",
-    "STATS_NUMBER"=>"Données chiffrées",
-    "STATS_GRAPHICS"=>"Données graphiques",
+    "STATS_NUMBER_AND GRAPHICS"=>"Données chiffrées et graphiques",
     "TIME_SERVER"=>"Heure du serveur",
     "ANALYSIS_OF_RETURNS"=>"Analyse des retours",
     "MANAGEMENT_UNDISTRIBUTED"=>"Gestion des non-distribués",
@@ -567,7 +566,6 @@ $lang_array = array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
-
 
 
 
