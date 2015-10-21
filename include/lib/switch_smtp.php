@@ -73,12 +73,22 @@ switch ($send_method) {
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
         fclose($daylog);
     break;
-    case "smtp_gmail":
+    case "smtp_gmail_tls":
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
         $mail->SMTPSecure = 'tls';
         $mail->Host = "smtp.gmail.com";
         $mail->Port = 587;
+        $mail->IsHTML(true);
+        $mail->Username = $row_config_globale['smtp_login'];
+        $mail->Password = $row_config_globale['smtp_pass'];
+        break;
+    case "smtp_gmail_ssl":
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = 'ssl';
+        $mail->Host = "smtp.gmail.com";
+        $mail->Port = 465;
         $mail->IsHTML(true);
         $mail->Username = $row_config_globale['smtp_login'];
         $mail->Password = $row_config_globale['smtp_pass'];
