@@ -28,13 +28,25 @@ if ($archives = getArchivesselectList($cnx, $row_config_globale['table_archives'
 }
 echo "</form>";
 if (!empty($msg_id) && empty($action)) {
+    /*
     $diff_send = $cnx->SqlRow("SELECT s.cpt AS cpt_send, COUNT(e.email) AS cpt_rec FROM
                     ".$row_config_globale['table_email']." e, ".$row_config_globale['table_send']." s
                     WHERE e.list_id=s.id_list
                         AND s.id_mail = '".$msg_id."'
                         AND s.id_list = '".$list_id."'
                         AND e.error   = 'N';");
-    $to_send = $diff_send['cpt_rec']-$diff_send['cpt_send'];
+    */
+    $diff_send = $cnx->SqlRow("SELECT COUNT(email) AS cpt_to_send FROM
+                        ".$row_config_globale['table_email']."
+                            WHERE list_id   = '".$list_id."'
+                                AND error   = 'N'
+                                AND campaign_id <
+                                (
+                                    SELECT MAX(id_mail) FROM 
+                                        ".$row_config_globale['table_send']."
+                                            WHERE id_list = '".$list_id."'
+                                )");
+    $to_send = $diff_send['cpt_to_send'];
     $js = false;
     if($to_send==1){
         echo '<br><div id="messInfo"><h4 class="alert_warning" id="SendIt">'.tr("SUBSCRIBER_DIDNT_RECEIVE", $to_send).'<h4></div><br>';
@@ -48,8 +60,6 @@ if (!empty($msg_id) && empty($action)) {
             $("#SendIt").click(function(){
                 $('#msg').show();
                 $(function(){
-                    var begin   = <?php echo $diff_send['cpt_send']?>;
-                    var sn      = <?php echo $diff_send['cpt_rec'];?>;
                     var step    = 'send';
                     var pct     = 0;
                     var list_id = <?=intval($list_id);?>;
@@ -61,7 +71,7 @@ if (!empty($msg_id) && empty($action)) {
                             url:"send.php",
                             type: "GET",
                             dataType:"json",
-                            data:'list_id=' + list_id +'&token=' + token + '&begin='+ begin + '&sn=' + sn + '&step=' + step +'&msg_id=' + msg_id,
+                            data:'list_id=' + list_id +'&token=' + token + '&step=' + step +'&msg_id=' + msg_id,
                             success:function(rj){
                                 begin = rj.begin;
                                 sn    = rj.sn;

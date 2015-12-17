@@ -139,11 +139,11 @@ switch($op){
                                     $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';
-                                    },10000);
+                                    },1000);
                                 }
                             }
                         });
-                        setTimeout(progresspump,3000);
+                        setTimeout(progresspump,5000);
                     }progresspump();
                 });
             });
@@ -234,7 +234,7 @@ switch($op){
             <input type='hidden' id='token' name='token' value='$token' />
             </form>";
             if($ft==""){
-                echo "<script src='js/tinymce/tinymce.min.js'></script>
+                echo "<script src='/".$row_config_globale['path']."js/tinymce/tinymce.min.js'></script>
                     <script>
                     tinymce.init({
                         selector: 'textarea#redac', theme: 'modern',
@@ -272,9 +272,9 @@ switch($op){
                         external_filemanager_path:'/".$row_config_globale['path']."js/tinymce/plugins/filemanager/',
                         filemanager_title:'Responsive Filemanager' ,
                         external_plugins: { 'filemanager' : '/".$row_config_globale['path']."js/tinymce/plugins/filemanager/plugin.min.js'},
-                        /*extended_valid_elements: 'style',
+                        extended_valid_elements: 'style',
                         custom_elements: 'style',
-                        http://stackoverflow.com/questions/10290121/how-to-prevent-tinymce-from-stripping-the-style-attribute-from-input-element
+                        /* http://stackoverflow.com/questions/10290121/how-to-prevent-tinymce-from-stripping-the-style-attribute-from-input-element */
                         valid_elements : '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
                                 + '+body[style],'
                                 + 'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],strong/b,em/i,strike,u,'
@@ -297,29 +297,28 @@ switch($op){
                                 + 'textarea[cols|rows|disabled|name|readonly],tt,var,big',
                                 extended_valid_elements : 'p[style]',
                                 inline_styles : true,
-                                verify_html : false*/
-                                });
-                        var elem=$('#chars');
-                        $('#subject').limiter(78,elem);
-                        $(document).ready(function() { Si=setInterval(save,10000); });
-                        function save(){
-                            tinyMCE.triggerSave();
-                            //$('#as').html('".tr("SAVE_PROCESS")."...').show();
-                            var ds=$('#mailform').serialize();
-                            $.ajax({
-                                type: 'POST',
-                                url: 'autosave.php',
-                                data: ds,
-                                cache: false,
-                                success: function(msg) {
-                                    $('#as').html(msg).show();
-                                },
-                                error: function() {
-                                    $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show();
-                                }
-                            });
-                        }
-                        $('#rec').click(function(){ save(); });
+                                verify_html : false
+                                
+                    });
+                    var elem=$('#chars');
+                    $('#subject').limiter(78,elem);
+                    $(document).ready(function() { Si=setInterval(save,10000); });
+                    function save(){
+                        tinyMCE.triggerSave();
+                        //$('#as').html('".tr("SAVE_PROCESS")."...').show();
+                        var ds=$('#mailform').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            url: 'autosave.php',
+                            data: ds,
+                            cache: false,
+                            success: function(msg) {
+                            $('#as').html(msg).show();
+                            },
+                            error: function() { $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show(); }
+                        });
+                    }
+                    $('#rec').click(function(){ save(); });
                     </script>";
             } elseif($ft=='else') {
                 echo "<script>var elem=$('#chars');$('#subject').limiter(78,elem);

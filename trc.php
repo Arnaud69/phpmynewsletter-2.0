@@ -35,13 +35,13 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
                          ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."',
                           '".$browser."','".$browser_version."','".$browser_platform."','".$browser_user_agent."')");
     } elseif( $nb_result==1 ) {
-        $cnx->query("UPDATE ".$row_config_globale['table_tracking']." 
+       $cnx->query("UPDATE ".$row_config_globale['table_tracking']." 
                         SET date = NOW(),
                             open_count = open_count+1,
                             ip = '".$ip."',
                             browser = '".$browser."',
                             version = '".$browser_version."',
-                            platform = '".$browser_platform."',,
+                            platform = '".$browser_platform."',
                             useragent = '".$browser_user_agent."'
                 WHERE hash='".$_GET['h']."' AND subject='".$_GET['i']."'");
     }
@@ -54,4 +54,3 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     header('Content-Length:'.$filesize);
     readfile($graphic_http);
 }
-

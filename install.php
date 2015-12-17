@@ -592,12 +592,21 @@ if (empty($langfile)) {
                                 `date` datetime NOT NULL,
                                 `open_count` smallint(3) NOT NULL,
                                 `ip` VARCHAR(20) NOT NULL,
+                                `browser` varchar(150) NOT NULL,
+                                `version` varchar(150) NOT NULL,
+                                `platform` varchar(255) NOT NULL,
+                                `useragent` text NOT NULL,
+                                `devicetype` varchar(10) NOT NULL,
                                 PRIMARY KEY (`id`), 
                                 KEY `hash` (`hash`), 
                                 KEY `subject` (`subject`), 
                                 KEY `date` (`date`), 
                                 KEY `open_count` (`open_count`),
-                                KEY `ip` (`ip`)
+                                KEY `ip` (`ip`),
+                                KEY `browser` (`browser`),
+                                KEY `version` (`version`),
+                                KEY `platform` (`platform`),
+                                KEY `devicetype` (`devicetype`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track") .' '.tr("DONE").'</h4>';
@@ -729,7 +738,7 @@ if (empty($langfile)) {
                 $alert_sub         = $cnx->CleanInput($alert_sub);
             }
             $admin_pass = md5($admin_pass);
-            echo $sql = "INSERT INTO " . $table_prefix . "config VALUES (
+            $sql = "INSERT INTO " . $table_prefix . "config VALUES (
                         '$admin_pass', '30', '$base_url', '$path',
                         '$sending_method', '$language', '" . $table_prefix . "email',
                         '" . $table_prefix . "temp','". $table_prefix . "listsconfig', '" . $table_prefix . "archives',

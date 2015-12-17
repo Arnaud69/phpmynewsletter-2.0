@@ -75,7 +75,7 @@ if(file_exists("config_bounce.php")){
         .tr("BOUNCE_COUNTER_MOVED").  ' : '.$result['counter']['moved'];
     if(count($result)>0){
         foreach($result['msgs'] as $item){
-            $expl = $cwsMailBounceHandler->findStatusExplanationsByCode($item['recipients'][0]['status']);
+            $expl = @$cwsMailBounceHandler->findStatusExplanationsByCode($item['recipients'][0]['status']);
             if($item['processed']&&$item['recipients'][0]['action']=='failed'&&$type_env=='prod'){
                 UpdateEmailError($cnx,$row_config_globale['table_email'],$list_id,$item['recipients'][0]['email'],
                                  $item['recipients'][0]['status'],$item['recipients'][0]['bounce_type'],$item['recipients'][0]['bounce_cat'],
