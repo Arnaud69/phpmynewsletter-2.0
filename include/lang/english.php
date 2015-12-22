@@ -1,302 +1,616 @@
 <?php
-$lang_array = array(
-           //BTN
-           "OK_BTN" => "OK",
-           "YES" => "Yes",
-           "NO" => "No",
-           
-                   "BACK" => "Back",
-
-           //ARCHIVE
-           "ARCHIVE_TITLE" => "Archives",
-           "ARCHIVE_CHOOSE" => "Choose a newsletter",
-           "ARCHIVE_SUBJECT" => "Subject",
-           "ARCHIVE_DATE" => "Date",
-           "ARCHIVE_FORMAT" => "Format",
-           "ARCHIVE_DISPLAY" => "Display this message",
-           "ARCHIVE_BROWSE" => "Browse archives",
-           "ARCHIVE_DELETE" => "Delete this archive",
-           "ARCHIVE_DELETE_TITLE" => "Archive deletion",
-           "ARCHIVE_DELETED" => "Archive deleted successfully",
-           "ARCHIVE_NOT_FOUND" => "No archive found",
-           
-           //INDEX
-           "PHPMYNEWSLETTER_TITLE" => "phpMyNewsletter",
-           "EMAIL_ADDRESS" => "Email address",
-           "EMAIL_ADDRESS_NOT_VALID" => "This email address is not valid",
-           "NEWSLETTER_SUBSCRIPTION" => "Subscribe",
-           "NEWSLETTER_UNSUBSCRIPTION" => "Unsubscribe",
-           "AVAILABLE_NEWSLETTER" => "Available newsletters",
-           
-           //ADMIN LOGIN admin/login.php
-           "LOGIN_TITLE" => "Login",
-           "LOGIN_PLEASE_ENTER_PASSWORD" => "Password is required to access administration area",
-           "LOGIN_PASSWORD" => "Password",
-           "LOGIN" => "Login !",
-           "LOGIN_BAD_PASSWORD" => "Wrong password !",
-           
-           
-           //MENU
-           "MENU_SUBSCRIBERS"=> "Subscribers",
-           "MENU_COMPOSE" => "Compose",
-           "MENU_ARCHIVES" => "Archives",
-           "MENU_NEWSLETTER" => "Newsletter Settings",
-           "MENU_CONFIG" => "Global Settings",
-           "MENU_LOGOUT" => "Logout",
-           
-           "SELECTED_NEWSLETTER" => "Selected newsletter",
-           "NEWSLETTER_TOTAL_SUBSCRIBER" => "subscriber",
-           "NEWSLETTER_TOTAL_SUBSCRIBERS" => "subscribers",
-           
-           
-           //ADMIN NEWSLETTER
-           "NEWSLETTER_CHOOSE" => "Choose a newsletter to manage",
-           "NEWSLETTER_ACTION" => "Newsletter action",
-           "NEWSLETTER_NEW" => "Create a new newsletter",
-           "NEWSLETTER_DEL" => "Delete '%s'",
-           "NEWSLETTER_SETTINGS" => "Newsletter settings",
-           "NEWSLETTER_NAME" => "Newsletter name",
-           "NEWSLETTER_FROM_ADDR" => "Sender email address",
-           "NEWSLETTER_FROM_NAME" => "Sender name",
-           "NEWSLETTER_SUBJECT" => "Message subject",
-           "NEWSLETTER_HEADER" => "Message header",
-           "NEWSLETTER_FOOTER" => "Message footer",
-           "NEWSLETTER_SUB_MSG_SUBJECT" => "Subscription message subject",
-           "NEWSLETTER_SUB_MSG_BODY" => "Subscription message",
-           "NEWSLETTER_WELCOME_MSG_SUBJECT" => "Welcome message subject",
-           "NEWSLETTER_WELCOME_MSG_BODY" => "Welcome message",
-           "NEWSLETTER_UNSUB_MSG_SUBJECT" => "Unsubscription message subject",
-           "NEWSLETTER_UNSUB_MSG_BODY" => "Unsubscription message",
-           "NEWSLETTER_SAVE_SETTINGS" => "Save these settings",
-           "NEWSLETTER_SETTINGS_SAVED" => "Settings saved",
-           "NEWSLETTER_CREATE" => "Create a newsletter",
-           "NEWSLETTER_SAVE_NEW" => "Create this newsletter",
-           "NEWSLETTER_DELETED" => "Newsletter deleted successfully",
-           "NEWSLETTER_DELETE_WARNING" => "Delete all data related to this newsletter",
-           "NEWSLETTER_SETTINGS_CREATED" => "Newsletter create successfully",
-           "NEWSLETTER_DEFAULT_HEADER" => "========= HEADER =========\n".
-                          "Put whatever you want here.\n".
-                          "This will be appended to the top of every message",
-           
-           "NEWSLETTER_DEFAULT_FOOTER" => "======== FOOTER =======\n".
-                          "You can put some message here",  
-           "NEWSLETTER_SUB_DEFAULT_SUBJECT" => "Please confirm your subscription",
-                   "NEWSLETTER_SUB_DEFAULT_BODY" => "Someone, probably you, request a subscription to this newsletter, please follow the instructions bellow", 
-           
-                   "NEWSLETTER_WELCOME_DEFAULT_SUBJECT" => "Welcome to this newsletter",
-              "NEWSLETTER_WELCOME_DEFAULT_BODY" => "Welcome to this newsletter !",           
-           "NEWSLETTER_UNSUB_DEFAULT_SUBJECT" => "Please confirm your unsubscription",
-                   "NEWSLETTER_UNSUB_DEFAULT_BODY" => "Someone, probably you, request unsubscription from this newsletter, please follow the instructions bellow", 
-
-
-           //SUBSCRIBER
-           "SUBSCRIBER_ADD_TITLE" => "Add a subscriber",
-           "SUBSCRIBER_ADD_BTN" => "Add this email address",
-           "SUBSCRIBER_ADDED" => "%s successfully added",
-           
-           "SUBSCRIBER_IMPORT_TITLE" => "Import a list of email address",
-           "SUBSCRIBER_IMPORT_BTN" => "Import",
-           "SUBSCRIBER_IMPORT_HELP" => "You can import a list of email address directly from a file.<br />This file need to follow this format:<br/>adress1@domain.com<br />adress2@domain.com<br/>adress3@domain.com",
-           
-           "SUBSCRIBER_DELETE_TITLE" => "Delete a subscriber",
-           "SUBSCRIBER_DELETE_BTN" => "Delete this email address",
-           "SUBSCRIBER_DELETED" => "Subscriber successfully deleted",
-           
-           "SUBSCRIBER_EXPORT_TITLE" => "Export subscribers",
-           "SUBSCRIBER_EXPORT_BTN" => "Export now",
-           
-           "SUBSCRIBER_TEMP_TITLE" => "Subscription pending",
-           "SUBSCRIBER_TEMP_BTN" => "Delete this email address",
-           "SUBSCRIBER_TEMP_DELETED" => "Email address successfully deleted",
-           
-           
-           //COMPOSE 
-           "COMPOSE_NEW" => "Compose a new message",
-           "COMPOSE_SUBJECT" => "Subject",
-           "COMPOSE_FORMAT" => "Format",
-           "COMPOSE_FORMAT_TEXT" => "Plain text",
-           "COMPOSE_FORMAT_HTML" => "HTML",
-           "COMPOSE_FORMAT_HTML_NOTICE" => "(Only provide code included between the <em>&lt;body&gt;&lt;/body&gt;<em> tags)",
-           "COMPOSE_PREVIEW" => "Message Preview",
-           "COMPOSE_RESET" => "Reset",
-           "COMPOSE_PREVIEW_TITLE" => "Message Preview",
-           "COMPOSE_BACK" => "Back",
-           "COMPOSE_SEND" => "Send this message",
-           "COMPOSE_SENDING" => "Sending a message ...",
-           "COMPOSE_SENT" => "Message sent successfully",
-
-
-           //GLOBAL CONFIG
-           "GCONFIG_TITLE" => "Global Settings",
-           "GCONFIG_DB_TITLE"=> "Database settings",
-           "GCONFIG_DB_HOST" => "Hostname",
-           "GCONFIG_DB_LOGIN" => "User Login",
-           "GCONFIG_DB_DBNAME" => "Database Name",
-           "GCONFIG_DB_PASSWD" => "User Password",
-           "GCONFIG_DB_CONFIG_TABLE" => "Config table",
-           "GCONFIG_DB_TABLE_MAIL" => "Subscriber emails are stored in",
-           "GCONFIG_DB_TABLE_TEMPORARY" => "Temp table",
-           "GCONFIG_DB_TABLE_NEWSCONFIG" => "Newsletter config table",
-           "GCONFIG_DB_TABLE_ARCHIVES" => "Archives are stored in",
-           "GCONFIG_DB_TABLE_SUBMOD" => "Subscription waiting for moderation are stored in",
-
-           
-           "GCONFIG_DB_CONFIG_UNWRITABLE" => "With write permissions on %s, More database settings would be available.",
-           "GCONFIG_MISC_TITLE" => "Misc Settings",
-           "GCONFIG_MISC_ADMIN_PASSW" => "Admin access password",
-           "GCONFIG_MISC_ADMIN_PASSW2"=> "(leave it blank if you don't want to change it)",
-           "GCONFIG_MISC_BASE_URL" => "Base URL",
-           "GCONFIG_MISC_BASE_PATH" => "Path to phpMyNewsletter",
-           "GCONFIG_MISC_LANGUAGE" => "Language",
-
-           "GCONFIG_MESSAGE_HANDLING_TITLE" => "Message handling",
-           "GCONFIG_MESSAGE_ADMIN_NAME" => "Default message sender name (<i>From:</i> field)",
-           "GCONFIG_MESSAGE_ADMIN_MAIL" => "Default message sender email address",
-           "GCONFIG_MESSAGE_CHARSET" => "Charset to use",
-           "GCONFIG_MESSAGE_NUM_LOOP" => "Number of messages sent in each sending loop",
-           "GCONFIG_MESSAGE_SEND_METHOD" => "Sending method",
-                   "GCONFIG_MESSAGE_SEND_METHOD_FUNCTION" => "PHP mail() function",
-           "GCONFIG_MESSAGE_SMTP_HOST" => "SMTP server hostname",
-           "GCONFIG_MESSAGE_SMTP_AUTH" => "SMTP authentification  needed ?",
-           "GCONFIG_MESSAGE_SMTP_LOGIN" =>"SMTP username",
-           "GCONFIG_MESSAGE_SMTP_PASSWORD" => "SMTP password",
-
-           "GCONFIG_SUBSCRIPTION_TITLE" => "Subscriptions",
-           "GCONFIF_SUBSCRIPTION_VALIDATION_TIMEOUT" => "Subscribers have %s day(s) to confirm their subscriptions",
-           "GCONFIG_SUBSCRIPTION_CONFIRM_SUB" => "Subscribers need to confirm their sunscriptions ?",
-           "GCONFIG_SUBSCRIPTION_CONFIRM_UNSUB" => "Subscribers need to confirm their unsubscriptions ?",
-           
-           "GCONFIG_SUBSCRIPTION_MODERATE" => "Subscriptions are moderated ?",
-
-           "GCONFIG_SAVE_BTN" => "Save these settings",
-           "GCONFIG_SUCCESSFULLY_SAVED" => "Global settings saved successfully",
-           //ERROR
-           "ERROR_SQL" => "Database Error :<br/>%s<br/>",
-           "ERROR_SQL2" => "SQL Error :<br/>%s<br/>",
+$lang_array=array (
+    //BTN
+    "OK_BTN"=>"OK",
+    "YES"=>"Yes",
+    "NO"=>"No",
+    "BACK"=>"Back",
+    "ACTION"=>"Action",
+    "ACTIONS"=>"Actions",
+    "SUBMIT"=>"Validate",
+    "UPDATE"=>"Update",
+    "DELETE"=>"Delete",
+    "FOUND"=>"Found",
+    "NOT_FOUND"=>"Not found",
+    // ARCHIVE
+    "ARCHIVE_TITLE"=>"Archive",
+    "ARCHIVE_CHOOSE"=>"Select an information letter",
+    "ARCHIVE_SUBJECT"=>"Subject",
+    "ARCHIVE_DATE"=>"Date",
+    "ARCHIVE_FORMAT"=>"Format",
+    "ARCHIVE_DISPLAY"=>"Show this message",
+    "ARCHIVE_BROWSE"=>"Search the archives",
+    "ARCHIVE_DELETE"=>"Remove this archive",
+    "ARCHIVE_DELETE_TITLE"=>"Archive Deletion",
+    "ARCHIVE_DELETED"=>"Archive deleted successfully.",
+    "ARCHIVE_NOT_FOUND"=>"since No archive found",
+    //INDEX
+    "PHPMYNEWSLETTER_TITLE"=>"phpMyNewsletter V.2.0",
+    "EMAIL_ADDRESS"=>"Email",
+    "EMAIL_ADDRESS_NOT_VALID"=>"This email address is invalid",
+    "NEWSLETTER_SUBSCRIPTION"=>"Registration",
+    "NEWSLETTER_UNSUBSCRIPTION"=>"Unsubscribe",
+    "AVAILABLE_NEWSLETTER"=>"existing info Letters",
+    //ADMIN LOGIN // admin / login.php
+    "LOGIN_TITLE"=>"Identification",
+    "LOGIN_PLEASE_ENTER_PASSWORD"=>"A password is required to access the administration area,",
+    "Login_password"=>"Password",
+    "LOGIN"=>"Connection",
+    "LOGIN_BAD_PASSWORD"=>"Invalid password !",
+    //MENU
+    "MENU_SUBSCRIBERS"=>"Subscribers",
+    "MENU_COMPOSE"=>"Write a message",
+    "MENU_ARCHIVES"=>"Archive",
+    "MENU_NEWSLETTER"=>"Configure the letter",
+    "MENU_CONFIG"=>"Global Configuration",
+    "MENU_LOGOUT"=>"Exit",
+    "MENU_SCHEDULE"=>"Scheduled Tasks",
+    "SELECTED_NEWSLETTER"=>"selected Info Letter",
+    "NEWSLETTER_TOTAL_SUBSCRIBER"=>"subscriber",
+    "NEWSLETTER_TOTAL_SUBSCRIBERS"=>"subscribers",
+    // ADMIN NEWSLETTER
+    "NEWSLETTER_CHOOSE"=>"Select the newsletter to configure",
+    "NEWSLETTER_ACTION"=>"Perform action",
+    "NEWSLETTER_NEW"=>"Create a new list",
+    "NEWSLETTER_DEL"=>"Remove ' %s'",
+    "NEWSLETTER_SETTINGS"=>"Settings of the newsletter",
+    "NEWSLETTER_CONFIGURATION"=>"Configure the newsletter",
+    "NEWSLETTER_NAME"=>"Name of the list",
+    "NEWSLETTER_FROM_ADDR"=>"Email sender",
+    "NEWSLETTER_FROM_NAME"=>"Sender Name",
+    "NEWSLETTER_SUBJECT"=>"Message Subject",
+    "NEWSLETTER_HEADER"=>"Message Header",
+    "NEWSLETTER_FOOTER"=>"Foot Message",
+    "NEWSLETTER_MAIL_PREVIEW"=>"Email address for preview",
+    "NEWSLETTER_SUB_MSG_SUBJECT"=>"Topic subscription message",
+    "NEWSLETTER_SUB_MSG_BODY"=>"Subscription Message",
+    "NEWSLETTER_WELCOME_MSG_SUBJECT"=>"welcome message subject",
+    "NEWSLETTER_WELCOME_MSG_BODY"=>"Welcome Message",
+    "NEWSLETTER_UNSUB_MSG_SUBJECT"=>"Topic unsubscribe message",
+    "NEWSLETTER_UNSUB_MSG_BODY"=>"Message unsubscribe",
+    "NEWSLETTER_SAVE_SETTINGS"=>"Save these settings",
+    "NEWSLETTER_SETTINGS_SAVED"=>"Settings saved",
+    "NEWSLETTER_CREATE"=>"Create a new list",
+    "NEWSLETTER_NEW_LETTER"=>"New Letter info",
+    "NEWSLETTER_SAVE_NEW"=>"Create this list",
+    "NEWSLETTER_DELETED"=>"Info Letter successfully removed",
+    "NEWSLETTER_DELETE_WARNING"=>"Delete all information related to this info letter",
+    "NEWSLETTER_SETTINGS_CREATED"=>"Info Letter successfully created",
+    "NEWSLETTER_DEFAULT_HEADER"=>"================== HEADER<br>Put what you want here.<br>This text will be added to all your messages head",
+    "NEWSLETTER_DEFAULT_FOOTER"=>"=============== FOOTER<br>You can specify a message",
+    "NEWSLETTER_SUB_DEFAULT_SUBJECT"=>"Please confirm your registration",
+    "NEWSLETTER_SUB_DEFAULT_BODY"=>"Someone, probably you, requested registration information to this letter, thank you to follow the following information.",
+    "NEWSLETTER_WELCOME_DEFAULT_SUBJECT"=>"Welcome",
+    "NEWSLETTER_WELCOME_DEFAULT_BODY"=>"Welcome and thank you for being part of the subscribers to this letter info !",
+    "NEWSLETTER_UNSUB_DEFAULT_SUBJECT"=>"Please confirm your unsubscribe",
+    "NEWSLETTER_UNSUB_DEFAULT_BODY"=>"Someone, probably you, requested you unsubscribe from this newsletter info, thank you to follow the following information.",
+    // SUBSCRIBER
+    "SUBSCRIBER_MANAGEMENT"=>"subscriber management",
+    "SUBSCRIBER_ADD_TITLE"=>"Add a subscriber",
+    "SUBSCRIBER_ADD_MAIL_FORMAT"=>"Add a subscriber (format : adress@domain.com)",
+    "SUBSCRIBER_ADD_BTN"=>"Add this email address",
+    "SUBSCRIBER_ADDED"=>" %s successfully added",
+    "SUBSCRIBER_IMPORT_TITLE"=>"Import an email list",
+    "SUBSCRIBER_IMPORT_BTN"=>"Import suscribers from this file",
+    "SUBSCRIBER_IMPORT_HELP"=>"You can import a list of e-mail from a file.",
+    "SUBSCRIBER_MASS_DELETE"=>"Remove ",
+    "SUBSCRIBER_MASS_DELETE_HELP"=>"You can delete a list of e-mail from a file.",
+    "SUBSCRIBER_MASS_DELETE_BTN"=>"Remove subscribers from this file",
+    "SUBSCRIBER_DELETE_TITLE"=>"Remove a subscriber",
+    "SUBSCRIBER_FIND_AND_DELETE"=>"Search for a subscriber to permanently delete",
+    "SUBSCRIBER_FIND"=>"Find a customer",
+    "SUBSCRIBER_DELETE_BTN"=>"Remove this mailbox",
+    "SUBSCRIBER_DELETED"=>"Subscriber %s successfully removed",
+    "SUBSCRIBER_EXPORT_TITLE"=>"Export Subscribers",
+    "SUBSCRIBER_EXPORT_TITLE_SIMPLE"=>"Export Subscribers",
+    "SUBSCRIBER_EXPORT_BTN"=>"Export",
+    "SUBSCRIBER_TEMP_TITLE"=>"Subscribers pending confirmation",
+    "SUBSCRIBER_TEMP_DELETED"=>"Email successfully removed",
+    "SUBSCRIBER_NOT_CONFIRMED"=>"Subscriber(s) not validated(s)",
+    "SUBSCRIBER_BULK_IMPORT"=>"Import mass",
+    "SUBSCRIBER_BOUNCERS"=>"Following error",
+    "SUBSCRIBER_BACKUP"=>"Note: Back up your subscriber list",
+    "SUBSCRIBER_NOT_CONFIRMED_WAITING"=>"These addresses were the subject of a registration and are awaiting confirmation.",
+    "SUBSCRIBER_EMPTY_LIST"=>"No accounts to be confirmed",
+    "SUBSCRIBER_ERROR_MANAGE_TITLE"=>"Managing wrong mail addresses",
+    "SUBSCRIBER_NO_ERRORS"=>"No wrong mail addresses",
+    "SUBSCRIBER_WITH_MAIL_DELETED"=>"mail address in the list of deleted mails / unsubscribed / or error !",
+    "EMAIL_ON_DELETED_LIST"=>"%s : this email address is present on the list of deleted mails !",
+    "SUBSCRIPTION_HTML_CODE"=>"HTML Code Subscription",
+    //COMPOUND
+    "COMPOSE_NEW"=>"Compose New Message",
+    "COMPOSE_SUBJECT"=>"Subject",
+    "COMPOSE_FORMAT"=>"Format",
+    "COMPOSE_FORMAT_TEXT"=>"Text",
+    "COMPOSE_FORMAT_HTML"=>"HTML",
+    "COMPOSE_FORMAT_HTML_NOTICE"=>"(Give only the html code located between the <em>&lt;body&gt;&lt;/body&gt;</em>)",
+    "COMPOSE_PREVIEW"=>"Message Preview",
+    "COMPOSE_RESET"=>"Reset",
+    "COMPOSE_PREVIEW_TITLE"=>"Message Preview",
+    "COMPOSE_BACK"=>"Back",
+    "COMPOSE_SEND"=>"Send this message",
+    "COMPOSE_SENDING"=>"Sending message ...",
+    "COMPOSE_SENT"=>"Message sent successfully",
+    "COMPOSE_MSG_BODY"=>"Message Body",
+    "STEP_SEND_PREVIEW"=>"preview mode: This step allows to visualize the creation of your newsletter <br>Click \"Send this message\" to send a copy to <b>%s</b>",
+    "RE_SEND_PREVIEW"=>"Restart preview message",
+    "SCHEDULE_THIS_SEND"=>"Plan this shipment",
+    "STOP_ON_PREVIEW_ERROR"=>"Preview in error, you can not send this letter to your mailing list",
+    "PREVIEW_SEND_OK"=>"The preview message was correctly sent, thank you to check it before continuing",
+    "PREVIEW_OK"=>"The preview of your composition is OK",
+    "CLICK_TO_SEND"=>"Click %s to send to your mailing list",
+    "SENDED"=>"sent",
+    "TOTAL_TO_SEND"=>"Total sent",
+    "CHRONO"=>"Chrono",
+    "LAST_TIME_SEND"=>"Last shipment (ms)",
+    "START_INITIALISATION"=>"Initializing",
+    "COMPOSE_AND_PREVIEW"=>"Write your newsletter and then click \"Message Preview\" to view",
+    "RFC_2822"=>"(note: according to standard RFC 2822 <a target='_blank'>href='http://www.faqs.org/rfcs/rfc2822.htm'</a>section 2.1.1, it should not exceed 78 characters !)",
+    "CLICK_TO_COMPOSE_HTML"=>"Click here to insert a message composed in html",
+    "CLICK_TO_COMPOSE_WITH_EDITOR"=>"Click here to compose a message with the publisher",
+    // GLOBAL CONFIG
+    "GCONFIG_TITLE"=>"Global Configuration",
+    "GCONFIG_DB_TITLE"=>"Database Settings",
+    "GCONFIG_DB_HOST"=>"Host Name",
+    "GCONFIG_DB_LOGIN"=>"Username",
+    "GCONFIG_DB_DBNAME"=>"The name of the database",
+    "GCONFIG_DB_PASSWD"=>"Password",
+    "GCONFIG_DB_CONFIG_TABLE"=>"Control Table",
+    "GCONFIG_DB_TABLE_MAIL"=>"The email addresses of subscribers are stored in",
+    "GCONFIG_DB_TABLE_MAIL_DELETED"=>"Table of error subscribers or unenrolled",
+    "GCONFIG_DB_TABLE_TEMPORARY"=>"Temporary Table",
+    "GCONFIG_DB_TABLE_NEWSCONFIG"=>"Table of configuration information letters",
+    "GCONFIG_DB_TABLE_ARCHIVES"=>"The records are stored in",
+    "GCONFIG_DB_TABLE_SUBMOD"=>"The pending confirmation registrations are stored in",
+    "GCONFIG_DB_CONFIG_UNWRITABLE"=>"More settings are available, if the web server has write permissions on %s.",
+    "GCONFIG_DB_TABLE_TRACK"=>"Tracking Table (monitoring readings emails)",
+    "GCONFIG_DB_TABLE_SEND"=>"and table the number of emails and campaign list",
+    "GCONFIG_DB_TABLE_SV"=>"Table automatic backups messages being dialed",
+    "GCONFIG_DB_TABLE_UPLOAD"=>"Table of attachments",
+    "GCONFIG_MISC_TITLE"=>"Other settings",
+    "GCONFIG_MISC_ADMIN_PASSW"=>"Password to access the administration area,",
+    "GCONFIG_MISC_ADMIN_PASSW2"=>"(leave blank if you do not want to change it)",
+    "GCONFIG_MISC_BASE_URL"=>"Base URL",
+    "GCONFIG_MISC_BASE_PATH"=>"Path of phpMyNewsletter",
+    "GCONFIG_MISC_LANGUAGE"=>"Language",
+    "GCONFIG_MESSAGE_HANDLING_TITLE"=>"shipments management",
+    "GCONFIG_MESSAGE_ADMIN_NAME"=>"Name of the default sender (Field <i>From:</i>)",
+    "GCONFIG_MESSAGE_ADMIN_MAIL"=>"Email the default sender",
+    "GCONFIG_MESSAGE_CHARSET"=>"Character encoding to use,",
+    "GCONFIG_MESSAGE_NUM_LOOP"=>"Number of messages sent to each send loop",
+    "GCONFIG_MESSAGE_SEND_METHOD"=>"Shipping Method",
+    "GCONFIG_MESSAGE_SEND_METHOD_FUNCTION"=>"mail() PHP",
+    "GCONFIG_MESSAGE_SMTP_HOST"=>"Host name of the SMTP server",
+    "GCONFIG_MESSAGE_SMTP_PORT"=>"Connection port to the SMTP server",
+    "GCONFIG_MESSAGE_SMTP_AUTH"=>"SMTP Authentication required ?",
+    "GCONFIG_MESSAGE_SMTP_LOGIN"=>"SMTP Username",
+    "GCONFIG_MESSAGE_SMTP_PASSWORD"=>"SMTP Password",
+    "GCONFIG_SUBSCRIPTION_TITLE"=>"Inscriptions",
+    "GCONFIF_SUBSCRIPTION_VALIDATION_TIMEOUT"=>"Number of days to confirm the inscriptions",
+    "GCONFIG_SUBSCRIPTION_CONFIRM_SUB"=>"Should subscribers confirm their registration ?",
+    "GCONFIG_SUBSCRIPTION_CONFIRM_UNSUB"=>"Should subscribers confirm their unsubscribe ?",
+    "ALERT_SUB"=>"Be notified of new listings ?",
+    "GCONFIG_SUBSCRIPTION_MODERATE"=>"Registration is moderate ?",
+    "GCONFIG_SAVE_BTN"=>"Save these settings",
+    "GCONFIG_SUCCESSFULLY_SAVED"=>"Global Configuration successfully saved",
+    "UNABLE_WRITE_CONFIG"=>"Unable to write to config.php in the directory include /, check rights,",
+    "GCONFIG_MANAGE_ENVIRONMENT"=>"Environmental Management",
+    "GCONFIG_MANAGE_BOUNCE"=>"Management of retained mail",
+    "GCONFIG_TRY_CONNECT"=>"Login attempt",
+    "BOUNCE_WARNING"=>"<h4 class = 'alert_warning'>Do not fill this field if you do not know the settings !</H4>
+            <p>Note that these settings will allow you to manage the retained messages. <br>
+            Do not complete this area if you use gmail for your shipments ! <br>
+            PhpMyNewsLetter must connect to the email account of the sender and thus proceed:
+            <ul>
+            <li>Playback on returned mail distribution error</li>
+            <li>Return Code Analysis</li>
+            <li>Counter Update</li>
+            <li>Delete the email returned</li>
+            <li>Reporting email address error distribution</li>
+            </ul>
+            Do not raise the mail account of the sender, the updates would be impossible !
+            Thank you ;-)
+            </p>",
+    "GCONFIG_HOST_MAIL"=>"Host Mail Server",
+    "GCONFIG_PORT"=>"<br>Port Default: 110",
+    "GCONFIG_SERVICE"=>"Service: pop3 or imap <br>Default: pop3",
+    "GCONFIG_SERVICE_OPTION"=>"Service Option: none, tls, notls, <br>ssl Default: notls",
+    "GCONFIG_TEST_BOUNCE"=>"Test those settings",
+    // SMTP CONFIGURATION:
+    "GCONFIG_SMTP_LB_TITLE"=>"Load Balancing Management SMTP",
+    // ERROR
+    "ERROR_SQL"=>"Error in database: %s <br><br>",
+    "ERROR_SQL2"=>"SQL error: %s <br><br>",
+    "ERROR_DBCONNECT"=>"Unable to connect to database.",
+    "ERROR_DBCONNECT_2"=>"Unable to connect to database: %s <br /><br />Please check your configuration..",
+    "ERROR_DBCONNECT_3"=>"Connection Error",
+    "ERROR_FLUSHING_TEMP_TABLE"=>"Error cleaning temp table ( %s)",
+    "ERROR_SAVING_SETTINGS"=>"Error saving settings: %s",
+    "ERROR_WHILE_SAVING_CONFIGURATION"=>"Error while saving the configuration",
+    "ERROR_DELETING_NEWSLETTER"=>"Error while deleting this information letter",
+    "ERROR_CHOOSE_ANOTHER_NEWSLETTER"=>"Please select another letter info or <a href='index.php ?page=home&action=create'>to create a new</a>",
+    "ERROR_NO_NEWSLETTER_CREATE_ONE"=>"Please <a href='index.php ?page=newsletterconf&action=create'>create a new letter info</a>",
+    "ERROR_NO_SUCH_NEWSLETTER"=>"not found info Letter",
+    "ERROR_ADDING_SUBSCRIBER"=>"Error adding %s",
+    "ERROR_ALREADY_SUBSCRIBER"=>" %s is already subscribed",
+    "ERROR_SUPPLY_VALID_EMAIL"=>"Please enter a valid email address",
+    "ERROR_DELETING_SUBSCRIBER"=>"Error while deleting the address: %s",
+    "ERROR_DELETING_SUBSCRIBER_NOT_IN_LIST"=>"Mail : %s unknown, not in this list",
+    "ERROR_NO_EMAIL_IN_FILE"=>"No email address in this file",
+    "ERROR_IMPORT_FILE_MISSING"=>"Please provide a file to import",
+    "ERROR_IMPORT_TMPDIR_NOT_WRITABLE"=>"Unable to write in admin / import !",
+    "ERROR_DELETING_TEMP"=>"Error while deleting the address: %s",
+    "ERROR_UNABLE_TO_SEND"=>"No subscriber, impossible to write a new message",
+    "ERROR_ALL_FIELDS_REQUIRED"=>"All fields are required",
+    "ERROR_SENDING"=>"Error Message forwarding",
+    "ERROR_DELETING_ARCHIVE"=>"Error while deleting this archive",
+    "ERROR_UNKNOWN"=>"Unknown error",
+    "ERROR_SENDING_CONFIRM_MAIL"=>"Error Message shipment confirmation",
+    "ERROR_LOG_CREATE"=>"Unable to create the log file. Check back permissions admin / logs",
+    "ERROR_IFRAME"=>"Oops ! Your browser does not support iframes",
+    //MSG
+    "NO_SUBSCRIBER"=>"No subscriber in the database",
+    "NO_ARCHIVE"=>"No archive for this info letter",
+    "NEWSLETTER_NOT_YET"=>"No letter info is configured.",
+    "BACK"=>"Back",
+    "EXAMPLE"=>"Example",
+    "DONE"=>"Done",
+    //INSTALLATION
+    "INSTALL_TITLE"=>"Installing phpMyNewsletter",
+    "INSTALL_LANGUAGE"=>"Language",
+    "INSTALL_LANGUAGE_LABEL"=>"Choose your language",
+    "INSTALL_DB_TYPE"=>"Database Type",
+    "INSTALL_DB_TITLE"=>"Database",
+    "INSTALL_DB_HOSTNAME"=>"Host Name",
+    "INSTALL_DB_NAME"=>"The name of the database",
+    "INSTALL_DB_LOGIN"=>"Username",
+    "INSTALL_DB_PASS"=>"Password",
+    "INSTALL_DB_TABLE_PREFIX"=>"Prefix for tables",
+    "INSTALL_DB_CREATE_DB"=>"Create the database ?",
+    "INSTALL_DB_CREATE_TABLES"=>"Create the tables ?",
+    "INSTALL_GENERAL_SETTINGS"=>"Common Settings",
+    "INSTALL_ADMIN_PASS"=>"Password to access the administration area,",
+    "INSTALL_ADMIN_BASEURL"=>"Base URL",
+    "INSTALL_ADMIN_PATH_TO_PMNL"=>"Path to phpMyNewsletter",
+    "INSTALL_ADMIN_NAME"=>"Name of the default sender",
+    "INSTALL_ADMIN_EMAIL"=>"Default E-mail address of the sender",
+    "INSTALL_MESSAGE_SENDING_TITLE"=>"shipments management",
+    "INSTALL_MESSAGE_SENDING_LOOP"=>" %s Message(s) shipped (s) each send loop",
+    "INSTALL_VALIDATION_PERIOD"=>" %s subscribers have days to confirm their subscription.",
+    "INSTALL_SENDING_METHOD"=>"Shipping Method",
+    "INSTALL_PHP_MAIL_FONCTION"=>"mail() PHP (default)",
+    "INSTALL_PHP_MAIL_FONCTION_ONLINE"=>"Online.net: email() function",
+    "INSTALL_SMTP_HOST"=>"SMTP Host Name",
+    "INSTALL_SMTP_AUTH_NEEDED"=>"SMTP Authentication required ?",
+    "INSTALL_SMTP_USERNAME"=>"SMTP Username",
+    "INSTALL_SMTP_PASSWORD"=>"SMTP Password",
+    "INSTALL_SUBSCRIPTION_TITLE"=>"Subscribe / Unsubscribe",
+    "INSTALL_SUB_CONFIRM"=>"Customers must confirm their registration ?",
+    "INSTALL_UNSUB_CONFIRM"=>"Customers must confirm their unsubscribe ?",
+    "INSTALL_SAVE_CREATE_DB"=>"Creating the database %s",
+    "INSTALL_SAVE_CREATE_TABLE"=>"Create table %s",
+    "INSTALL_SAVE_CONFIG"=>"Saving the configuration",
+    "INSTALL_SAVE_CONFIG_FILE"=>"Writing the configuration file",
+    "INSTALL_UNABLE_TO_SAVE_CONFIG_FILE"=>"Can not write configuration file.",
+    "INSTALL_CONFIG_MANUALLY"=>"Please copy the lines below and paste them into the configuration file (<em>include / config.php</em>).",
+    "INSTALL_FINISHED"=>"Finish",
+    "INSTALL_STEP_FINISHED"=>"Completing the installation",
+    "INSTALL_VERSIONS_EXTENSIONS"=>"Versions and Extensions",
+    "INSTALL_EXTENSION"=>"Extension",
+    "INSTALL_MISSING"=>"Missing",
+    "INSTALL_OBSOLETE"=>"obsolete",
+    "INSTALL_FUNCTION_OK"=>"function %s OK",
+    "INSTALL_FUNCTION_DOWN"=>"function %s not available",
+    "INSTALL_ENVIRONMENT"=>"Environment",
+    "INSTALL_DEVELOPMENT"=>"Development",
+    "INSTALL_PRODUCTION"=>"Production",
+    "INSTALL_SERVER_TYPE"=>"Server Type",
+    "SHARED_SERVER"=>"shared, shared",
+    "DEDICATED_SERVER"=>"dedicated",
+    "Storage_engine"=>"Storage Engine",
+    "LOCAL_TIME_ZONE"=>"Local time zone",
+    "INSTALL_SHARED"=>"Shared",
+    "INSTALL_CHOOSE_PASSWORD"=>"Please enter a password",
+    "INSTALL_RESULT_INSTALLATION"=>"The result of the installation",
+    "INSTALL_CREATE_DB_DOWN"=>"The creation of the database has failed,",
+    "QUERY"=>"Request",
+    "UPLOAD_DIRECTORY"=>"upload directory",
+    "DKIM_DIRECTORY"=>"Directory DKIM certificates",
+    "BK_CRONTAB_DIRECTORY"=>"Backup directory crontab",
+    "ERROR_CREATE_UPLOAD_DIRECTORY"=>"Error creating the upload directory",
+    "MANUALLY"=>"manually",
+    "CHECK_PERMISSIONS_OR_CREATE"=>"Please, check permissions or manually create upload",
+    "NOT_YET_AVAILABLE"=>"is not available",
+    "MANUALLY_SAVE_CONF"=>"Please save this configuration text in include / config and everything will be ready. Renez you then at %s to begin",
+    "YOU_DID_IT"=>"Perfect, everything is ready",
+    "CREDITS_WITH"=>"All this is possible through",
+    "CREDITS_GREGORY"=>"Gregory (initial Project development and legitimate author of PhpMyNewsLetter)",
+    "CREDITS_PHPMAILER"=>"phpmailer (emails shipment management Class)",
+    "CREDITS_TINYMCE"=>"TinyMCE (WYSIWYG HTML editor, written in JavaScript, used for writing messages),",
+    "CREDITS_CRAZY"=>"Cr@zy (emails class revenue management error)",
+    "CREDITS_MEDIALOOT"=>"Medialoot (Editor templates and icons),",
+    "CREDITS_PASSWORD"=>"Plugin jQuery test the quality of a password",
+    "CREDITS_MODAL"=>"Plugin jQuery modal window and lightbox-type",
+    "CREDITS_DND"=>"JavaScript library independent (not dependent on any other library) management \" drag'n'drop file uploads \"",
+    "CONTRIBUTE"=>"Contribute",
+    "LICENSE"=>"License",
+    "LICENSE_TERMS"=>"phpMyNewsletter is free software available under the terms of the <a target='_blank'>href='http://www.gnu.org/copyleft/gpl.html' General Public License</a ><a project href='http://www.gnu.org' target='_blank' class='lien'></a>GNU (Gnu GPL)",
+    "CONTRIBUTE_HELP"=>"PhpMyNewsLetter is a free project that needs to be improved Your ideas and suggestions are welcome, your qualities as developer Go to the forum <a href = 'http: //www.phpmynewsletter com/forum/' target='_blank '>PhpMyNewsLetter</a>",
+    "ASK_ON_FORUM"=>"I do not reply to individual requests, thank you to go through the forum for any questions or problems Go to the forum <a href =. 'Http: //www.phpmynewsletter.com/forum/' target = '_ blank'>PhpMyNewsLetter</a>",
+    "INSTALL_REFRESH"=>"Please refresh this page after correction of the error",
+    "LOGOUT_DONE"=>"You are offline",
+    "LOGOUT_ERROR"=>"Error when disconnecting",
+    "LOGOUT_TITLE"=>"Logout",
+    "LOGOUT_BACK"=>"Back",
+    //SUBSCRIPTION.PHP
+    "SUBSCRIPTION_TITLE"=>"Subscribe to the newsletter",
+    "SUBSCRIPTION_SEND_CONFIRM_MESSAGE"=>"confirmation Message sent.",
+    "SUBSCRIPTION_ALREADY_SUBSCRIBER"=>"You are already a subscriber.",
+    "SUBSCRIPTION_NOT_A__SUBSCRIBER"=>"You are not a subscriber of this newsletter.",
+    "SUBSCRIPTION_CONFIRMATION"=>"Confirm your registration",
+    "SUBSCRIPTION_FINISHED"=>"Subscription done",
+    "SUBSCRIPTION_MAIL_BODY"=>"Go to this address to confirm your subscription",
+    "SUBSCRIPTION_UNSUBSCRIBE_LINK"=>"Click the following link to unsubscribe",
+    "SUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS"=>"Error: Unknown Email",
+    "UNSUBSCRIPTION_TITLE"=>"Unsubscribe to the newsletter",
+    "UNSUBSCRIPTION_MAIL_BODY"=>"To unsubscribe, click the link",
+    "UNSUBSCRIPTION_SEND_CONFIRM_MESSAGE"=>"confirmation Message sent.",
+    "UNSUBSCRIPTION_CONFIRMATION"=>"Confirm unsubscribe",
+    "UNSUBSCRIPTION_FINISHED"=>"Unsubscribe finished",
+    "NEWSLETTER_TITLE"=>"info Letters",
+    "UNSUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS"=>"Error: unknown email address",
+    "SEND_UNSUBSCRIPTION_LINK"=>"\r\n\r\nFor unsubscribe:\r\n",
+    "PASSWORD_MD5_NOTICE"=>"The storage format of the administration password has changed, thank you to enter your admin password to perform the update.",
+    "PASSWORD_MD5_PWD"=>"Password:",
+    "PASSWORD_MD5_ERR"=>"An error occurred, perhaps the entered password is incorrect.",
+    "PASSWORD_MD5_ERR2"=>"A SQL error occurred: %s.",
+    "SUBSCRIPTION_CAPTCHA"=>"Confirm your registration by entering the code below",
+    "SUBSCRIPTION_I_SUB"=>"I subscribe",
+    "SUBSCRIPTION_AGREE_SUB"=>"I confirm my subscription",
+    "SUBSCRIPTION_UN_SUB"=>"I unsubscribe",
+    "SUBSCRIPTION_AGREE_UN_SUB"=>"I confirm my unsubscribe",
+    "SUBSCRIPTION_WAITING_MODERATION"=>"Your subscription request is recorded and is awaiting validation",
+    "CLOSE_WINDOW"=>"You can close this window",
+    "SAVED_MESSAGE_AT"=>"Message saved at ",
+    "UNSAVED_MESSAGE"=>"Saving error !",
+    "SAVE_PROCESS"=>"Saving",
+    "SAVE_THIS_MESSAGE"=>"Save this message",
+    // INDEX :
+    "ROOT_TO_FLUSH_MAIL_QUEUE"=>"You must enter root mode and call another command to flush the queue of mails in progress.",
+    "MAIL_ADDED"=>"Email(s) added(s)",
+    "MAIL_MASS_DELETED"=>"Email(s) processed",
+    "MAIL_ADDED_ERROR"=>"Email (s) in error",
+    "DASHBOARD"=>"Dashboard",
+    "SUPPORT"=>"Support",
+    "ADMINISTRATION"=>"Administration",
+    "TITLE_ADMIN_PAGE"=>"PhpMyNewsLetter>Administration",
+    "CURRENT_DRAFT"=>"Current draft",
+    "ACCESS_DRAFT_CONTINUE_WRITING"=>"Access this draft and continue writing",
+    "NO_CURRENT_DRAFT"=>"No current draft",
+    "LIST_OF_LISTS"=>"List of Lists",
+    "CREATION_NEW_LIST"=>"Create New List",
+    "CREATE_NEW_LIST"=>"Create New List",
+    "INITIAL_WORDING"=>"Writing initial",
+    "SCREEN_PREVIEW"=>"Preview screen",
+    "SENDING_TEST_MAIL"=>"Preview by sending test mail",
+    "TRACKING"=>"Tracking",
+    "STATS_NUMBER_AND GRAPHICS"=>"Data and graphs",
+    "TIME_SERVER"=>"Server Time",
+    "ANALYSIS_OF_RETURNS"=>"Returns Analysis",
+    "MANAGEMENT_UNDISTRIBUTED"=>"Management of non-distributed",
+    "MANAGEMENT_ARCHIVE"=>"archive management",
+    "MANAGEMENT_SCHEDULED_TASKS"=>"Managing Scheduled Tasks",
+    "SCHEDULED_TASKS"=>"Scheduled Tasks",
+    "PENDING_MAILS"=>"Mails being sent",
+    "PENDING_MAILS_MANAGEMENT"=>"Management of mails being sent",
+    "LOOKING_PROGRESS_MAILS"=>"Search mails being sent",
+    "LISTS"=>"Lists",
+    "WRITING"=>"Writing",
+    "WRITE_AND_SEND_A_MAIL"=>"Writing and sending a message",
+    "MANAGEMENT_ERROR_LAST_CAMPAIN"=>"Processing of the last shipment errors",
+    "MANAGEMENT_ERROR_NOT_CONFIGURED"=>"Processing mails back unconfigured",
+    "INVALID_MAIL"=>"invalid email address",
+    // ONLINE, SEND
+    "READ_ON_LINE"=>"If you can not view this message orrectly, %s click here</a>",
+    "ADD_ADRESS_BOOK"=>"Please, add %s to your address book to make sure you receive our news in your inbox !",
+    "UNSUBSCRIBE_LINK"=>"No longer interested ? %s Unsubscribe</a>",
+    "MAIL_PREVIEW_SEND"=>"Mail preview",
+    "NO_SEND_DEFINITION"=>"Sending Mode Not Set !",
+    // TRACK
+    "CLICKED_LINK_REPORT"=>"Record of links clicked",
+    "CLICKED_LINK_REPORT_GRAPHIC"=>"Graph links clicked",
+    "CLICKED_LINK"=>"Links clicked",
+    "CLICKED_COUNT"=>"Number of clicks",
+    "CLICKED_LINK_NO_LINK"=>"No link clicked in the letter",
+    // UPLOAD
+    "ATTACHMENTS"=>"Attachments",
+    "NO_ATTACHMENTS"=>"No attachments",
+    "UPLOAD_ADD"=>"Add attachments",
+    //add attachment
+    "ADD_ONE_OR_MORE_ATTACHMENT"=>"Add one or more attachments to this mail",
+    "UPLOAD_DROP_FILES"=>"Drag here to send files on the server,",
+    "UPLOAD_EXPLAIN"=>"The documents are automatically added here attached to the email being drafted. <br>Careful not to put too heavy attached documents (risk of discharges according limitations), not too many ! (10 records maximum, 4-5 MB is a reasonable limit !)",
+    // ARCHIVES
+    "SUBSCRIBER_DIDNT_RECEIVE"=>"Warning: %s registered has not received such information Click here to return to that part !",
+    "SUBSCRIBERS_DIDNT_RECEIVE"=>"Warning: %s registered have not received this information Click here to return to those registered !",
+    "SEND_ENDED"=>"Sending completed",
+    "REDIRECT_NOW"=>"Redirecting",
+    "PROGRESSION_OF_CURRENT_SEND"=>"the current shipment of Progress",
+    // BOUNCE
+    "BOUNCE_NOT_CONFIGURED"=>"Processing mails back unconfigured",
+    "BOUNCE_TOTAL_MAILS"=>"Number of mails",
+    "BOUNCE_FETCHED"=>"Number of processes",
+    "BOUNCE_PROCESSED"=>"Error treated Emails",
+    "BOUNCE_UNPROCESSED"=>"Correct Emails treaties",
+    "BOUNCE_COUNTER_DELETED"=>"Deleted Emails",
+    "BOUNCE_COUNTER_MOVED"=>"Moved Emails",
+    "BOUNCE"=>"Returns management",
+    // CODE_HTML
+    "PASTE_CODE"=>"Copy this code and insert it into the page or pages of your portal to your users to subscribe to your newsletters",
+    "WITH_POP_UP"=>"Code with pop-up",
+    "FULL_PAGE"=>"Code in full screen",
+    "MODIFY_IT"=>"Note: This code can be changed. You can add javascript or link for style sheet, but don't modify variables...",
+    "Suscribe"=>"subscribe",
+    "CODE_TITLE"=>"HTML Code Subscription",
+    // LISTS
+    "LIST_NUMBER"=>"No.",
+    "LIST_NAME"=>"Name",
+    "LIST_COUNT_SUSCRIBERS"=>"Subscribers",
+    "LIST_SELECTED"=>"Selected List",
+    "CHOOSE_THIS_LIST"=>"Select list",
+    "DELETE_THIS_LIST"=>"Delete this list",
+    "LIST_LAST_CAMPAIGN"=>"Latest Post",
+    "LIST_DUPLICATE"=>"Duplicate this list",
+    "LIST_MIX_TITLE"=>"MIXER",
+    "LIST_MIX_DETAIL"=>"Mixer this list with another list",
+    "WARNING_DELETE_LIST"=>"Delete all information relating to this list (This action is irreversible)",
+    // Mailq
+    "NO_MAIL_IN_PROCESS"=>"no email being sent",
+    // MANAGERS (ALL)
+    "MONTH_TAB"=>array('','January','February','March','April','May','June','July','August','September','October','November','December'),
+    "SCHEDULE_A_SEND"=>"Planning a shipment",
+    "SCHEDULE_EXPLAIN"=>"<p>You will plan the sending of the campaign entitled: <b>%s</b>
+                You must select a date, stating:
+                <ul>
+                    <li>the minutes (00) default</li>
+                    <li>the hours, (00) default</li>
+                    <li>the day of the month (1) by default</li>
+                    <li>the month (January) Default</li>
+                </ul>
+                Once the sending finished, the scheduled task will be automatically removed.
+                </p>",
+    "SCHEDULE_DATE_HEAD"=>"<th>Minute (s)</th>
+                                <th>time (s)</th>
+                                <th>Day of the month</th>
+                                <th>Month</th>",
+    "SCHEDULE_MONTHS_OPTION"=>"<option value=1>January</option>
+                                        <option value =2>February</option>
+                                        <option value=3>March</option>
+                                        <option value=4>April</option>
+                                        <option value=5>May</option>
+                                        <option value=6>June</option>
+                                        <option value=7>July</option>
+                                        <option value=8>August</option>
+                                        <option value=9>September</option>
+                                        <option value=10>October</option>
+                                        <option value=11>November</option>
+                                        <option value=12>December</option>",
+    "SCHEDULE_RESULT"=>"<h4>As defined, sending the campaign \"<i>%s</i>\"will be held on <span id = 'dd'>1</span><span id = 'dmo'>January</span> <span id = 'dh'>00</span>h <span id = 'dmi'>00</span>min</h4>",
+    "SCHEDULE_JS_LIST_MONTH"=>'"January","February","March","April","May","June","July","August","September","October","November","December"',
+    "SCHEDULE_NO_SEND_SCHEDULED"=>"No sending email planned",
+    "SCHEDULE_SEND_SCHEDULED"=>"Planned Shipments",
+    "SCHEDULE_DOWNLOAD_LOG"=>"Download log file",
+    "SCHEDULE_NO_LOG"=>"No log available",
+    "SCHEDULE_STATE"=>array ('scheduled'=>'planned', 'done'=>'completed', 'deleted'=>'running'),
+    "SCHEDULE_DELETE_TASK"=>"Delete this task",
+    "SCHEDULE_REPORT_HEAD"=>"<th>Name</th>
+                <th>List</th>
+                <th>Title of sending</th>
+                <th>Planning Date</th>
+                <th>State</th>
+                <th>Log file</th>
+                <th></th>",
+    "SCHEDULE_TASK_NOT_FOUND"=>"Task not found",
+    "SCHEDULE_NOT_POSSIBLE_TRANSACTION"=>"Unable Transaction",
+    "SCHEDULE_REPORT_SUBJECT"=>"Report of a planned shipment",
+    "SCHEDULE_REPORT_TITLE"=>"PhpMyNewsLetter tells you",
+    "SCHEDULE_REPORT_LONG_DESC"=>"Report sending of a planned campaign,",
+    "SCHEDULE_CAMPAIGN_TITLE"=>"Campaign Name",
+    "SCHEDULE_CAMPAIGN_ID"=>"Name of the campaign",
+    "SCHEDULE_CAMPAIGN_DATE_DONE"=>"Execution date",
+    "SCHEDULE_CAMPAIGN_SENDED"=>"Number of mails sent,",
+    "SCHEDULE_CAMPAIGN_ERROR"=>"Number of mails error",
+    "SCHEDULE_START_PROCESS"=>"Sending started",
+    "SCHEDULE_END_PROCESS"=>"Sending completed",
+    "MAILS_REPORT_HEAD"=>"<th>ID</th>
+                        <th>Size</th>
+                        <th>Date</th>
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th></th>",
+    "MAIL_FULL_MSG_ERROR"=>"Complete error message",
+    "MAIL_DELETE_THIS"=>"Delete mail",
+    "MAIL_REMOVE_FROM_QUEUE"=>"Delete mail file the shipments",
+    "MAIL_PURGE_QUEUE"=>"Purge the line of shipments",
+    "MAIL_CORRECTED"=>" %s email Correction correct",
+    "MAIL_DELETED"=>"Removing %s correct email",
+    "MAIL_ERROR_TO_DELETE"=>"Error while deleting the mail: %s",
+    "MAIL_ERROR_TO_CORRECT"=>"Error correction mail : %s",
+    "PJ_DELETED"=>"Attachment removed from the current shipment",
+    "PJ_ERROR_DELETE"=>"An error was encountered while deleting attachment",
+    "PJ_TO_DELETE"=>"delete this attachment",
+    "IMAP_OK"=>"Connection successful",
+    "IMAP_DOWN"=>"No connection",
+    "TRACKING_TITLE"=>"Tracking",
+    "TRACKING_NO_DATA_AVAILABLE"=>"No statistics available, awaiting campaigns",
+    "TRACKING_STATS_GRAPHICS_REPORT"=>"Graphs reporting by campaign ID",
+    "TRACKING_SEND"=>"Send",
+    "TRACKING_ERROR"=>"Errors",
+    "TRACKING_OPENED"=>"Opened",
+    "TRACKING_READ"=>"Read",
+    "TRACKING_UNSUB"=>"Unsub",
+    "TRACKING_COUNT"=>"Count",
+    "TRACKING_REPORT_HEAD_TABLE"=>"<th>Date</th>
+                <th>Log</th>
+                <th>ID</th>
+                <th>Subjet</th>
+                <th>Send</th>
+                <th>Read</th>
+                <th>Opened</th>
+                <th>Open-Rate</th>
+                <th>CTR</th>
+                <th>ACTR</th>
+                <th>Errors</th>
+                <th>Unsub</th>
+                ",
+    "TRACKING_BULLE_ACTR"=>"Adjusted Ratio : #CLICKED / #OPENED",
+    "TRACKING_BULLE_CTR"=>"Ratio : #CLICKED / #SEND",
+    "TRACKING_BULLE_OPEN_RATE"=>"Ratio : #OPENED / #DELIVERED",
+    "TRACKING_VIEW_LOG_DAY"=>"View day log for %s",
+    "TRACKING_VIEW_LOG_SEND"=>"View send log",
+    "TRACKING_DETAILLED_CLICKED_LINKS"=>"Detailled stats for clicked links",
     
-           "ERROR_DBCONNECT" => "Unable to connect to the Database.",
-           "ERROR_DBCONNECT_2" => "Unable to connect to the Database: <br />%s.<br />Please check your database settings.",
-           "ERROR_DBCONNECT_3" => "Connection Error",
-
-           
-           "ERROR_FLUSHING_TEMP_TABLE" => "Error while flushing temporary table (%s)",
-           "ERROR_SAVING_SETTINGS" => "Error while saving settings: %s",
-           "ERROR_DELETING_NEWSLETTER" => "Error while deleting this newsletter",
-           "ERROR_CHOOSE_ANOTHER_NEWSLETTER" => "Please choose another newsletter, or <a href=\"index.php?page=home&action=create\">create a new one</a>",
-           "ERROR_NO_NEWSLETTER_CREATE_ONE" => "Please <a href=\"index.php?page=newsletterconf&action=create\">create a new newsletter</a>",
-
-           "ERROR_NO_SUCH_NEWSLETTER" => "Newsletter not found",
-           "ERROR_ADDING_SUBSCRIBER" => "Error while adding %s",
-           "ERROR_ALREADY_SUBSCRIBER" => "%s is already in the subscribers list",
-           "ERROR_SUPPLY_VALID_EMAIL" => "Please supply a valid address email",
-           "ERROR_DELETING_SUBSCRIBER" => "Error while deleting this address: %s",
-           "ERROR_NO_EMAIL_IN_FILE"=>"No email address in this file",
-           "ERROR_IMPORT_FILE_MISSING" => "Please provide a file to import",
-                "ERROR_IMPORT_TMPDIR_NOT_WRITABLE" => "Can't write in admin/import !",
-           "ERROR_DELETING_TEMP" => "Error while deleting this address: %s",
-           "ERROR_UNABLE_TO_SEND" => "No subscriber, unable to compose a new message",
-           "ERROR_ALL_FIELDS_REQUIRED" => "All fields required",
-           "ERROR_SENDING" => "Error while sending this message",
-           "ERROR_DELETING_ARCHIVE" => "Error while deleting this archive",
-           "ERROR_UNKNOWN" => "Unknown error",
-                   "ERROR_SENDING_CONFIRM_MAIL" => "Error while sending confirmation mail",
-           "ERROR_LOG_CREATE" => "Unable to create log file.<br/>".
-                      "Please check permissions of admin/logs",
-
-           //MSG
-           "NO_SUBSCRIBER" => "No subscriber in the database",
-           "NO_ARCHIVE" => "No archive for this newsletter",
-           "NEWSLETTER_NOT_YET" => "No newsletter configured yet.",
-           "BACK" => "Back",
-           "EXAMPLE" => "Example",
-           "DONE" => "Done",
-           
-           
-           //install
-           "INSTALL_TITLE" => "phpMyNewsletter installation",
-           "INSTALL_LANGUAGE" => "Language",
-           "INSTALL_LANGUAGE_LABEL" => "Choose your prefered language",
-           "INSTALL_DB_TYPE" => "Database Type",
-           "INSTALL_DB_TITLE" => "Database",
-           "INSTALL_DB_HOSTNAME" => "Hostname",
-           "INSTALL_DB_NAME" => "Database name",
-           "INSTALL_DB_LOGIN"=> "Login",
-           "INSTALL_DB_PASS" => "Password",
-           "INSTALL_DB_TABLE_PREFIX" => "Database tables prefix",
-           "INSTALL_DB_CREATE_DB" => "Create database ?",
-           "INSTALL_DB_CREATE_TABLES" => "Create database tables ?",
-           "INSTALL_GENERAL_SETTINGS" => "Common settings",
-           "INSTALL_ADMIN_PASS" => "Admin password",
-           "INSTALL_ADMIN_BASEURL"=> "Base Url",
-           "INSTALL_ADMIN_PATH_TO_PMNL" => "Path to phpMyNewsletter",
-           "INSTALL_ADMIN_NAME" => "Admin name",
-           "INSTALL_ADMIN_EMAIL" => "Admin email address",
-           
-           "INSTALL_MESSAGE_SENDING_TITLE" => "Message sending",
-           "INSTALL_MESSAGE_SENDING_LOOP" => "Newsletter are sent by loop of %s messages.",
-           "INSTALL_VALIDATION_PERIOD" => "Subscribers have %s days to confirm their subscriptions.",
-           "INSTALL_SENDING_METHOD" => "Sending method",
-           "INSTALL_PHP_MAIL_FONCTION" => "php mail() function (default)",
-           "INSTALL_PHP_MAIL_FONCTION_ONLINE" => "Online.net specific email() php function",
-
-           "INSTALL_SMTP_HOST" => "SMTP host",
-           "INSTALL_SMTP_AUTH_NEEDED" => "Authentificaton needed ?",
-           "INSTALL_SMTP_USERNAME" => "Username",
-           "INSTALL_SMTP_PASSWORD" => "Password",
-           
-           "INSTALL_SUBSCRIPTION_TITLE" => "Subscription / Unsubscription",
-           "INSTALL_SUB_CONFIRM" => "Subscribers need to confirm their subscriptions ?",
-           "INSTALL_UNSUB_CONFIRM"=>"Subscribers need to confirm their unsubscriptions ?",
-           
-           "INSTALL_SAVE_CREATE_DB" => "Creating %s database",
-           "INSTALL_SAVE_CREATE_TABLE" => "Creating %s table",
-           "INSTALL_SAVE_CONFIG" => "Saving configuration",
-           "INSTALL_SAVE_CONFIG_FILE" => "Saving configuration file",
-           "INSTALL_UNABLE_TO_SAVE_CONFIG_FILE" => "Unable to save config file.",
-           "INSTALL_CONFIG_MANUALLY" => "Please cut and paste the lines below in the config file (<em>include/config.php</em>).",
-           "INSTALL_FINISHED" => "Finish",
-           
-           
-           "LOGOUT_DONE" => "You are logged out",
-           "LOGOUT_ERROR"=> "Error while logging out",
-           "LOGOUT_TITLE" => "Logout",
-           "LOGOUT_BACK" => "Back",
-
-
-           //subscription.php
-           "SUBSCRIPTION_TITLE" => "Newsletter subscription",
-           "SUBSCRIPTION_SEND_CONFIRM_MESSAGE" => "Confirmation request sent by email.",
-           "SUBSCRIPTION_ALREADY_SUBSCRIBER" => "You've already subscribed to this newsletter.",
-           "SUBSCRIPTION_CONFIRMATION" => "Confirm your subscription",
-                   "SUBSCRIPTION_FINISHED" => "Subscription successfull",
-
-
-           "SUBSCRIPTION_MAIL_BODY" => "Go to the following URL in order to confirm your subscription",
-           "SUBSCRIPTION_UNSUBSCRIBE_LINK" => "Click on the following link to unsubscribe",
     
-           "SUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS" => "Error: Unknow email address",
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    "CLICKED_LINK_REPORT_ENVIRONMENT"=>"Browsers",
+    "CLICKED_LINK_REPORT_OS"=>"Operating Systems",
+    "RESULTS"=>"Results",
+    "UNDISTURBED_TITLE"=>"Processing of the last shipment errors",
+    "UNDISTURBED_MSG_EXPLAIN"=>"Complete error message",
+    "UNDISTURBED_NO_ERROR"=>"No mail error",
+    "UNDISTURBED_TABLE_HEAD"=>"<th>code</th>
+                                <th>Recipient</th>
+                                <th>Type</th>
+                                <th>Type</th>
+                                <th>Title</th>",
+    "UNDISTURBED_TITLE_GRPH_AND_ERROR"=>"Graphic and distribution of the last shipment errors",
+    "UNDISTURBED_LABEL_ERROR"=>"Graphic by error code",
+    "UNDISTURBED_LABEL_CLASS"=>"Graphic by error class: hard-bounce, soft-bounce ",
+    "UNDISTURBED_ERROR_SERVER"=>"Your server does not allow the processing of mail returns", 
+    "F_UNDETECTED_VERSION"=>"Version undetected file",
+    "F_NEW_VERSION_AVAILABLE "=>"%s version available",
+    "F_MAILS_OF_SUBSCRIBERS"=>"subscriber email addresses",
+    "F_TITLE_MAILS_OF_SUBSCRIBERS"=>"List Addresses",
+    "F_TRANSLATION_REQUIRED"=>"[missing translation]",
+    "F_SENT_ON"=>"Posted",
+    "F_BROWSER_IFRAME"=>" Oops ! Your Browser does not support iframes !",
+    "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Use this message as a template for redrafting with the list",
+    );
 
 
-           "UNSUBSCRIPTION_TITLE" => "Newsletter unsubscription",    
-                   "UNSUBSCRIPTION_MAIL_BODY" => "To unsubscribe click on the following link",
-           "UNSUBSCRIPTION_SEND_CONFIRM_MESSAGE" => "Confirmation request sent by email.",
-           "UNSUBSCRIPTION_CONFIRMATION" => "Confirm your unsubscription",
-
-           "UNSUBSCRIPTION_FINISHED" => "Unsubscription done",
-
-
-           "NEWSLETTER_TITLE" => "Newsletters",
-                   "UNSUBSCRIPTION_UNKNOWN_EMAIL_ADDRESS" => "Error: Unknow email address",
-            
-           "SEND_UNSUBSCRIPTION_LINK" => "\r\n\r\nUnsubscription :\r\n",
-
-           "PASSWORD_MD5_NOTICE" => "Admin password storage format has changed, please supply your admin password to update your configuration.",
-           "PASSWORD_MD5_PWD" => "Password: ",
-           "PASSWORD_MD5_ERR" => "An error occured, maybe you've entered a wrong password.",
-           "PASSWORD_MD5_ERR2"=> "An SQL error occured : %s.",
-
-           );
 
 
 
-?>
+
+
+

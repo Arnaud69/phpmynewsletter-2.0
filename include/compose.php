@@ -6,7 +6,9 @@ switch($op){
     case "preview":
         $up = @($_GET['up']=='false' ? false : true);
         if($up){
-            $cnx->query("UPDATE ".$row_config_globale['table_sauvegarde']." SET textarea = '".addslashes($message)."',subject='".addslashes($subject)."',type='$format' WHERE list_id='$list_id'");
+            $cnx->query("UPDATE ".$row_config_globale['table_sauvegarde']." 
+                    SET textarea = '".addslashes($message)."',subject='".addslashes($subject)."',type='$format' 
+                WHERE list_id='$list_id'");
         }
         $newsletter     = getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
         $msg            = getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
@@ -34,7 +36,8 @@ switch($op){
         echo "</article>";
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
-        echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" value=\"".tr("COMPOSE_BACK")."\" />";
+        echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" 
+            value=\"".tr("COMPOSE_BACK")."\" />";
         echo "<br><br><input type='submit' value='".tr("COMPOSE_SEND")."  (Mode PREVIEW)' /></div>";
         echo '<header></header>';
         echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
@@ -218,14 +221,16 @@ switch($op){
             echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
             echo '<header><h3>'.tr("ACTIONS").' :</h3></header><div align="center">';
             echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />
-            <br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&reset=true'\" />
-            <br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' /></div>";
+            <br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF'] 
+                ."?page=compose&token=$token&list_id=$list_id&reset=true'\" />
+            <br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' disabled id='send_preview' /></div>";
             echo '<header></header>';
             echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
             echo "<div id='pjs'></div>";
             echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
             echo "</div></article>";
-            echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});</script>";
+            echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", 
+                data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});</script>";
             echo "<input type='hidden' id='type' name='format' value='html' />
             <input type='hidden' name='op' value='preview' />
             <input type='hidden' name='action' value='compose' />
@@ -313,9 +318,12 @@ switch($op){
                             data: ds,
                             cache: false,
                             success: function(msg) {
-                            $('#as').html(msg).show();
+                                $('#as').html(msg).show();
+                                $('#send_preview').removeAttr('disabled');
                             },
-                            error: function() { $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show(); }
+                            error: function() {
+                                $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
+                            }
                         });
                     }
                     $('#rec').click(function(){ save(); });
@@ -337,7 +345,7 @@ switch($op){
                                     $('#as').html(msg).show();
                                 },
                                 error: function() {
-                                    $('#as').html('<span class=error>".tr("UNSAVED_MESSAGE")." !</span>').show();
+                                    $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
                                 }
                             });
                         }
@@ -362,12 +370,12 @@ switch($op){
         $error=(empty($_GET['error']) ? "0" : $_GET['error']);
         $errorlog=(empty($_GET['errorlog']) ? "0" : $_GET['errorlog']);
         if($error!=0){
-            echo "<div align='center' class='error'>".tr("ERROR_SENDING")."</div>";
+            echo "<h4 class=alert_error>".tr("ERROR_SENDING")."</h4>";
         } else {
-            echo "<div align='center' class='success'>".tr("COMPOSE_SENT").".</div>";
+            echo "<h4 class=alert_success>".tr("COMPOSE_SENT").".</h4>";
         }
         if($errorlog) {
-            echo "<div align='center' class='error'>".tr("ERROR_LOG_CREATE")."</div>";
+            echo "<h4 class=alert_error>".tr("ERROR_LOG_CREATE")."</h4>";
         }
         echo "<br><div align='center'><img align='middle' src='css/puce.gif'> <a href='?page=compose&list_id=".$list_id."&token=$token'>".tr("BACK")."</a></div>";
     break;

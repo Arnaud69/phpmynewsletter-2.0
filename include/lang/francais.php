@@ -1,5 +1,5 @@
 <?php
-$lang_array = array(
+$lang_array=array(
     //BTN
     "OK_BTN"=>"OK",
     "YES"=>"Oui",
@@ -76,11 +76,8 @@ $lang_array = array(
     "NEWSLETTER_DELETED"=>"Lettre d'info supprimée avec succès",
     "NEWSLETTER_DELETE_WARNING"=>"Supprimer toutes les informations relatives à cette lettre d'info",
     "NEWSLETTER_SETTINGS_CREATED"=>"Lettre d'info créée avec succès",
-    "NEWSLETTER_DEFAULT_HEADER"=>"========= ENTETE =========\n".
-             "Mettez ici ce que vous voulez.\n".
-             "Ce texte sera ajouté en tête de tous vos messages",
-    "NEWSLETTER_DEFAULT_FOOTER"=>"======== PIED DE PAGE =======\n".
-             "Vous pouvez spécifier un message",  
+    "NEWSLETTER_DEFAULT_HEADER"=>"========= ENTETE =========<br>Mettez ici ce que vous voulez.<br>Ce texte sera ajouté en tête de tous vos messages",
+    "NEWSLETTER_DEFAULT_FOOTER"=>"======== PIED DE PAGE =======<br>Vous pouvez spécifier un message",  
     "NEWSLETTER_SUB_DEFAULT_SUBJECT"=>"Merci de confirmer votre inscription",
     "NEWSLETTER_SUB_DEFAULT_BODY"=>"Quelqu'un, certainement vous, a demandé votre inscription à cette lettre d'info, merci de suivre les informations qui suivent.", 
     "NEWSLETTER_WELCOME_DEFAULT_SUBJECT"=>"Bienvenue",
@@ -88,18 +85,22 @@ $lang_array = array(
     "NEWSLETTER_UNSUB_DEFAULT_SUBJECT"=>"Merci de confirmer votre désinscription",
     "NEWSLETTER_UNSUB_DEFAULT_BODY"=>"Quelqu'un, certainement vous, a demandé votre désinscription de cette lettre d'info, merci de suivre les informations qui suivent.", 
     //SUBSCRIBER
+    "SUBSCRIBER_MANAGEMENT"=>"gestion des abonnés",
     "SUBSCRIBER_ADD_TITLE"=>"Ajouter un abonné",
     "SUBSCRIBER_ADD_MAIL_FORMAT"=>"Ajouter un abonné au format adress@domain.com",
     "SUBSCRIBER_ADD_BTN"=>"Ajouter cette adresse électronique",
     "SUBSCRIBER_ADDED"=>"%s ajoutée avec succès",
     "SUBSCRIBER_IMPORT_TITLE"=>"Importer une liste d'adresse électronique",
-    "SUBSCRIBER_IMPORT_BTN"=>"Importer",
-    "SUBSCRIBER_IMPORT_HELP"=>"Vous pouvez importer une liste d'adresse électronique depuis un fichier.<br />Ce fichier doit suivre le formalisme suivant: une adresse par ligne<br>adress1@domain.com<br />adress2@domain.com<br>adress3@domain.com",
+    "SUBSCRIBER_IMPORT_BTN"=>"Importer les abonnés dans cette liste",
+    "SUBSCRIBER_IMPORT_HELP"=>"Vous pouvez importer une liste d'adresses électroniques depuis un fichier.",
+    "SUBSCRIBER_MASS_DELETE"=>"Supprimer les abonnés en masse depuis un fichier",
+    "SUBSCRIBER_MASS_DELETE_HELP"=>"Vous pouvez supprimer une liste d'adresses électroniques depuis un fichier.",
+    "SUBSCRIBER_MASS_DELETE_BTN"=>"Supprimer les abonnés de cette liste",
     "SUBSCRIBER_DELETE_TITLE"=>"Supprimer un abonné",
     "SUBSCRIBER_FIND_AND_DELETE"=>"Rechercher un abonné pour suppression définitive",
     "SUBSCRIBER_FIND"=>"Rechercher un abonné",
     "SUBSCRIBER_DELETE_BTN"=>"Supprimer cette adresse électronique",
-    "SUBSCRIBER_DELETED"=>"Abonné supprimé avec succès",
+    "SUBSCRIBER_DELETED"=>"Abonné %s supprimé avec succès",
     "SUBSCRIBER_EXPORT_TITLE"=>"Exporter des abonnés",
     "SUBSCRIBER_EXPORT_TITLE_SIMPLE"=>"Export des abonnés",
     "SUBSCRIBER_EXPORT_BTN"=>"Exporter",
@@ -113,8 +114,8 @@ $lang_array = array(
     "SUBSCRIBER_EMPTY_LIST"=>"Pas de comptes en attente de confirmation",
     "SUBSCRIBER_ERROR_MANAGE_TITLE"=>"Gestion des adresses mails (abonnés) en erreur",
     "SUBSCRIBER_NO_ERRORS"=>"Pas d'adresse(s) e-mail incidentée(s) à traiter",
-	"SUBSCRIBER_WITH_MAIL_DELETED"=>"Adresse mail dans la liste des mails supprimés / désabonnés / en erreur !",
-    "EMAIL_ON_DELETED_LIST"=>"Cette adresse mail est présente sur la liste des mails supprimés !",
+    "SUBSCRIBER_WITH_MAIL_DELETED"=>"Adresse mail dans la liste des mails supprimés / désabonnés / en erreur !",
+    "EMAIL_ON_DELETED_LIST"=>"%s : Cette adresse mail est présente sur la liste des mails supprimés !",
     "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
     //COMPOSE 
     "COMPOSE_NEW"=>"Rédiger un nouveau message",
@@ -234,6 +235,7 @@ $lang_array = array(
     "ERROR_ALREADY_SUBSCRIBER"=>"%s est déjà abonné",
     "ERROR_SUPPLY_VALID_EMAIL"=>"Merci de rentrer une adresse électronique valide",
     "ERROR_DELETING_SUBSCRIBER"=>"Erreur lors de la suppression de l'adresse: %s",
+    "ERROR_DELETING_SUBSCRIBER_NOT_IN_LIST"=>"Adresse : %s, inconnue dans la liste",
     "ERROR_NO_EMAIL_IN_FILE"=>"Aucune adresse électronique dans ce fichier",
     "ERROR_IMPORT_FILE_MISSING"=>"Merci de fournir un fichier à importer",
     "ERROR_IMPORT_TMPDIR_NOT_WRITABLE"=>"Ecriture impossible dans admin/import !",
@@ -378,7 +380,8 @@ $lang_array = array(
     // INDEX :
     "ROOT_TO_FLUSH_MAIL_QUEUE"=>"Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.",
     "MAIL_ADDED"=>"mail(s) ajouté(s)",
-    "MAIL_ADDED_ERROR"=>"mail(s) en erreur à l'import",
+    "MAIL_MASS_DELETED"=>"mail(s) traité(s)",
+    "MAIL_ADDED_ERROR"=>"mail(s) en erreur",
     "DASHBOARD"=>"Tableau de bord",
     "SUPPORT"=>"Support",
     "ADMINISTRATION"=>"Administration",
@@ -410,9 +413,9 @@ $lang_array = array(
     "MANAGEMENT_ERROR_NOT_CONFIGURED"=>"Traitement des mails en retour non configuré",
     "INVALID_MAIL"=>"Adresse mail invalide",
     // ONLINE, SEND
-    "READ_ON_LINE"=>"Si cet e-mail ne s'affiche pas correctement, veuillez %scliquer ici</a>", // If you can’t view this message correctly, click here
+    "READ_ON_LINE"=>"Si cet e-mail ne s'affiche pas correctement, veuillez %s cliquer ici</a>", // If you can’t view this message correctly, click here
     "ADD_ADRESS_BOOK"=>"Ajoutez %s &agrave; votre carnet d'adresses pour &ecirc;tre s&ucirc;r de recevoir toutes nos newsletters !", //Please, add % to your address book to make sure you receive our news in your inbox
-    "UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %sdésinscription</a>", // No longer interested ? %s Unsubscribe
+    "UNSUBSCRIBE_LINK"=>"Je ne souhaite plus recevoir la newsletter : %s désinscription</a>", // No longer interested ? %s Unsubscribe
     "MAIL_PREVIEW_SEND"=>"Mail de preview",
     "NO_SEND_DEFINITION"=>"Mode d'envoi non défini !",
     // TRACK
@@ -481,18 +484,18 @@ $lang_array = array(
                             <th>Heure(s)</th>
                             <th>Jour du mois</th> 
                             <th>Mois</th>",
-    "SCHEDULE_MONTHS_OPTION"=>"<option value='1'>Janvier</option>
-                                    <option value='2'>Février</option>
-                                    <option value='3'>Mars</option>
-                                    <option value='4'>Avril</option>
-                                    <option value='5'>Mai</option>
-                                    <option value='6'>Juin</option>
-                                    <option value='7'>Juillet</option>
-                                    <option value='8'>Août</option>
-                                    <option value='9'>Septembre</option>
-                                    <option value='10'>Octobre</option>
-                                    <option value='11'>Novembre</option>
-                                    <option value='12'>Décembre</option>",
+    "SCHEDULE_MONTHS_OPTION"=>"<option value=1>Janvier</option>
+                                    <option value=2>Février</option>
+                                    <option value=3>Mars</option>
+                                    <option value=4>Avril</option>
+                                    <option value=5>Mai</option>
+                                    <option value=6>Juin</option>
+                                    <option value=7>Juillet</option>
+                                    <option value=8>Août</option>
+                                    <option value=9>Septembre</option>
+                                    <option value=10>Octobre</option>
+                                    <option value=11>Novembre</option>
+                                    <option value=12>Décembre</option>",
     "SCHEDULE_RESULT"=>"<h4>Tel que défini, l'envoi de la campagne \"<i>%s</i>\" aura lieu le <span id='dd'>1er</span> <span id='dmo'>janvier</span> à <span id='dh'>00</span>h<span id='dmi'>00</span>min</h4>",
     "SCHEDULE_JS_LIST_MONTH"=>'"Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"',
     "SCHEDULE_NO_SEND_SCHEDULED"=>"Pas d'envoi de mail planifié",
@@ -543,6 +546,34 @@ $lang_array = array(
     "TRACKING_TITLE"=>"Tracking, suivi des envois",
     "TRACKING_NO_DATA_AVAILABLE"=>"Pas de statistiques disponibles, en attente de campagnes",
     "TRACKING_STATS_GRAPHICS_REPORT"=>"Compte-rendu graphique",
+    "TRACKING_SEND"=>"Envois",
+    "TRACKING_ERROR"=>"Erreurs",
+    "TRACKING_OPENED"=>"Ouvertures",
+    "TRACKING_READ"=>"Lectures",
+    "TRACKING_UNSUB"=>"Abandons",
+    "TRACKING_COUNT"=>"Nombre",
+    "TRACKING_REPORT_HEAD_TABLE"=>"<th>Date</th>
+                <th>Log</th>
+                <th>ID</th>
+                <th>Sujet</th>
+                <th>Envois</th>
+                <th>Lectures</th>
+                <th>Ouvertures</th>
+                <th>Taux d'ouverture</th>
+                <th>CTR</th>
+                <th>ACTR</th>
+                <th>Erreurs</th>
+                <th>Abandons</th>
+                ",
+    "TRACKING_BULLE_ACTR"=>"Ratio ajusté : #CLICS / #OUVERTURES",
+    "TRACKING_BULLE_CTR"=>"Ratio : #CLICS / #ENVOIS",
+    "TRACKING_BULLE_OPEN_RATE"=>"Ratio : #OUVERTURES / #REMIS",
+    "TRACKING_VIEW_LOG_DAY"=>"Visualiser le fichier log de la journée du %s",
+    "TRACKING_VIEW_LOG_SEND"=>"Visualiser le fichier log de l'envoi",
+    "TRACKING_DETAILLED_CLICKED_LINKS"=>"Statistiques détaillées des liens cliqués",
+    "CLICKED_LINK_REPORT_ENVIRONMENT"=>"Navigateurs",
+    "CLICKED_LINK_REPORT_OS"=>"Systèmes d'exploitation",
+    "RESULTS"=>"Résultats",
     // UNDISTURBED
     "UNDISTURBED_TITLE"=>"Traitement des erreurs du dernier envoi",
     "UNDISTURBED_MSG_EXPLAIN"=>"Message d'erreur complet",
@@ -566,24 +597,6 @@ $lang_array = array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

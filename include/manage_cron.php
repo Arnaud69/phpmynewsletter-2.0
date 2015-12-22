@@ -56,7 +56,7 @@ if(isset($_POST['NEWTASK'])&&$_POST['NEWTASK']=='SCHEDULE_NEW_TASK'&&$list_id==$
         $("#days").on("change",function(){$("#dd").html(n($(this).val()))});
         $("#months").on("change",function(){$("#dmo").html(months[$(this).val()])});
         $("#subcronjob").click(function(){
-            var ds='min='+$("#mins").val()+'&hour='+$("#hours").val()+'&day='+$("#days").val()+'&month='+$("#months").val()+'&token=<?=$token;?>&action=new&list_id=<?=$list_id;?>';
+            var ds='min='+$("#mins").val()+'&hour='+$("#hours").val()+'&day='+$("#days").val()+'&months='+$("#months").val()+'&token=<?=$token;?>&action=new&list_id=<?=$list_id;?>';
             $.ajax({
                 type:'POST',
                 url:'include/manager_cron.php',
@@ -90,43 +90,44 @@ if(isset($_POST['NEWTASK'])&&$_POST['NEWTASK']=='SCHEDULE_NEW_TASK'&&$list_id==$
     $step_tab=tr("SCHEDULE_STATE");
     if(count($list_crontab)>0){
         foreach($list_crontab as $x){
-            echo '<form id="'.$x['job_id'].'"><tr>';
+            echo '<tr class="'.$x['job_id'].' success">';
             echo '  <td>'.$x['job_id'].'</td>';
             echo '  <td>'.$x['list_id'].'</td>';
             echo '  <td>'.stripslashes($x['mail_subject']).'</td>';
             echo '  <td>'.sprintf("%02d",$x['day']).' '.$month_tab[$x['month']].' à '.sprintf("%02d",$x['hour']).'h'.sprintf("%02d",$x['min']).'</td>';
             echo '  <td>'.$step_tab[$x['etat']].'</td>';
             if(is_file("logs/list".$x['list_id']."-msg".$x['msg_id'].".txt")){
-                echo '<td><a href="dl.php?log=logs/list'.$x['list_id'].'-msg'.$x['msg_id'].'.txt&token='.$token.'" title="'.tr("SCHEDULE_DOWNLOAD_LOG").'" class="tooltip"><img src="css/icn_download.png" /></a></td>';
+                echo '<td><a class="iframe tooltip" href="include/view_log.php?list_id='.$x['list_id'].'&id_mail='.$x['msg_id'].'&t=l&token='
+                     .$token.'" title="'. tr( "TRACKING_VIEW_LOG_SEND" ) .'"><img src="css/icn_search.png" /></a></td>';
             } else {
                 echo '<td>'.tr("SCHEDULE_NO_LOG").'.</td>';    
             }
-            echo '  <td><a title="'.tr("SCHEDULE_DELETE_TASK").'" class="tooltip"><input type="image" src="css/icn_trash.png" class="deltask"></a>
-                        <input type="hidden" value="'.$x['job_id'].'" name="deltask">
-                        <input type="hidden" value="'.$token.'" name="token">
-                        <input type="hidden" value="'.$list_id.'" name="list_id">
-                    </td>';
-            echo '</tr></form>';
+            echo '  <td><form id="'.$x['job_id'].'" method="post">';
+            if($x['etat']=='scheduled'){
+                echo '<a title="'.tr("SCHEDULE_DELETE_TASK").'" class="tooltip"><input type="image" src="css/icn_trash.png" class="deltask"></a>
+                            <input type="hidden" value="'.$x['job_id'].'" id="deltask">
+                            <input type="hidden" value="'.$token.'" id="token">
+                            <input type="hidden" value="'.$list_id.'" name="list_id">';
+            }
+            echo '</form></td>';
+            echo '</tr>';
         }
         echo '</table>';
         ?>
         <script>
-            $(document).ready(function() {
-                $(".deltask").click(function() {
-                    var hideItem='#'+$(this).closest("form").attr('id');
-                    alert(hideItem);
-                });
-            });
-            /*$(".deltask").click(function(){
-                var hideItem='#'+$(this).closest("form").attr('id');
-                $.ajax({type: "POST",
-                    url: "include/manager_cron.php",
-                    data: $(this).parents('form').serialize()+'&'+ encodeURI($(this).attr('name'))+'='+ encodeURI($(this).attr('id')),
-                    success: function(data){
-                        $(hideItem).html(data).addClass('success');
+            $(".deltask").click(function() {
+                var task=$(this).closest("form").attr("id");
+                var dt='.'+task;
+                var ds="deltask="+task+"&token=<?=$token;?>&list_id=<?=$list_id;?>&action=delete";
+                $.ajax({type:"POST",
+                    url:"include/manager_cron.php",
+                    data:ds,
+                    success: function(){
+                        alert('success_'+dt);
+                        $(dt).hide("slow");
                     }
                 });
-            });*/
+            });
         </script>
         <?php
     } else {

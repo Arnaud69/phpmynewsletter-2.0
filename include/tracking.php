@@ -1,24 +1,9 @@
 <article class="module width_full">
     <header><h3><?=tr("TRACKING_TITLE");?></h3></header>
     <?php
-    $row_cnt = get_id_send($cnx,$list_id,$row_config_globale['table_send']); // le nombre d'envoi pour une liste
+    $row_cnt = get_id_send($cnx,$list_id,$row_config_globale['table_send']);
     if($row_cnt['CPTID'] > 0){
-        $array_stats_tmp = get_stats_send($cnx,$list_id,$row_config_globale); // les stats complètes par envoi dans une liste
-        /* exemple :
-        
-        SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d'),a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
-                (SELECT COUNT(id) FROM test_track WHERE subject=a.id) AS TID,
-                (SELECT SUM(open_count) FROM test_send WHERE id_mail=a.id) AS TOPEN
-            FROM test_send s
-                LEFT JOIN test_archives a ON a.id=s.id_mail 
-                LEFT JOIN test_track t ON a.id=t.subject
-            WHERE a.list_id=6
-                GROUP BY a.id
-            ORDER BY a.id DESC LIMIT 15
-            
-        Voir si modification à la hausse de la limite du nombre d'articles
-        
-        */
+        $array_stats_tmp = get_stats_send($cnx,$list_id,$row_config_globale);
         echo '<div class="module_content">';
         $array_stats=array_reverse($array_stats_tmp);
         ?>
@@ -42,39 +27,39 @@
                         {
                             "bullet": "round",
                             "id": "envois",
-                            "title": "Envois",
+                            "title": "<?=tr("TRACKING_SEND");?>",
                             "valueField": "c1"
                         },
                         {
                             "bullet": "round",
                             "id": "erreurs",
-                            "title": "Erreurs",
+                            "title": "<?=tr("TRACKING_ERROR");?>",
                             "valueField": "c2"
                         },
                         {
                             "bullet": "round",
                             "id": "ouvertures",
-                            "title": "Ouvertures",
+                            "title": "<?=tr("TRACKING_OPENED");?>",
                             "valueField": "c3"
                         },
                         {
                             "bullet": "round",
                             "id": "lectures",
-                            "title": "Lectures",
+                            "title": "<?=tr("TRACKING_READ");?>",
                             "valueField": "c4"
                         },
                         {
                             "bullet": "round",
                             "id": "abandons",
-                            "title": "Abandons",
+                            "title": "<?=tr("TRACKING_UNSUB");?>",
                             "valueField": "c5"
-                        }
+                        },
                     ],
                     "guides": [],
                     "valueAxes": [
                         {
                             "id": "ValueAxis-1",
-                            "title": "Nombre"
+                            "title": "<?=tr("TRACKING_COUNT");?>"
                         }
                     ],
                     "allLabels": [],
@@ -102,7 +87,6 @@
                                 "c5":'    .($row['leave']    !=''?$row['leave']  :0).',
                                 "cp_id":' . $row['id_mail'] . '
                             },';
-                            //$tableau_sujet[] =($row['subject']  !=''?$row['subject']:0);
                         }
                         ?>
                     ]
@@ -116,15 +100,7 @@
         echo '<table class="tablesorter" cellspacing="0"> 
         <thead> 
             <tr> 
-                <th>Date</th>
-                <th>Log</th>
-                <th>ID</th>
-                <th>Sujet</th>
-                <th>Envois</th>
-                <th>Lectures</th>
-                <th>Ouvertures</th>
-                <th>Erreurs</th>
-                <th>Abandons</th>
+                '. tr("TRACKING_REPORT_HEAD_TABLE") .'
             </tr> 
         </thead> 
         <tbody>';
@@ -132,23 +108,19 @@
             echo '<tr>';
             if(is_file("logs/daylog-".$row['dt'].".txt")){
                 echo '<td><a class="iframe tooltip" href="include/view_log.php?day='.$row['dt'].'&t=d&token='
-                     .$token.'" title="Visualiser le fichier log de la journée du '.$row['dt'].'">'.$row['dt'].'</a></td>';
+                     .$token.'" title="'. tr( "TRACKING_VIEW_LOG_DAY" , $row['dt'] ) .'">'.$row['dt'].'</a></td>';
             } else {
                 echo '<td>'.    $row['dt'].    '</td>';
             }
             if(is_file("logs/list$list_id-msg".$row['id_mail'].".txt")){
                 echo '<td><a class="iframe tooltip" href="include/view_log.php?list_id='.$list_id.'&id_mail='.$row['id_mail'].'&t=l&token='
-                     .$token.'" title="Visualiser le fichier log de l\'envoi"><img src="css/icn_search.png" /></a></td>';
+                     .$token.'" title="'. tr( "TRACKING_VIEW_LOG_SEND" ) .'"><img src="css/icn_search.png" /></a></td>';
             }
             echo '<td>'. $row['id_mail'].                       '</td>';
-            $links = $cnx->query("SELECT * FROM ".$row_config_globale['table_track_links']." 
-                                    WHERE list_id=$list_id 
-                                      AND msg_id=".$row['id_mail']." 
-                                    ORDER BY cpt DESC")->fetchAll(PDO::FETCH_ASSOC);
             echo '<td>';
-            if(count($links)>0){
+            if($row['CPT_CLICKED']>0){
                 echo '<a class="iframe tooltip" href="tracklinks.php?id_mail='.$row['id_mail'].'&list_id='.$list_id.'&token='
-                     .$token.'" title="Statistiques détaillées des liens cliqués">'.$row['subject'].'</a>';
+                     .$token.'" title="'. tr( "TRACKING_DETAILLED_CLICKED_LINKS" ) .'">'.$row['subject'].'</a>';
             } else {
                 echo $row['subject'];
             }
@@ -156,6 +128,16 @@
             echo '<td>'. $row['cpt'].                           '</td>';
             echo '<td>'. ($row['TOPEN']!=''?$row['TOPEN']:0).   '</td>';
             echo '<td>'. $row['TID'].                           '</td>';
+            
+            $OPENRATE = round(($row['TOPEN']/($row['cpt']-$row['error'])*100),1);//OPEN RATE
+            echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_OPEN_RATE" ) .'">'.($OPENRATE>0?'<b>'.$OPENRATE.'</b>':0).'%</a></td>';
+            
+            $CTR = round(($row['CPT_CLICKED']/$row['cpt']*100),1);//CTR
+            echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_CTR" ) .'">'.($CTR>0?'<b>'.$CTR.'</b>':0).'%</a></td>';
+            
+            $ACTR = round(($row['CPT_CLICKED']/$row['TOPEN']*100),1);//ACTR
+            echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_ACTR" ) .'">'.($ACTR>0?'<b>'.$ACTR.'</b>':0).'%</a></td>';
+            
             echo '<td>'. $row['error'].                         '</td>';
             echo '<td>'. $row['leave'].                         '</td>';
             echo '</tr>';
@@ -168,17 +150,7 @@
     <div class="spacer"></div>
     <div class="clear"></div>
 </article>
-<?php
-/*
-if(file_exists("include/config_bounce.php")){
-    // alors pavé rechargé automatiquement des traitements toutes les 30 secondes.
-    include('include/config_bounce.php');
-    include('include/bounce.php');
-} else {
-    echo '<div align="center" class="error">Traitement des mails en retour non configuré</div>';
-}
-?>
-*/
+
 
 
 

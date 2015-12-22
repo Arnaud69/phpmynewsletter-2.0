@@ -155,11 +155,13 @@ if(count($detail_task)==0){
             $mail->AddAddress(trim($addr[$i]['email']));
             $mail->XMailer = ' ';
             $body = "";
-            $trac = "<img style='border:0' src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" . $addr[$i]['hash'] . "' width='1' height='1' alt='" .$detail_task[0]['list_id']. "' />";
+            $trac = "<img style='border:0' src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$detail_task[0]['msg_id']. "&h=" 
+                    . $addr[$i]['hash'] . "' width='1' height='1' alt='" .$detail_task[0]['list_id']. "' />";
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-                $body .= tr("READ_ON_LINE", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=".$detail_task[0]['msg_id']."&list_id=".$detail_task[0]['list_id']."&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>") . ".<br />";
+                $body .= tr("READ_ON_LINE", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "online.php?i=" 
+                        . $detail_task[0]['msg_id']."&list_id=".$detail_task[0]['list_id']."&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "'>") . ".<br />";
                 $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
                 $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
                 $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$detail_task[0]['msg_id'].'&h='.$addr[$i]['hash'].'&l='.$detail_task[0]['list_id'].'&r=';
@@ -169,19 +171,25 @@ if(count($detail_task)==0){
                         global $new_url;
                         return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
                     },$AltMessage);
-                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' color='#D4D4D4' width='90%' size='1'>"
-                . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>") ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+                $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'><hr noshade='' 
+                    color='#D4D4D4' width='90%' size='1'>"
+                . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" . $detail_task[0]['msg_id'] . "&list_id=" 
+                . $detail_task[0]['list_id'] . "&op=leave&email_addr=" . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] . "' style='' target='_blank'>") 
+                ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
-                $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=" . $detail_task[0]['msg_id'] . "&list_id=".$detail_task[0]['list_id']."&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
+                $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=" . $detail_task[0]['msg_id'] 
+                . "&list_id=".$detail_task[0]['list_id']."&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
                 $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
-                $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i=' .$detail_task[0]['msg_id']. '&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . urlencode($addr[$i]['email']).'&h=' . $addr[$i]['hash'];
+                $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i=' .$detail_task[0]['msg_id']. '&list_id=' 
+                . $detail_task[0]['list_id'].'&op=leave&email_addr=' . urlencode($addr[$i]['email']).'&h=' . $addr[$i]['hash'];
             }
             $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
             $mail->AltBody = quoted_printable_encode($AltBody->getText());
             $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$detail_task[0]['msg_id'].'&list_id='.$detail_task[0]['list_id'].'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
+            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] . 'subscription.php?i='.$detail_task[0]['msg_id'].'&list_id=' 
+                . $detail_task[0]['list_id'].'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>, <mailto:'.$newsletter['from_addr'].'>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
@@ -274,7 +282,7 @@ if(count($detail_task)==0){
     <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
     <tbody>
     <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;font-size: 14pt;">
-        <img src="http://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png" alt="" width="123" height="72" /><br />'.tr("SCHEDULE_REPORT_TITLE").' !</td></tr>
+        <img src="https://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png" alt="" width="123" height="72" /><br />'.tr("SCHEDULE_REPORT_TITLE").' !</td></tr>
     <tr><td style="text-align: center;" colspan="2"><span style="color: #2446a2;">'.tr("SCHEDULE_REPORT_LONG_DESC").'</span></td></tr>
     <tr><td><span style="color: #2446a2;">'.tr("SCHEDULE_CAMPAIGN_TITLE").' :</span></td>
         <td><span style="color: #2446a2;">'.$subject.'</span></td></tr>
@@ -287,7 +295,9 @@ if(count($detail_task)==0){
     <tr><td></td><td><span style="color: #2446a2;">'.@$motifs_send_errors.'</span></td></tr>
     </tbody>
     </table>';
-    sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+    sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], 
+              $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], 
+              $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
 }
 
 
