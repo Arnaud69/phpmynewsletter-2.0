@@ -10,9 +10,9 @@ if(file_exists("include/config.php")) {
     include('include/lib/pmn_fonctions.php');
     include('include/lib/constantes.php');
 }
-$langfileArray  = array('castellano','dansk','deutsch','english','francais','italiano','nederlands',',norwsegian','portugues','portugues_do_Brazil','romana','svenska');
+$langfileArray  = array('english','francais');
 $langfile       = (isset($_POST['langfile'])&&in_array($_POST['langfile'],$langfileArray) ? $_POST['langfile'] :"");
-$db_typeArray   = array('mysql','mssql','pgsql','oracle');
+$db_typeArray   = array('mysql');
 $db_type        = (isset($_POST['db_type'])&&in_array($_POST['db_type'],$db_typeArray) ? $_POST['db_type'] : "");
 $stepArray      = array(1,2,3,4);
 $step           = (isset($_POST['step'])&&in_array($_POST['step'],$stepArray) ? $_POST['step'] : 1);
@@ -274,16 +274,17 @@ if (empty($langfile)) {
             echo '<div class="module_content">';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_MESSAGE_SENDING_LOOP").'</label>';
-            echo "<input type='text' class='input' name='sending_limit' size='3' value='10'>";
+            echo "<input type='text' class='input' name='sending_limit' size='3' value='3'>";
             echo '</fieldset>';
             echo '<fieldset>';
             echo '<label>'.tr("INSTALL_SENDING_METHOD").'</label>';
             echo "<select name='sending_method' onChange='checkSMTP()'>";
             echo "<option value='smtp'>smtp</option>";
             echo "<option value='lbsmtp'>Load Balancing SMTP</option>";
-            echo "<option value='smtp_gmail'>smtp Gmail</option>";
+            echo "<option value='smtp_gmail_tls'>smtp Gmail TLS (port 587)</option>";
+            echo "<option value='smtp_gmail_ssl'>smtp Gmail SSL (port 465)</option>";
             echo "<option value='smtp_mutu_ovh'>smtp ".tr("INSTALL_SHARED")." OVH</option>";
-            echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND (fr)</option>";
+            echo "<option value='smtp_mutu_1and1'>smtp ".tr("INSTALL_SHARED")." 1AND1 (fr)</option>";
             echo "<option value='smtp_mutu_gandi'>smtp ".tr("INSTALL_SHARED")." GANDI</option>";
             echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
             echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
@@ -405,14 +406,14 @@ if (empty($langfile)) {
                     die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
                 }
             }
-            if(!is_dir("DKIM")){
+            if(!is_dir("include/DKIM")){
                 if(mkdir("DKIM",0755)){
                     echo '<h4 class="alert_success">'.tr("DKIM_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'DKIM".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'DKIM" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
                 }
             }
-            if(!is_dir("backup_crontab")){
+            if(!is_dir("include/backup_crontab")){
                 if(mkdir("backup_crontab",0755)){
                     echo '<h4 class="alert_success">'.tr("BK_CRONTAB_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
@@ -466,7 +467,7 @@ if (empty($langfile)) {
                                 KEY `error` (`error`),
                                 KEY `status` (`status`),
                                 KEY `type` (`type`),
-                                KEY `campaign_id` (`type`)
+                                KEY `campaign_id` (`campaign_id`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email") .' '.tr("DONE").'</h4>';
@@ -503,7 +504,9 @@ if (empty($langfile)) {
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","smtp_gmail","smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online","smtp_mutu_infomaniak") NOT NULL DEFAULT "php_mail",
+                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","smtp_gmail_tls","smtp_gmail_ssl",
+                                                         "smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online",
+                                                         "smtp_mutu_infomaniak") NOT NULL DEFAULT "smtp",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `table_email`       VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_temp`        VARCHAR(255) NOT NULL DEFAULT "",
@@ -514,7 +517,7 @@ if (empty($langfile)) {
                                 `smtp_auth`         ENUM("0","1") NOT NULL DEFAULT "0",
                                 `smtp_login`        VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_pass`         VARCHAR(255) NOT NULL DEFAULT "",
-                                `sending_limit`     INT(4) NOT NULL DEFAULT "30",
+                                `sending_limit`     INT(4) NOT NULL DEFAULT "3",
                                 `validation_period` TINYINT(4) NOT NULL DEFAULT "0",
                                 `sub_validation`    ENUM("0","1") NOT NULL DEFAULT "1",
                                 `unsub_validation`  ENUM("0","1") NOT NULL DEFAULT "1",
@@ -791,10 +794,11 @@ if (empty($langfile)) {
                             <li><a href="https://github.com/Synchro/PHPMailer">'. tr("CREDITS_PHPMAILER") . '</a></li>
                             <li><a href="http://www.tinymce.com/" target="_blank">'. tr("CREDITS_TINYMCE") . '</a></li>
                             <li><a href="http://www.crazyws.fr/dev/classes-php/classe-de-gestion-des-bounces-en-php-C72TG.html" target="_blank">'. tr("CREDITS_CRAZY") . '</a></li>
-                            <li><a href="http://medialoot.com/preview/admin-template/index.html" targe="_blank">'. tr("CREDITS_MEDIALOOT") . '</a></li>
-                            <li><a href="http://git.aaronlumsden.com/strength.js/" targe="_blank">'. tr("CREDITS_PASSWORD") . '</a></li>
-                            <li><a href="http://www.jacklmoore.com/colorbox" targe="_blank">'. tr("CREDITS_MODAL") . '</a></li>
-                            <li><a href="http://www.dropzonejs.com/" targe="_blank">'. tr("CREDITS_DND") . '</a></li>
+                            <li><a href="http://www.amcharts.com/" target="_blank">AM<b>CHARTS</b></a></li>
+                            <li><a href="http://medialoot.com/preview/admin-template/index.html" target="_blank">'. tr("CREDITS_MEDIALOOT") . '</a></li>
+                            <li><a href="http://git.aaronlumsden.com/strength.js/" target="_blank">'. tr("CREDITS_PASSWORD") . '</a></li>
+                            <li><a href="http://www.jacklmoore.com/colorbox" target="_blank">'. tr("CREDITS_MODAL") . '</a></li>
+                            <li><a href="http://www.dropzonejs.com/" target="_blank">'. tr("CREDITS_DND") . '</a></li>
                         </ul> 
                     <div>
                   </article>
@@ -816,8 +820,6 @@ if (empty($langfile)) {
                         <p>'. tr("ASK_ON_FORUM") . '.</p>
                     <div>
                   </article>';
-                
-                    
         }
         ?>
         <div class="spacer"></div>

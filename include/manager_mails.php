@@ -48,7 +48,9 @@ if ($continue) {
             }
         break;
         case 'update':
-            if($cnx->query("UPDATE ".$row_config_globale['table_email']." SET email=$email,status=NULL,error='N' WHERE list_id=$list_id AND hash=$hash")){
+            if($cnx->query("UPDATE ".$row_config_globale['table_email']." 
+                                SET email=$email,status=NULL,error='N',campaign_id=0
+                                    WHERE list_id=$list_id AND hash=$hash")){
                 echo '<h4 class="alert_success">'.tr("MAIL_CORRECTED", htmlentities($_POST['this_mail'])).'</h4>';
             } else {
                 echo '<h4 class="alert_error">'.tr("MAIL_ERROR_TO_CORRECT", htmlentities($_POST['this_mail'])).'</h4>.';
