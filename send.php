@@ -55,13 +55,14 @@ switch ($step) {
         $mail           = new PHPMailer();
         $mail->CharSet  = $row_config_globale['charset'];
         $mail->ContentType="text/html";
-        $mail->Encoding = "quoted-printable";
+        $mail->Encoding = "8bit";
         $mail->PluginDir= "include/lib/";
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
         $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
         $addr           = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
-        // include("include/lib/switch_smtp.php");  //  basculer en ligne 96 pour load balncing smtp
+        $daylogmsg="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
+        fwrite($daylog, $daylogmsg, strlen($daylogmsg));
         $mail->Sender = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
         $msg     = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
@@ -77,6 +78,9 @@ switch ($step) {
             }
         }
         $message    = stripslashes($msg['message']);
+        $to_replace = array("  ", "\t", "\n", "\r", "\0", "\x0B", "\xA0");
+        $message    = str_replace($to_replace," ",$message);
+        $message    = str_replace("  "," ",$message);
         $subject    = stripslashes($msg['subject']);
         if ($format == "html"){
             $message .= "<br />";
@@ -93,10 +97,9 @@ switch ($step) {
             $mail->DKIM_identity   = $DKIM_identity;
         }
         $to_send = count($addr);
-        var_dump($addr);
         for ($i = 0; $i < $to_send; $i++) {
             $dest_adresse = trim($addr[$i]['email']);
-            include("include/lib/switch_smtp.php"); // vient de la ligne 63 pour load balancing smtp
+            include("include/lib/switch_smtp.php");
             $time_info = '';
             $begintimesend = microtime(true);
             $unsubLink = "";
@@ -141,9 +144,8 @@ switch ($step) {
             $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-            $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] 
-                  . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . "&h=" . $addr[$i]['hash'] 
-                  . '>, <mailto:'.$newsletter['from_addr'].'>');
+            $mail->addCustomHeader("List-Unsubscribe",'<'. $row_config_globale['base_url'] . $row_config_globale['path'] 
+                  . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>');
             @set_time_limit(300);
             $ms_err_info = '';
             if (!$mail->Send()) {
@@ -173,7 +175,7 @@ switch ($step) {
                             WHERE `msg_id`='".$msg_id."' AND `list_id`='".$list_id."'");
             $endtimesend = microtime(true);
             $time_info = substr(($endtimesend-$begintimesend),0,5);
-            $errstr = ($begin + $i + 1) . "\t" . date("H:i:s") . "\t " . $time_info . "\t\t " .$ms_err_info. " \t" . $addr[$i]['email'] . "\r\n";
+            $errstr = $addr[$i]['id'] . "\t" . date("H:i:s") . "\t " . $time_info . "\t\t " .$ms_err_info. " \t" . $addr[$i]['email'] . "\r\n";
             if (!$dontlog){
                 fwrite($handler, $errstr, strlen($errstr));
             }
@@ -199,7 +201,8 @@ switch ($step) {
             echo json_encode($arr);
             $cnx->query("UPDATE ".$row_config_globale['table_send_suivi']." 
                         SET tts=tts+'".$tts."',last_id_send='".$last_id_send."',nb_send=nb_send+".$to_send." 
-                            WHERE list_id='".$list_id."' AND msg_id='".$msg_id."'");
+                            WHERE list_id='".$list_id."' 
+                                AND msg_id='".$msg_id."'");
         } else {
             $errstr = "------------------------------------------------------------\r\n";
             $errstr .= "Finished at " . date("H:i:s") . "\r\n";
@@ -208,7 +211,7 @@ switch ($step) {
                 fwrite($handler, $errstr, strlen($errstr));
                 fclose($handler);
             }
-            $daylogmsg=date("Y-m-d H:i:s") . " : fin globale de l envoi du message $msg_id, sujet $suject, sur liste $list_id\n";
+            $daylogmsg=date("Y-m-d H:i:s") . " : fin globale de l envoi du message $msg_id, sujet \"$subject\", sur liste $list_id\n";
             fwrite($daylog, $daylogmsg, strlen($daylogmsg));
             $arr=array(
                     'step'   => 'send',
@@ -231,13 +234,18 @@ switch ($step) {
         $format  = $_SESSION['format'];
         $date    = date("Y-m-d H:i:s");
         $msg_id  = save_message($cnx, $row_config_globale['table_archives'], addslashes($subject), $format, addslashes($message), $date, $list_id);
-        $cnx->query("UPDATE ".$row_config_globale['table_upload']." SET msg_id=$msg_id WHERE list_id=$list_id AND msg_id=0");
         $dontlog = 0;
         if (!$handler = @fopen('logs/list' . $list_id . '-msg' . $msg_id . '.txt', 'a+')){
             $dontlog = 1;
         }
         $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
-        $daylogmsg=$date. " : initialisation envoi message $msg_id liste $list_id\n";
+        $daylogmsg=$date. " : message sauvegardé sous Numéro d'envoi : $msg_id\n";
+        fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+        $cnx->query("UPDATE ".$row_config_globale['table_upload']." 
+                SET msg_id=".$msg_id."
+                WHERE list_id=".$list_id."
+                    AND msg_id=0");
+        $daylogmsg="\r\n**********************************************************\r\n".$date. " : initialisation envoi message $msg_id liste $list_id\n";
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
         $num    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$list_id,$msg_id);
         $cnx->query("INSERT into ".$row_config_globale['table_send']." (`id_mail`, `id_list`, `cpt`) VALUES ('".$msg_id."','".$list_id."','0')");

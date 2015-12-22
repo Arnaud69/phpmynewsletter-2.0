@@ -112,9 +112,12 @@ echo '<article class="module width_3_quarter">
 		echo "<option value='lbsmtp' ";
         if ($row_config_globale['sending_method'] == "lbsmtp") echo "selected='selected' ";
         echo ">Load Balancing SMTP</option>";
-        echo "<option value='smtp_gmail' ";
-        if ($row_config_globale['sending_method'] == "smtp_gmail") echo "selected='selected'";
-        echo ">SMTP GMAIL</option>";
+        echo "<option value='smtp_gmail_tls' ";
+        if ($row_config_globale['sending_method'] == "smtp_gmail_tls") echo "selected='selected'";
+        echo ">SMTP GMAIL TLS (port 587)</option>";
+        echo "<option value='smtp_gmail_ssl' ";
+        if ($row_config_globale['sending_method'] == "smtp_gmail_ssl") echo "selected='selected'";
+        echo ">SMTP GMAIL SSL (port 465)</option>";
         echo "<option value='php_mail' ";
         if ($row_config_globale['sending_method'] == "php_mail") echo "selected='selected'";
         echo ">" . tr("GCONFIG_MESSAGE_SEND_METHOD_FUNCTION") . "</option>";

@@ -43,7 +43,7 @@ switch ($step) {
         $mail          = new PHPMailer;
         $mail->CharSet = $row_config_globale['charset'];
         $mail->ContentType="text/html";
-        $mail->Encoding  = "quoted-printable";
+        $mail->Encoding  = "8bit";
         $mail->PluginDir= "include/lib/";
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
