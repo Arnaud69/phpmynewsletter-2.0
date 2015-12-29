@@ -128,10 +128,13 @@ $lang_array=array(
     "COMPOSE_RESET"=>"Réinitialiser",
     "COMPOSE_PREVIEW_TITLE"=>"Aperçu du message",
     "COMPOSE_BACK"=>"Retour",
+    "COMPOSE_ELSE_BACK"=>"sinon, cliquez 'retour'",
     "COMPOSE_SEND"=>"Envoyer ce message",
     "COMPOSE_SENDING"=>"Envoi du message...",
     "COMPOSE_SENT"=>"Message envoyé avec succès",
     "COMPOSE_MSG_BODY"=>"Corps du message",
+    "COMPOSE_ENCODE"=>"Encoder ce mail",
+    "COMPOSE_ENCODED"=>"Mail encodé",
     "STEP_SEND_PREVIEW"=>"Mode preview : Cette étape permet de visualiser la création de votre newsletter.<br>Cliquez sur \"Envoyer ce message\" pour envoyer un exemplaire à <b>%s</b>",
     "RE_SEND_PREVIEW"=>"Relancer le message de preview",
     "SCHEDULE_THIS_SEND"=>"Planifier cet envoi",
@@ -284,6 +287,7 @@ $lang_array=array(
     "INSTALL_SMTP_AUTH_NEEDED"=>"Authentification SMTP requise ?",
     "INSTALL_SMTP_USERNAME"=>"Nom d'utilisateur SMTP",
     "INSTALL_SMTP_PASSWORD"=>"Mot de passe SMTP",
+    "INSTALL_SMTP_PORT"=>"Port SMTP",
     "INSTALL_SUBSCRIPTION_TITLE"=>"Abonnement / Désabonnement",
     "INSTALL_SUB_CONFIRM"=>"Les abonnés doivent confirmer leur inscription ?",
     "INSTALL_UNSUB_CONFIRM"=>"Les abonnés doivent confirmer leur désinscription ?",
@@ -563,8 +567,7 @@ $lang_array=array(
                 <th>CTR</th>
                 <th>ACTR</th>
                 <th>Erreurs</th>
-                <th>Abandons</th>
-                ",
+                <th>Abandons</th>",
     "TRACKING_BULLE_ACTR"=>"Ratio ajusté : #CLICS / #OUVERTURES",
     "TRACKING_BULLE_CTR"=>"Ratio : #CLICS / #ENVOIS",
     "TRACKING_BULLE_OPEN_RATE"=>"Ratio : #OUVERTURES / #REMIS",
@@ -597,9 +600,6 @@ $lang_array=array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     );
-
-
-
 
 
 

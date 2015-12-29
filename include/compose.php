@@ -1,13 +1,17 @@
 <?php
-$subject = (!empty($_POST['subject'])) ? $_POST['subject'] : '';
-$message = (!empty($_POST['message'])) ? $_POST['message'] : '';
-$format  = (!empty($_POST['format']))  ? $_POST['format']  : '';
+$subject = ( !empty($_POST['subject']) ) ? $_POST['subject'] : '';
+$message = ( !empty($_POST['message']) ) ? $_POST['message'] : '';
+$format  = ( !empty($_POST['format']) )  ? $_POST['format']  : '';
+$encode  = ( !empty($_POST['encode']) ) ? 'base64'  : '8bit';
 switch($op){
     case "preview":
         $up = @($_GET['up']=='false' ? false : true);
+        $_SESSION['encode'] = $encode;
         if($up){
             $cnx->query("UPDATE ".$row_config_globale['table_sauvegarde']." 
-                    SET textarea = '".addslashes($message)."',subject='".addslashes($subject)."',type='$format' 
+                    SET textarea = '".addslashes($message)."',
+                        subject='".addslashes($subject)."',
+                        type='$format' 
                 WHERE list_id='$list_id'");
         }
         $newsletter     = getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
@@ -21,24 +25,26 @@ switch($op){
         }
         $subj           = htmlspecialchars($subject);
         if($format == "html"){
-            $msg = $message;
+            $msg        = $message;
         } else {
-            $msg = htmlspecialchars($message);
+            $msg        = htmlspecialchars($message);
         }
-        echo "<form method='post' action='send_preview.php' class='post_message'>";
+        echo "<form method='get' action='send_preview.php' id='mailform' name='mailform'>";
         echo "<div align='center'><h4 class='alert_info'>".tr("STEP_SEND_PREVIEW", $newsletter['preview_addr']).".</h4></div>";
         echo '<article class="module width_3_quarter">';
         echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").'</h3></header>';
         echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>".tr("ERROR_IFRAME")."...</p></iframe></div>";
-        echo "<input type='hidden' name='list_id' value='".$list_id."'>
+        echo "<input type='hidden' name='list_id' value='$list_id'>
+              <input type='hidden' name='encode' value='$encode'>
               <input type='hidden' name='op' value='send_preview'>
-              <input type='hidden' name='token' value='$token' />";
+              <input type='hidden' id='token' name='token' value='$token'>";
         echo "</article>";
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
         echo "<input type='button' onClick=\"window.location.href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=init'\" 
             value=\"".tr("COMPOSE_BACK")."\" />";
-        echo "<br><br><input type='submit' value='".tr("COMPOSE_SEND")."  (Mode PREVIEW)' /></div>";
+        echo "<br><br><input type='submit' value='".tr("COMPOSE_SEND")."  (Mode PREVIEW)' />";
+        echo "</div>";
         echo '<header></header>';
         echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
         echo "<div id='pjs'></div>";
@@ -48,6 +54,11 @@ switch($op){
         echo "<script>";
         echo "$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});";
         echo "</script>";
+        echo "<script>
+            function Soumettre(){
+                document.mailform.submit();
+            }
+            </script>";
     break;
     case "send_preview":
         $newsletter     = getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
@@ -65,22 +76,27 @@ switch($op){
         } else {
             $msg = htmlspecialchars($message);
         }
-        $error          =(empty($_GET['error'])?"":$_GET['error']);
+        $error          = ( empty($_GET['error']) ? "" : $_GET['error'] );
+        $encode         = ( !empty($_GET['encode']) && $_GET['encode'] == 'base64' ) ? 'base64'  : '8bit';
         echo '<div class="archmsg">';
         if($error==""){
             echo "<div align='center'><h4 class='alert_success'>".tr("PREVIEW_SEND_OK").".</h4>";
             echo "<h4 class='advt alert_info' align='center'>".tr("PREVIEW_OK")." ?<br>"
-                .tr("CLICK_TO_SEND", tr("COMPOSE_SEND")).", sinon cliquez sur '".tr("COMPOSE_BACK")."'</h4></div>";
+                . tr("CLICK_TO_SEND", tr("COMPOSE_SEND")).", ".tr("COMPOSE_ELSE_BACK")."</h4></div>";
         } else {
-            echo "<div align='center'><h4 class='alert_error'>Attention ! Le message de preview est en erreur. Motif : $error ! Merci de corriger, puis relancer le message de preview en cliquant ici : <a href='".$_SERVER['PHP_SELF']."?page=compose&op=init&list_id=$list_id&token=$token'>".tr("RE_SEND_PREVIEW")."</a></h4></div>";
+            echo "<div align='center'><h4 class='alert_error'>Attention ! Le message de preview est en erreur. Motif : "
+                . $error ." ! Merci de corriger, puis relancer le message de preview en cliquant ici : <a href='"
+                . $_SERVER['PHP_SELF']."?page=compose&op=init&list_id=$list_id&token=$token'>".tr("RE_SEND_PREVIEW")."</a></h4></div>";
         }
         echo '<article class="module width_3_quarter">';
         echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").' :</h3></header>';
-        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>".tr("ERROR_IFRAME")."...</p></iframe>";
+        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>"
+            . tr("ERROR_IFRAME")."...</p></iframe>";
         echo "</article>";
         echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
         echo '<header><h3>Actions :</h3></header><div align="center">';
-        echo "<br><br><input type='button' value='".tr("COMPOSE_BACK")."' onClick=\"parent.location='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=preview&up=false'\" />";
+        echo "<br><br><input type='button' value='".tr("COMPOSE_BACK")."' onClick=\"parent.location='"
+            . $_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&op=preview&up=false&encode=$encode'\" />";
         if($error==""){
             echo "<br><br><input type='button' value='".tr("COMPOSE_SEND")."' class='button' id='SendIt'>";
         } else {
@@ -91,10 +107,12 @@ switch($op){
             <input type='submit' value='".tr("SCHEDULE_THIS_SEND")."' />
             <input type='hidden' name='NEWTASK' value='SCHEDULE_NEW_TASK' />
             <input type='hidden' name='list_id' value='$list_id' />
+            <input type='hidden' name='encode' value='$encode'>
             <input type='hidden' name='page' value='task' />";
         }
         echo '</div>';
-        echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});
+        echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", data:\"token="
+            . $token . "&list_id=" . $list_id . "\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});
         </script>";
         echo '<header></header>';
         echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
@@ -109,22 +127,23 @@ switch($op){
                 $('.button').hide('slow');
                 $('html,body').animate({scrollTop:'0px'},500);
                 $('#msg').show();
-                $('#smail').html('Envoi du mail à la liste');
+                $('#smail').html('<?=tr("PROGRESSION_OF_CURRENT_SEND";?>');
                 $(function(){
                     var begin   = 0;
                     var sn      = 0;
                     var step    = '';
                     var pct     = 0;
-                    var list_id = <?=intval($list_id);?>;
+                    var list_id = <?=(($list_id)+0);?>;
                     var token   = '<?=$token;?>';
                     var msg_id  = 0;
                     var tts     = 0;
+                    var encode  = '<?=$encode;?>';
                     function progresspump(){ 
                         $.ajax({
                             url:"send.php",
                             type: "GET",
                             dataType:"json",
-                            data:'list_id=' + list_id +'&token=' + token + '&begin='+ begin + '&sn=' + sn + '&step=' + step +'&msg_id=' + msg_id,
+                            data:'list_id=' + list_id + '&token=' + token + '&begin=' + begin + '&sn=' + sn + '&step=' + step + '&msg_id=' + msg_id + '&encode=' + encode,
                             success:function(rj){
                                 begin = rj.begin;
                                 sn    = rj.sn;
@@ -140,6 +159,7 @@ switch($op){
                                     clearInterval(progresspump);
                                     $("#send_title").text("<?=tr("SEND_ENDED");?>...");
                                     $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
+                                    $('#smail').html("<?=tr("SCHEDULE_END_PROCESS";?>");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';
                                     },1000);
@@ -189,11 +209,13 @@ switch($op){
         $ft  = (!empty($_GET['ft'])) ? $_GET['ft'] : '';
         if(getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id)){
             if (isset($import_id) && is_numeric($import_id)) {
-                $row = $cnx->query("SELECT date, type, subject, message, list_id FROM ".$row_config_globale['table_archives']." WHERE id='$import_id'")->fetch(PDO::FETCH_ASSOC);
+                $row = $cnx->query("SELECT date, type, subject, message, list_id FROM "
+                    . $row_config_globale['table_archives']." WHERE id='$import_id'")->fetch(PDO::FETCH_ASSOC);
                 $textarea = addslashes(@htmlspecialchars($row['message']));
                 $subject  = addslashes(@htmlspecialchars($row['subject']));
                 $type     = $row['type'];
-                $cnx->query("INSERT INTO ".$row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
+                $cnx->query("INSERT INTO "
+                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
             } elseif(isset($newsletter_autosave['textarea'])&&trim($newsletter_autosave['textarea'])!=''&&$reset=='false') {
                 $textarea = $newsletter_autosave['textarea'];
                 $type    = 'html';
@@ -202,28 +224,38 @@ switch($op){
                 $textarea = addslashes($newsletter['header']."\n\n\n".$newsletter['footer']);
                 $subject = @addslashes(htmlspecialchars($newsletter['subject']));
                 $type    = 'html';
-                $cnx->query("INSERT INTO ".$row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
+                $cnx->query("INSERT INTO "
+                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
             }
             echo "<form id='mailform' name='mailform' method='post' action='' class='post_message'>";
             echo "<div align='center'><h4 class='alert_info'>".tr("COMPOSE_AND_PREVIEW").".</h4></div>";
             echo '<article class="module width_3_quarter">';
             echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_NEW").'</h3></header>';
             echo tr("COMPOSE_SUBJECT")." : ".tr("RFC_2822")."<br><br>
-                <input type='text' name='subject' value=\"".  stripslashes($subject)  ."\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
+                <input type='text' name='subject' value=\"".  stripslashes($subject)  
+                . "\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
                 <br><br>".tr("COMPOSE_MSG_BODY")." :";
             if($ft=="") {
-                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
+                echo " (<a href='".$_SERVER['PHP_SELF']
+                    . "?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
             } elseif($ft=='else') {
-                echo " (<a href='".$_SERVER['PHP_SELF']."?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
+                echo " (<a href='".$_SERVER['PHP_SELF']
+                    . "?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
             }
             echo "<textarea name='message' id='redac' rows='20' cols='70'>".   stripslashes($textarea)  ."</textarea>";
             echo "<div id='as'><h4 class='alert_info'>".tr("START_INITIALISATION")."...</h4></div><br>&nbsp;</article>";
             echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
             echo '<header><h3>'.tr("ACTIONS").' :</h3></header><div align="center">';
-            echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />
-            <br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF'] 
-                ."?page=compose&token=$token&list_id=$list_id&reset=true'\" />
-            <br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' disabled id='send_preview' /></div>";
+            echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />"
+                ."<br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF'] 
+                ."?page=compose&token=$token&list_id=$list_id&reset=true'\" />"
+                ."<br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' disabled id='send_preview' />";
+            if ( isset( $_SESSION['encode'] ) && $_SESSION['encode'] == 'base64' ) {
+                echo "<br><br><input type='checkbox' name='encode' value='base64' checked='checked'><b>".tr("COMPOSE_ENCODED")."</b>";
+            } else {
+                echo "<br><br><input type='checkbox' name='encode' value='base64'><b>".tr("COMPOSE_ENCODE")." ?</b>";
+            }
+            echo "</div>";
             echo '<header></header>';
             echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
             echo "<div id='pjs'></div>";

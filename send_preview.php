@@ -1,4 +1,5 @@
 <?php
+
 if(!file_exists("include/config.php")) {
     header("Location:install.php");
     exit;
@@ -10,6 +11,7 @@ if(!file_exists("include/config.php")) {
         quick_Exit();
     }
 }
+
 $cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
@@ -38,12 +40,13 @@ $begin   = (!empty($_GET['begin']) && empty($begin)) ? $_GET['begin'] : 0;
 $msg_id  = (!empty($_GET['msg_id'])) ? $_GET['msg_id'] : '';
 $sn      = (!empty($_GET['sn'])) ? $_GET['sn'] : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
+$encode  = (!empty($_GET['encode']))  ? 'base64' : '8bit' ;
 switch ($step) {
     case "sendpreview":
         $mail          = new PHPMailer;
         $mail->CharSet = $row_config_globale['charset'];
         $mail->ContentType="text/html";
-        $mail->Encoding  = "8bit";
+        $mail->Encoding  = $encode ;
         $mail->PluginDir= "include/lib/";
         $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
         $mail->From     = $newsletter['from_addr'];
@@ -76,7 +79,7 @@ switch ($step) {
             $mail->IsHTML(true);
         }
         $AltMessage = $message;
-        $mail->WordWrap = 70;
+        $mail->WordWrap = 78;
         if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
             include("DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
@@ -129,12 +132,18 @@ switch ($step) {
             die(tr("ERROR_SENDING"));
         }else{
             if(!isset($dontlog)) $dontlog='';
-            header("location:index.php?page=compose&op=send_preview&error=$error&list_id=$list_id&errorlog=$dontlog&token=$token");
+            header("location:index.php?page=compose&op=send_preview&error=$error&list_id=$list_id&errorlog=$dontlog&token=$token&encode=$encode");
         }
         break;
     default:
         if(!isset($num)) $num='';
-        header("location:send_preview.php?step=sendpreview&begin=0&list_id=$list_id&msg_id=$msg_id&sn=$num&error=0&token=$token");
+        header("location:send_preview.php?step=sendpreview&begin=0&list_id=$list_id&msg_id=$msg_id&sn=$num&error=0&token=$token&encode=$encode");
         break;
 }
-?>
+
+
+
+
+
+
+

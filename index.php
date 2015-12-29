@@ -126,6 +126,7 @@ if($page=='listes'){
                                    $row_config_globale['table_email'],$row_config_globale['table_temp'],
                                    $row_config_globale['table_send'],$row_config_globale['table_tracking'],
                                    $row_config_globale['table_sauvegarde'],$list_id);
+            $cnx->query('DELETE FROM '.$row_config_globale['table_email_deleted'].' WHERE list_id='.$list_id.'');
         break;
         case 'duplicate':
             $newsletter_modele = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
@@ -173,6 +174,7 @@ $op_true = array(
     'subscriber_del',
     'subscriber_del_temp',
     'subscriber_import',
+    'subscriber_mass_delete',
     'smtp_add',
     'smtp_del',
     'smtp_mod'
@@ -224,31 +226,36 @@ if(in_array($op,$op_true)){
                 unset($forceUpdate);
             }
             saveBounceFile($_POST['bounce_host'],$_POST['bounce_user'],$_POST['bounce_pass'],$_POST['bounce_port'],$_POST['bounce_service'],$_POST['bounce_option']);
+            $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
         break;
         case 'subscriber_add':
             $add_addr = (empty($_POST['add_addr']) ? "" : $_POST['add_addr']);
             if(!empty($add_addr)){
-                $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$add_addr,$row_config_globale['table_email_deleted']);
-                if($add_r==0){
-                    $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_ADDING_SUBSCRIBER"," <b>$add_addr</b>").".</h4>";
-                }else if($add_r==-1){
-                    $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$add_addr</b>").".</h4>";
-                }else if($add_r==2){
-                    $subscriber_op_msg = "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$add_addr</b>").".</h4>";
-                }else if($add_r==3){
-                    $subscriber_op_msg = "<h4 class='alert_error'>".tr("SUBSCRIBER_WITH_MAIL_DELETED", "<b>$add_addr</b>")."</h4>";
+                if(preg_match('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}/', $add_addr)){
+                    $add_r=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$add_addr,$row_config_globale['table_email_deleted']);
+                    if($add_r==0){
+                        $subscriber_op_msg_a = "<h4 class='alert_error'>".tr("ERROR_ADDING_SUBSCRIBER"," <b>$add_addr</b>").".</h4>";
+                    }else if($add_r==-1){
+                        $subscriber_op_msg_a = "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$add_addr</b>").".</h4>";
+                    }else if($add_r==2){
+                        $subscriber_op_msg_a = "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$add_addr</b>").".</h4>";
+                    }else if($add_r==3){
+                        $subscriber_op_msg_a = "<h4 class='alert_error'>".tr("SUBSCRIBER_WITH_MAIL_DELETED", "<b>$add_addr</b>")."</h4>";
+                    }
+                } else {
+                    $subscriber_op_msg_a = "<h4 class='alert_error'>".tr("ERROR_SUPPLY_VALID_EMAIL")."</h4>";
                 }
-            }else{
-                $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_SUPPLY_VALID_EMAIL")."</h4>";
+            } else {
+                $subscriber_op_msg_a = "<h4 class='alert_error'>".tr("ERROR_SUPPLY_VALID_EMAIL")."</h4>";
             }
         break;
         case 'subscriber_del':
             $del_addr = (empty($_POST['del_addr']) ? "" : $_POST['del_addr']);
             $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr,$row_config_globale['table_email_deleted'],'by_admin');
             if($deleted){
-                $subscriber_op_msg = "<h4 class='alert_success'>".tr("SUBSCRIBER_DELETED")."</h4>";
+                $subscriber_op_msg_d = "<h4 class='alert_success'>".tr("SUBSCRIBER_DELETED","<b>$del_addr</b>")."</h4>";
             }else{
-                $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_DELETING_SUBSCRIBER","<i>$del_addr</i>")."</h4>";
+                $subscriber_op_msg_d = "<h4 class='alert_error'>".tr("ERROR_DELETING_SUBSCRIBER","<b>$del_addr</b>")."</h4>";
             }
         break;
         case 'subscriber_import':
@@ -281,30 +288,87 @@ if(in_array($op,$op_true)){
                                 if(!empty($mail_importe)&&validEmailAddress($mail_importe)){
                                     $added=add_subscriber($cnx,$row_config_globale['table_email'],$list_id,$mail_importe,$row_config_globale['table_email_deleted']);
                                     if($added==-1){
-                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
+                                        $subscriber_op_msg_i .= "<h4 class='alert_error'>".tr("ERROR_ALREADY_SUBSCRIBER", "<b>$mail_importe</b>").".</h4>";
                                         $tx_error++;
                                     }elseif($added==2){
-                                        $subscriber_op_msg .= "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
+                                        $subscriber_op_msg_i .= "<h4 class='alert_success'>".tr("SUBSCRIBER_ADDED", "<b>$mail_importe</b>").".</h4>";
                                         $tx_import++;
                                     }elseif($added==0){
-                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("ERROR_SQL", DbError())."</h4>";
+                                        $subscriber_op_msg_i .= "<h4 class='alert_error'>".tr("ERROR_SQL", DbError())."</h4>";
+                                        $tx_error++;
                                     }elseif($added==3){
-                                        $subscriber_op_msg .= "<h4 class='alert_error'>".tr("EMAIL_ON_DELETED_LIST")."</h4>";
+                                        $subscriber_op_msg_i .= "<h4 class='alert_error'>".tr("EMAIL_ON_DELETED_LIST", "<b>$mail_importe</b>")."</h4>";
+                                        $tx_error++;
                                     }
                                 } else {
-                                    $subscriber_op_msg .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";
+                                    $subscriber_op_msg_i .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$mail_importe."</h4>";
                                     $tx_error++;
                                 }
                             }
                         }
                     }
-                    $subscriber_op_msg .= "<h4 class='alert_success'><b>$tx_import ".tr("MAIL_ADDED")."</b></h4>";
-                    $subscriber_op_msg .= "<h4 class='alert_error'><b>$tx_error ".tr("MAIL_ADDED_ERROR")."</b></h4>";
+                    $subscriber_op_msg_i .= "<h4 class='alert_success'><b>$tx_import ".tr("MAIL_ADDED")."</b></h4>";
+                    $subscriber_op_msg_i .= "<h4 class='alert_error'><b>$tx_error ".tr("MAIL_ADDED_ERROR")."</b></h4>";
                 } else{
-                    $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_IMPORT_TMPDIR_NOT_WRITABLE")." !</h4>";
+                    $subscriber_op_msg_i = "<h4 class='alert_error'>".tr("ERROR_IMPORT_TMPDIR_NOT_WRITABLE")." !</h4>";
                 }
             }else{
-                $subscriber_op_msg = "<h4 class='alert_error'>".tr("ERROR_IMPORT_FILE_MISSING")." !</h4>";
+                $subscriber_op_msg_i = "<h4 class='alert_error'>".tr("ERROR_IMPORT_FILE_MISSING")." !</h4>";
+            }
+        break;
+        case 'subscriber_mass_delete':
+            @set_time_limit(300);
+            $import_file = (!empty($_FILES['import_file']) ? $_FILES['import_file'] : "");
+            if (!empty($import_file) && $import_file != "none" && $import_file['size'] > 0 && is_uploaded_file($import_file['tmp_name'])){
+                $tmp_subdir_writable = true;
+                $open_basedir = @ini_get('open_basedir');
+                if (!empty($open_basedir)){
+                    $tmp_subdir="./upload/";
+                    $local_filename = $tmp_subdir.basename($import_file['tmp_name']);
+                    move_uploaded_file($import_file['tmp_name'], $local_filename);
+                    $liste = fopen($local_filename, 'r');
+                } else{
+                    $liste = fopen($import_file['tmp_name'], 'r');
+                }
+                if($tmp_subdir_writable){
+                    $tx_import = 0;
+                    $tx_error  = 0;
+                    while (!feof($liste)){    
+                        $del_addr = fgets($liste, 4096);
+                        preg_match_all('/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}/i', $del_addr, $found_mails);
+                        foreach ($found_mails[0] as $del_addr){
+                            if(strlen($del_addr)==2){
+                                // dummy and pretty function ;-) yeah !
+                            }else{
+                                $del_addr = str_replace("'","",$del_addr);
+                                $del_addr = str_replace('"',"",$del_addr);
+                                $del_addr = strtolower(trim($del_addr));
+                                if(!empty($del_addr)&&validEmailAddress($del_addr)){
+                                    $deleted = delete_subscriber($cnx,$row_config_globale['table_email'],$list_id,$del_addr,$row_config_globale['table_email_deleted'],'by_admin');
+                                    if($deleted == true){
+                                        //$subscriber_op_msg_md = "<h4 class='alert_success'>".tr("SUBSCRIBER_DELETED","<b>$del_addr</b>")."</h4>";
+                                        $tx_import++;
+                                    }elseif($deleted == false){
+                                        //$subscriber_op_msg_md = "<h4 class='alert_error'>".tr("ERROR_DELETING_SUBSCRIBER","<b>$del_addr</b>")."</h4>";
+                                        $tx_error++;
+                                    }elseif($deleted == 5){
+                                        $subscriber_op_msg_md = "<h4 class='alert_error'>".tr("ERROR_DELETING_SUBSCRIBER_NOT_IN_LIST","<b>$del_addr</b>")."</h4>";
+                                        $tx_error++;
+                                    }
+                                } else {
+                                    $subscriber_op_msg_md .= "<h4 class='alert_error'>".tr("INVALID_MAIL")." : ".$del_addr."</h4>";
+                                    $tx_error++;
+                                }
+                            }
+                        }
+                    }
+                    $subscriber_op_msg_md .= "<h4 class='alert_success'><b>$tx_import ".tr("MAIL_MASS_DELETED")."</b></h4>";
+                    $subscriber_op_msg_md .= "<h4 class='alert_error'><b>$tx_error ".tr("MAIL_ADDED_ERROR")."</b></h4>";
+                } else{
+                    $subscriber_op_msg_md = "<h4 class='alert_error'>".tr("ERROR_IMPORT_TMPDIR_NOT_WRITABLE")." !</h4>";
+                }
+            }else{
+                $subscriber_op_msg_md = "<h4 class='alert_error'>".tr("ERROR_IMPORT_FILE_MISSING")." !</h4>";
             }
         break;
         case 'smtp_add':
@@ -532,20 +596,7 @@ if(!$list&&$page!="config"){
                                 '<div class="breadcrumb_divider"></div> <a class="current">'.tr("CREATION_NEW_LIST").'</a>');
             }
             if($page == "subscribers"){
-                echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("MENU_SUBSCRIBERS").'</a>';
-                echo ($t=='a'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_ADD_TITLE").'</a>':
-                        ($t=='i'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_BULK_IMPORT").'</a>':
-                            ($t=='s'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_DELETE_TITLE").'</a>':
-                                ($t=='e'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_EXPORT_TITLE").'</a>':
-                                    ($t=='x'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_BOUNCERS").'</a>':
-                                        ($t=='t'?'<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_NOT_CONFIRMED").'</a>':
-                                            '<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_ADD_TITLE").'</a>'
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    );
+                echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("SUBSCRIBER_MANAGEMENT").'</a>';
             }
             if($page == "newsletterconf") {
                 echo '<div class="breadcrumb_divider"></div> <a class="current">'.tr("MENU_NEWSLETTER").'</a><div class="breadcrumb_divider"></div> <a class="current">'.tr("MENU_NEWSLETTER").'</a>';
@@ -608,12 +659,14 @@ if(!$list&&$page!="config"){
         </ul>
         <h3><?=tr("MENU_SUBSCRIBERS");?></h3>
         <ul class="toggle">
-            <li class="icn_add_user"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=a"><?=tr("SUBSCRIBER_ADD_TITLE");?></a></li>
+            <li class="icn_add_user"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("SUBSCRIBER_MANAGEMENT");?></a></li>
+            <?php /*
             <li class="icn_view_users"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=i"><?=tr("SUBSCRIBER_BULK_IMPORT");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=s"><?=tr("SUBSCRIBER_DELETE_TITLE");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=e"><?=tr("SUBSCRIBER_EXPORT_TITLE_SIMPLE");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=x"><?=tr("SUBSCRIBER_BOUNCERS");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=t"><?=tr("SUBSCRIBER_NOT_CONFIRMED");?></a></li>
+            */ ?>
         </ul>
         <h3><?=tr("MENU_NEWSLETTER");?></h3>
         <ul class="toggle">

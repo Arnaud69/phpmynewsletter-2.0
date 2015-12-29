@@ -35,13 +35,14 @@ $step    = (empty($_GET['step']) ? "" : $_GET['step']);
 $subject = (!empty($_SESSION['subject'])) ? $_SESSION['subject'] : '';
 $message = (!empty($_SESSION['message'])) ? $_SESSION['message'] : '';
 $format  = (!empty($_SESSION['format'])) ? $_SESSION['format'] : '';
-$list_id = (!empty($_POST['list_id'])) ? intval($_POST['list_id']) : '';
-$list_id = (!empty($_GET['list_id']) && empty($list_id)) ? intval($_GET['list_id']) : intval($list_id);
+$list_id = (!empty($_POST['list_id'])) ? (($_POST['list_id'])+0) : '';
+$list_id = (!empty($_GET['list_id']) && empty($list_id)) ? (($_GET['list_id'])+0) : (($list_id)+0);
 $begin   = (!empty($_POST['begin'])) ? $_POST['begin'] : '';
-$begin   = (!empty($_GET['begin']) && empty($begin)) ? intval($_GET['begin']) : 0;
-$msg_id  = (!empty($_GET['msg_id'])) ? intval($_GET['msg_id']) : '';
-$sn      = (!empty($_GET['sn'])) ? intval($_GET['sn']) : '';
+$begin   = (!empty($_GET['begin']) && empty($begin)) ? (($_GET['begin'])+0) : 0;
+$msg_id  = (!empty($_GET['msg_id'])) ? (($_GET['msg_id'])+0) : '';
+$sn      = (!empty($_GET['sn'])) ? (($_GET['sn'])+0) : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
+$encode  = (!empty($_GET['encode'])) ? $_GET['encode'] : '';
 switch ($step) {
     case "send":
         $tts = 0;
@@ -51,22 +52,25 @@ switch ($step) {
             $dontlog = 1;
         }
         $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
-        $limit          = $row_config_globale['sending_limit'];
-        $mail           = new PHPMailer();
-        $mail->CharSet  = $row_config_globale['charset'];
+        $limit            = $row_config_globale['sending_limit'];
+        $mail             = new PHPMailer();
+        $mail->CharSet    = $row_config_globale['charset'];
         $mail->ContentType="text/html";
-        $mail->Encoding = "8bit";
-        $mail->PluginDir= "include/lib/";
-        $newsletter     = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
-        $mail->From     = $newsletter['from_addr'];
-        $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
-        $addr           = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
-        $daylogmsg="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
+        $mail->Encoding   = $encode;
+        $mail->PluginDir  = "include/lib/";
+        $newsletter       = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
+        $mail->From       = $newsletter['from_addr'];
+        $mail->FromName   = ( strtoupper($row_config_globale['charset']) == "UTF-8" ? 
+                                $newsletter['from_name'] : 
+                                    iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']) 
+                            );
+        $addr             = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
+        $daylogmsg        ="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
-        $mail->Sender = $newsletter['from_addr'];
+        $mail->Sender    = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
-        $msg     = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
-        $format  = $msg['type'];
+        $msg             = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
+        $format          = $msg['type'];
         $list_pj = $cnx->query("SELECT * 
             FROM ".$row_config_globale['table_upload']." 
                 WHERE list_id=$list_id 
@@ -78,17 +82,17 @@ switch ($step) {
             }
         }
         $message    = stripslashes($msg['message']);
-        $to_replace = array("  ", "\t", "\n", "\r", "\0", "\x0B", "\xA0");
-        $message    = str_replace($to_replace," ",$message);
-        $message    = str_replace("  "," ",$message);
-        $subject    = stripslashes($msg['subject']);
-        if ($format == "html"){
+        $to_replace = array( "  ", "\t", "\n", "\r", "\0", "\x0B", "\xA0" );
+        $message    = str_replace( $to_replace , " " , $message );
+        $message    = str_replace( "  "," ",$message );
+        $subject    = stripslashes( $msg['subject'] );
+        if ( $format == "html" ){
             $message .= "<br />";
             $mail->IsHTML(true);
         }
         $AltMessage = $message;
         $mail->WordWrap = 70;    
-        if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
+        if ( file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail') ) {
             include("DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
             $mail->DKIM_private    = $DKIM_private;
@@ -285,14 +289,15 @@ switch ($step) {
         DelMsgTemp($cnx, $list_id, $row_config_globale['table_sauvegarde']);
         echo json_encode(
             array(
-                'step'  => 'send',
-                'error' =>0,
-                'begin' => 0,
-                'list_id' => intval($list_id),
-                'msg_id' => intval($msg_id),
-                'sn' => intval($num),
-                'token' => $token,
-                'pct' => 0)
+                'step'    => 'send',
+                'error'   => 0,
+                'begin'   => 0,
+                'list_id' => ( ($list_id)+0 ),
+                'msg_id'  => ( ($msg_id)+0 ),
+                'ecnode'  => $encode,
+                'sn'      => ( ($num)+0 ),
+                'token'   => $token,
+                'pct'     => 0)
             );
         break;
 }

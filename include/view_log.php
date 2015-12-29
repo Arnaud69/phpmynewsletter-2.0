@@ -1,8 +1,4 @@
 <?php
-/*script visu logs
-- quotidien
-- list
-*/
 session_start();
 if(!file_exists("config.php")) {
     die("1");

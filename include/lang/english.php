@@ -33,8 +33,8 @@ $lang_array=array (
     "AVAILABLE_NEWSLETTER"=>"existing info Letters",
     //ADMIN LOGIN // admin / login.php
     "LOGIN_TITLE"=>"Identification",
-    "LOGIN_PLEASE_ENTER_PASSWORD"=>"A password is required to access the administration area,",
-    "Login_password"=>"Password",
+    "LOGIN_PLEASE_ENTER_PASSWORD"=>"Password required",
+    "LOGIN_PASSWORD"=>"Password",
     "LOGIN"=>"Connection",
     "LOGIN_BAD_PASSWORD"=>"Invalid password !",
     //MENU
@@ -117,7 +117,7 @@ $lang_array=array (
     "SUBSCRIBER_WITH_MAIL_DELETED"=>"mail address in the list of deleted mails / unsubscribed / or error !",
     "EMAIL_ON_DELETED_LIST"=>"%s : this email address is present on the list of deleted mails !",
     "SUBSCRIPTION_HTML_CODE"=>"HTML Code Subscription",
-    //COMPOUND
+    //COMPOSE
     "COMPOSE_NEW"=>"Compose New Message",
     "COMPOSE_SUBJECT"=>"Subject",
     "COMPOSE_FORMAT"=>"Format",
@@ -128,14 +128,17 @@ $lang_array=array (
     "COMPOSE_RESET"=>"Reset",
     "COMPOSE_PREVIEW_TITLE"=>"Message Preview",
     "COMPOSE_BACK"=>"Back",
+    "COMPOSE_ELSE_BACK"=>"else, click 'back'",
     "COMPOSE_SEND"=>"Send this message",
     "COMPOSE_SENDING"=>"Sending message ...",
     "COMPOSE_SENT"=>"Message sent successfully",
     "COMPOSE_MSG_BODY"=>"Message Body",
-    "STEP_SEND_PREVIEW"=>"preview mode: This step allows to visualize the creation of your newsletter <br>Click \"Send this message\" to send a copy to <b>%s</b>",
+    "COMPOSE_ENCODE"=>"Encode this mail",
+    "COMPOSE_ENCODED"=>"Encoded mail",
+    "STEP_SEND_PREVIEW"=>"preview mode : this step allows to visualize the creation of your newsletter <br>Click \"Send this message\" to send a copy to <b>%s</b>",
     "RE_SEND_PREVIEW"=>"Restart preview message",
     "SCHEDULE_THIS_SEND"=>"Plan this shipment",
-    "STOP_ON_PREVIEW_ERROR"=>"Preview in error, you can not send this letter to your mailing list",
+    "STOP_ON_PREVIEW_ERROR"=>"Preview in error, you can't send this letter to your mailing list",
     "PREVIEW_SEND_OK"=>"The preview message was correctly sent, thank you to check it before continuing",
     "PREVIEW_OK"=>"The preview of your composition is OK",
     "CLICK_TO_SEND"=>"Click %s to send to your mailing list",
@@ -145,7 +148,7 @@ $lang_array=array (
     "LAST_TIME_SEND"=>"Last shipment (ms)",
     "START_INITIALISATION"=>"Initializing",
     "COMPOSE_AND_PREVIEW"=>"Write your newsletter and then click \"Message Preview\" to view",
-    "RFC_2822"=>"(note: according to standard RFC 2822 <a target='_blank'>href='http://www.faqs.org/rfcs/rfc2822.htm'</a>section 2.1.1, it should not exceed 78 characters !)",
+    "RFC_2822"=>"(note: according to standard <a href='http://www.faqs.org/rfcs/rfc2822.htm' target='_blank'>RFC 2822</a> section 2.1.1, it shouldn't exceed 78 characters !)",
     "CLICK_TO_COMPOSE_HTML"=>"Click here to insert a message composed in html",
     "CLICK_TO_COMPOSE_WITH_EDITOR"=>"Click here to compose a message with the publisher",
     // GLOBAL CONFIG
@@ -169,7 +172,7 @@ $lang_array=array (
     "GCONFIG_DB_TABLE_UPLOAD"=>"Table of attachments",
     "GCONFIG_MISC_TITLE"=>"Other settings",
     "GCONFIG_MISC_ADMIN_PASSW"=>"Password to access the administration area,",
-    "GCONFIG_MISC_ADMIN_PASSW2"=>"(leave blank if you do not want to change it)",
+    "GCONFIG_MISC_ADMIN_PASSW2"=>"(leave blank if you don't want to change it)",
     "GCONFIG_MISC_BASE_URL"=>"Base URL",
     "GCONFIG_MISC_BASE_PATH"=>"Path of phpMyNewsletter",
     "GCONFIG_MISC_LANGUAGE"=>"Language",
@@ -197,9 +200,9 @@ $lang_array=array (
     "GCONFIG_MANAGE_ENVIRONMENT"=>"Environmental Management",
     "GCONFIG_MANAGE_BOUNCE"=>"Management of retained mail",
     "GCONFIG_TRY_CONNECT"=>"Login attempt",
-    "BOUNCE_WARNING"=>"<h4 class = 'alert_warning'>Do not fill this field if you do not know the settings !</H4>
+    "BOUNCE_WARNING"=>"<h4 class = 'alert_warning'>Don't fill this field if you don't know the settings !</H4>
             <p>Note that these settings will allow you to manage the retained messages. <br>
-            Do not complete this area if you use gmail for your shipments ! <br>
+            Don't complete this area if you use gmail for your shipments ! <br>
             PhpMyNewsLetter must connect to the email account of the sender and thus proceed:
             <ul>
             <li>Playback on returned mail distribution error</li>
@@ -208,7 +211,7 @@ $lang_array=array (
             <li>Delete the email returned</li>
             <li>Reporting email address error distribution</li>
             </ul>
-            Do not raise the mail account of the sender, the updates would be impossible !
+            Don't raise the mail account of the sender, the updates would be impossible !
             Thank you ;-)
             </p>",
     "GCONFIG_HOST_MAIL"=>"Host Mail Server",
@@ -247,7 +250,7 @@ $lang_array=array (
     "ERROR_UNKNOWN"=>"Unknown error",
     "ERROR_SENDING_CONFIRM_MAIL"=>"Error Message shipment confirmation",
     "ERROR_LOG_CREATE"=>"Unable to create the log file. Check back permissions admin / logs",
-    "ERROR_IFRAME"=>"Oops ! Your browser does not support iframes",
+    "ERROR_IFRAME"=>"Oops ! Your browser doesn't support iframes",
     //MSG
     "NO_SUBSCRIBER"=>"No subscriber in the database",
     "NO_ARCHIVE"=>"No archive for this info letter",
@@ -284,6 +287,7 @@ $lang_array=array (
     "INSTALL_SMTP_AUTH_NEEDED"=>"SMTP Authentication required ?",
     "INSTALL_SMTP_USERNAME"=>"SMTP Username",
     "INSTALL_SMTP_PASSWORD"=>"SMTP Password",
+    "INSTALL_SMTP_PORT"=>"SMTP port",
     "INSTALL_SUBSCRIPTION_TITLE"=>"Subscribe / Unsubscribe",
     "INSTALL_SUB_CONFIRM"=>"Customers must confirm their registration ?",
     "INSTALL_UNSUB_CONFIRM"=>"Customers must confirm their unsubscribe ?",
@@ -291,7 +295,7 @@ $lang_array=array (
     "INSTALL_SAVE_CREATE_TABLE"=>"Create table %s",
     "INSTALL_SAVE_CONFIG"=>"Saving the configuration",
     "INSTALL_SAVE_CONFIG_FILE"=>"Writing the configuration file",
-    "INSTALL_UNABLE_TO_SAVE_CONFIG_FILE"=>"Can not write configuration file.",
+    "INSTALL_UNABLE_TO_SAVE_CONFIG_FILE"=>"Can't write configuration file.",
     "INSTALL_CONFIG_MANUALLY"=>"Please copy the lines below and paste them into the configuration file (<em>include / config.php</em>).",
     "INSTALL_FINISHED"=>"Finish",
     "INSTALL_STEP_FINISHED"=>"Completing the installation",
@@ -307,7 +311,7 @@ $lang_array=array (
     "INSTALL_SERVER_TYPE"=>"Server Type",
     "SHARED_SERVER"=>"shared, shared",
     "DEDICATED_SERVER"=>"dedicated",
-    "Storage_engine"=>"Storage Engine",
+    "STORAGE_ENGINE"=>"Storage Engine",
     "LOCAL_TIME_ZONE"=>"Local time zone",
     "INSTALL_SHARED"=>"Shared",
     "INSTALL_CHOOSE_PASSWORD"=>"Please enter a password",
@@ -320,7 +324,7 @@ $lang_array=array (
     "ERROR_CREATE_UPLOAD_DIRECTORY"=>"Error creating the upload directory",
     "MANUALLY"=>"manually",
     "CHECK_PERMISSIONS_OR_CREATE"=>"Please, check permissions or manually create upload",
-    "NOT_YET_AVAILABLE"=>"is not available",
+    "NOT_YET_AVAILABLE"=>"isn't available",
     "MANUALLY_SAVE_CONF"=>"Please save this configuration text in include / config and everything will be ready. Renez you then at %s to begin",
     "YOU_DID_IT"=>"Perfect, everything is ready",
     "CREDITS_WITH"=>"All this is possible through",
@@ -335,8 +339,8 @@ $lang_array=array (
     "CONTRIBUTE"=>"Contribute",
     "LICENSE"=>"License",
     "LICENSE_TERMS"=>"phpMyNewsletter is free software available under the terms of the <a target='_blank'>href='http://www.gnu.org/copyleft/gpl.html' General Public License</a ><a project href='http://www.gnu.org' target='_blank' class='lien'></a>GNU (Gnu GPL)",
-    "CONTRIBUTE_HELP"=>"PhpMyNewsLetter is a free project that needs to be improved Your ideas and suggestions are welcome, your qualities as developer Go to the forum <a href = 'http: //www.phpmynewsletter com/forum/' target='_blank '>PhpMyNewsLetter</a>",
-    "ASK_ON_FORUM"=>"I do not reply to individual requests, thank you to go through the forum for any questions or problems Go to the forum <a href =. 'Http: //www.phpmynewsletter.com/forum/' target = '_ blank'>PhpMyNewsLetter</a>",
+    "CONTRIBUTE_HELP"=>"PhpMyNewsLetter is a free project that needs to be improved Your ideas and suggestions are welcome, your qualities as developer Go to the forum <a href = 'http://www.phpmynewsletter com/forum/' target='_blank'>PhpMyNewsLetter</a>",
+    "ASK_ON_FORUM"=>"I don't reply to individual requests, thank you to go through the forum for any questions or problems Go to the forum <a href='http://www.phpmynewsletter.com/forum/' target='_ blank'>PhpMyNewsLetter</a>",
     "INSTALL_REFRESH"=>"Please refresh this page after correction of the error",
     "LOGOUT_DONE"=>"You are offline",
     "LOGOUT_ERROR"=>"Error when disconnecting",
@@ -411,11 +415,11 @@ $lang_array=array (
     "MANAGEMENT_ERROR_NOT_CONFIGURED"=>"Processing mails back unconfigured",
     "INVALID_MAIL"=>"invalid email address",
     // ONLINE, SEND
-    "READ_ON_LINE"=>"If you can not view this message orrectly, %s click here</a>",
+    "READ_ON_LINE"=>"If you can't view this message correctly, %s click here</a>",
     "ADD_ADRESS_BOOK"=>"Please, add %s to your address book to make sure you receive our news in your inbox !",
     "UNSUBSCRIBE_LINK"=>"No longer interested ? %s Unsubscribe</a>",
     "MAIL_PREVIEW_SEND"=>"Mail preview",
-    "NO_SEND_DEFINITION"=>"Sending Mode Not Set !",
+    "NO_SEND_DEFINITION"=>"Sending mode isn't set !",
     // TRACK
     "CLICKED_LINK_REPORT"=>"Record of links clicked",
     "CLICKED_LINK_REPORT_GRAPHIC"=>"Graph links clicked",
@@ -429,10 +433,10 @@ $lang_array=array (
     //add attachment
     "ADD_ONE_OR_MORE_ATTACHMENT"=>"Add one or more attachments to this mail",
     "UPLOAD_DROP_FILES"=>"Drag here to send files on the server,",
-    "UPLOAD_EXPLAIN"=>"The documents are automatically added here attached to the email being drafted. <br>Careful not to put too heavy attached documents (risk of discharges according limitations), not too many ! (10 records maximum, 4-5 MB is a reasonable limit !)",
+    "UPLOAD_EXPLAIN"=>"The documents are automatically added here attached to the email being drafted.<br>Be careful : don't to put too heavy attached documents (risk of discharges according limitations), not too many ! (10 records maximum, 4-5 MB is a reasonable limit !)",
     // ARCHIVES
-    "SUBSCRIBER_DIDNT_RECEIVE"=>"Warning: %s registered has not received such information Click here to return to that part !",
-    "SUBSCRIBERS_DIDNT_RECEIVE"=>"Warning: %s registered have not received this information Click here to return to those registered !",
+    "SUBSCRIBER_DIDNT_RECEIVE"=>"Warning: %s registered hasn't received such information Click here to return to that part !",
+    "SUBSCRIBERS_DIDNT_RECEIVE"=>"Warning: %s registered haven't received this information Click here to return to those registered !",
     "SEND_ENDED"=>"Sending completed",
     "REDIRECT_NOW"=>"Redirecting",
     "PROGRESSION_OF_CURRENT_SEND"=>"the current shipment of Progress",
@@ -450,7 +454,7 @@ $lang_array=array (
     "WITH_POP_UP"=>"Code with pop-up",
     "FULL_PAGE"=>"Code in full screen",
     "MODIFY_IT"=>"Note: This code can be changed. You can add javascript or link for style sheet, but don't modify variables...",
-    "Suscribe"=>"subscribe",
+    "SUSCRIBE"=>"subscribe",
     "CODE_TITLE"=>"HTML Code Subscription",
     // LISTS
     "LIST_NUMBER"=>"No.",
@@ -561,27 +565,13 @@ $lang_array=array (
                 <th>CTR</th>
                 <th>ACTR</th>
                 <th>Errors</th>
-                <th>Unsub</th>
-                ",
+                <th>Unsub</th>",
     "TRACKING_BULLE_ACTR"=>"Adjusted Ratio : #CLICKED / #OPENED",
     "TRACKING_BULLE_CTR"=>"Ratio : #CLICKED / #SEND",
     "TRACKING_BULLE_OPEN_RATE"=>"Ratio : #OPENED / #DELIVERED",
     "TRACKING_VIEW_LOG_DAY"=>"View day log for %s",
     "TRACKING_VIEW_LOG_SEND"=>"View send log",
     "TRACKING_DETAILLED_CLICKED_LINKS"=>"Detailled stats for clicked links",
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     "CLICKED_LINK_REPORT_ENVIRONMENT"=>"Browsers",
     "CLICKED_LINK_REPORT_OS"=>"Operating Systems",
     "RESULTS"=>"Results",
@@ -596,21 +586,15 @@ $lang_array=array (
     "UNDISTURBED_TITLE_GRPH_AND_ERROR"=>"Graphic and distribution of the last shipment errors",
     "UNDISTURBED_LABEL_ERROR"=>"Graphic by error code",
     "UNDISTURBED_LABEL_CLASS"=>"Graphic by error class: hard-bounce, soft-bounce ",
-    "UNDISTURBED_ERROR_SERVER"=>"Your server does not allow the processing of mail returns", 
+    "UNDISTURBED_ERROR_SERVER"=>"Your server doesn't allow the processing of mail returns", 
     "F_UNDETECTED_VERSION"=>"Version undetected file",
     "F_NEW_VERSION_AVAILABLE "=>"%s version available",
     "F_MAILS_OF_SUBSCRIBERS"=>"subscriber email addresses",
     "F_TITLE_MAILS_OF_SUBSCRIBERS"=>"List Addresses",
     "F_TRANSLATION_REQUIRED"=>"[missing translation]",
     "F_SENT_ON"=>"Posted",
-    "F_BROWSER_IFRAME"=>" Oops ! Your Browser does not support iframes !",
-    "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Use this message as a template for redrafting with the list",
+    "F_BROWSER_IFRAME"=>" Oops ! Your Browser doesn't support iframes !",
+    "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Use this message as draft to start a noew campaign with list ",
     );
-
-
-
-
-
-
 
 

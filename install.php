@@ -403,21 +403,24 @@ if (empty($langfile)) {
                 if(mkdir("upload",0755)){
                     echo '<h4 class="alert_success">'.tr("UPLOAD_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
-                    die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                    die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' 
+                    . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'upload" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
                 }
             }
             if(!is_dir("include/DKIM")){
-                if(mkdir("DKIM",0755)){
+                if(mkdir("include/DKIM",0755)){
                     echo '<h4 class="alert_success">'.tr("DKIM_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
-                    die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'DKIM".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'DKIM" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                    die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'include/DKIM".<br>' 
+                    . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'include/DKIM" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
                 }
             }
             if(!is_dir("include/backup_crontab")){
-                if(mkdir("backup_crontab",0755)){
+                if(mkdir("include/backup_crontab",0755)){
                     echo '<h4 class="alert_success">'.tr("BK_CRONTAB_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
-                    die('<h4 class="alert_error">'.tr("BK_CRONTAB_DIRECTORY").' : "'.$path.'backup_crontab".<br>' . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'backup_crontab" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
+                    die('<h4 class="alert_error">'.tr("BK_CRONTAB_DIRECTORY").' : "'.$path.'include/backup_crontab".<br>' 
+                    . tr("CHECK_PERMISSIONS_OR_CREATE") . ' "'.$path.'include/backup_crontab" ' . tr("MANUALLY") . '<br>' . tr("INSTALL_REFRESH") . ' !</div>');
                 }
             }
             if ($db_type == "mysql") {

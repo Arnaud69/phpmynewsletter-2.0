@@ -101,7 +101,11 @@ function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
 }
 function append_cronjob($command){
     if(is_string($command)&&!empty($command)){
-        exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
+        # 2.0.3
+        # exec('echo -e "`crontab -l`\n'.$command.'" | crontab -', $output);
+        # 2.0.4
+        # shell_exec("crontab -l | { cat; echo '$command'; } |crontab -");
+        exec("crontab -l | { cat; echo '$command'; } |crontab -");
     }
     return $output;
 }
@@ -211,14 +215,23 @@ function CronID() {
     return 'pmnl2_'.$activatecode;
 }
 function delete_subscriber($cnx, $table_email, $list_id, $del_addr, $table_email_deleted, $motif='') {
-    if (!$cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) 
-        VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
-        return false;
-    }
-    if (!$cnx->query("DELETE FROM $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
-        return false;
+    $CPTID = $cnx->query("SELECT count(*) AS CPTID 
+            FROM $table_email
+                WHERE list_id = '".$list_id."' 
+                    AND email = ".escape_string($cnx,$del_addr)."")->fetch();
+    if ( $CPTID['CPTID'] > 0 ) {
+        if (!$cnx->query("INSERT IGNORE INTO $table_email_deleted (list_id,email,type) 
+            VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$del_addr).",'".($motif!=''?$motif:'unsub')."')")) {
+            return false;
+        } else {
+            if (!$cnx->query("DELETE FROM $table_email WHERE list_id = '$list_id' AND email='$del_addr'")) {
+                return false;
+            } else {
+                return true;
+            }
+        }
     } else {
-        return true;
+        return 5;
     }
 }
 function deleteArchive($cnx,$table_archives, $msg_id) {
@@ -376,20 +389,17 @@ function get_relative_path($filename) {
 function get_stats_send($cnx,$list_id,$param_global){
     $cnx->query("SET NAMES UTF8");
     return $cnx->query("SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d') as dt, a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
-                (SELECT COUNT(id) 
-                     FROM ".$param_global['table_tracking']."
-                 WHERE subject=a.id) AS TID,
-                (SELECT SUM(open_count) 
-                     FROM ".$param_global['table_send']."
-                 WHERE id_mail=a.id) AS TOPEN
-            FROM ".$param_global['table_send']." s
-                LEFT JOIN ".$param_global['table_archives']." a 
-                    ON a.id=s.id_mail 
-                LEFT JOIN ".$param_global['table_tracking']." t 
-                    ON a.id=t.subject
-            WHERE a.list_id='".$list_id."'
-                GROUP BY a.id
-            ORDER BY a.id DESC LIMIT 15")->fetchAll(PDO::FETCH_ASSOC);
+                            (SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject=a.id) AS TID,
+                            (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id) AS TOPEN,
+                            (SELECT SUM(cpt) FROM ".$param_global['table_track_links']." WHERE list_id=$list_id AND msg_id=a.id) AS CPT_CLICKED
+                        FROM ".$param_global['table_send']." s
+                            LEFT JOIN ".$param_global['table_archives']." a 
+                                ON a.id=s.id_mail 
+                            LEFT JOIN ".$param_global['table_tracking']." t 
+                                ON a.id=t.subject
+                        WHERE a.list_id='".$list_id."'
+                            GROUP BY a.id
+                        ORDER BY a.id DESC LIMIT 30")->fetchAll(PDO::FETCH_ASSOC);
 }
 function get_subscribers($cnx, $table_email, $list_id) {
     return $subscribers = $cnx->query("SELECT email 
@@ -399,18 +409,13 @@ function get_subscribers($cnx, $table_email, $list_id) {
 }
 function getAddress($cnx,$table_email,$list_id,$begin='',$limit='',$msg_id) {
     $cnx->query("SET NAMES UTF8");
-    $limite=(isset($begin)&&isset($limit))?" LIMIT $begin,$limit":"";
-    echo "SELECT id,email,hash 
-                                    FROM $table_email 
-                                WHERE list_id = '$list_id' 
-                                    AND error='N' 
-                                    AND campaign_id != '$msg_id'
-                                $limite";
+    $limite=(isset($limit))?" LIMIT 0,$limit":"";
     return $Addr = $cnx->query("SELECT id,email,hash 
                                     FROM $table_email 
                                 WHERE list_id = '$list_id' 
                                     AND error='N' 
                                     AND campaign_id != '$msg_id'
+                                ORDER BY id ASC
                                 $limite")->fetchAll(PDO::FETCH_ASSOC);
 }
 function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list) {
@@ -747,8 +752,8 @@ function sanitize_output($buffer) {
 }
 function save_message($cnx, $table_archive, $subject, $format, $body, $date, $list_id) {
     $cnx->query("SET NAMES UTF8");
-    $id = $cnx->query("SELECT id FROM $table_archive ORDER BY id DESC")->fetch(PDO::FETCH_ASSOC);
-    $newid = $id['id'] + 1;
+    $id = $cnx->query("SELECT MAX(id) AS MAXID FROM $table_archive ORDER BY id DESC")->fetch(PDO::FETCH_ASSOC);
+    $newid = $id['MAXID'] + 1;
     $sql = "INSERT into $table_archive (`id`, `date`,`type`, `subject` , `message`, `list_id`) VALUES ('$newid', '$date','$format','$subject','$body', '$list_id')";
     if ($cnx->query($sql)) {
         return $newid;
@@ -1095,7 +1100,9 @@ function tok_val($token){
 }
 function tr($s, $i="") {
     global $lang_array;
+    $xxx=fopen('/home/www/phpmynewsletter.com/dev/logs/a-traduire.txt', 'a+');
     if (!isset($lang_array[$s])){
+        fwrite($xxx, "\n$s",150);
         return ("[Translation required] : $s");
     }
     if ($lang_array[$s] != "") {
@@ -1105,8 +1112,10 @@ function tr($s, $i="") {
         $sprint = $lang_array[$s];
         return sprintf("$sprint" , $i);
     } else {
+        fwrite($xxx, "\n$s",150);
         return ("[Translation required] : $s");
     }
+    fclose($xxx);
 }
 function unique_id() {
     mt_srand((double) microtime() * 1000000);
