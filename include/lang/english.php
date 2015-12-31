@@ -426,6 +426,7 @@ $lang_array=array (
     "CLICKED_LINK"=>"Links clicked",
     "CLICKED_COUNT"=>"Number of clicks",
     "CLICKED_LINK_NO_LINK"=>"No link clicked in the letter",
+    "CLICKED_LINK_REPORT_SUPPORT"=>"Support",
     // UPLOAD
     "ATTACHMENTS"=>"Attachments",
     "NO_ATTACHMENTS"=>"No attachments",

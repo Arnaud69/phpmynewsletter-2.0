@@ -127,7 +127,7 @@ switch($op){
                 $('.button').hide('slow');
                 $('html,body').animate({scrollTop:'0px'},500);
                 $('#msg').show();
-                $('#smail').html('<?=tr("PROGRESSION_OF_CURRENT_SEND";?>');
+                $('#smail').html('<?=tr("PROGRESSION_OF_CURRENT_SEND");?>');
                 $(function(){
                     var begin   = 0;
                     var sn      = 0;
@@ -159,7 +159,7 @@ switch($op){
                                     clearInterval(progresspump);
                                     $("#send_title").text("<?=tr("SEND_ENDED");?>...");
                                     $("#all_done").html("<?=tr("REDIRECT_NOW");?>...");
-                                    $('#smail').html("<?=tr("SCHEDULE_END_PROCESS";?>");
+                                    $('#smail').html("<?=tr("SCHEDULE_END_PROCESS");?>");
                                     setTimeout(function() {
                                         window.location.href='?page=tracking&list_id=<?=$list_id;?>&token=<?=$token;?>';
                                     },1000);

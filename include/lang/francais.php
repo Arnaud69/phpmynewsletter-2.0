@@ -428,6 +428,7 @@ $lang_array=array(
     "CLICKED_LINK"=>"Liens cliqués",
     "CLICKED_COUNT"=>"Nombre de clics",
     "CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
+    "CLICKED_LINK_REPORT_SUPPORT"=>"Support",
     // UPLOAD
     "ATTACHMENTS"=>"Pièces jointes",
     "NO_ATTACHMENTS"=>"Pas de pièces jointes",

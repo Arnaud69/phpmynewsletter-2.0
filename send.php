@@ -55,7 +55,7 @@ switch ($step) {
         $limit            = $row_config_globale['sending_limit'];
         $mail             = new PHPMailer();
         $mail->CharSet    = $row_config_globale['charset'];
-        $mail->ContentType="text/html";
+        $mail->ContentType= "text/html";
         $mail->Encoding   = $encode;
         $mail->PluginDir  = "include/lib/";
         $newsletter       = getConfig($cnx, $list_id, $row_config_globale['table_listsconfig']);
@@ -65,8 +65,10 @@ switch ($step) {
                                     iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']) 
                             );
         $addr             = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
-        $daylogmsg        ="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
-        fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+        if ( $type_env == 'dev' ) {
+            $daylogmsg        ="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
+            fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+        }
         $mail->Sender    = $newsletter['from_addr'];
         $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
         $msg             = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
