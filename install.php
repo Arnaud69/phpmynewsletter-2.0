@@ -431,9 +431,8 @@ if (empty($langfile)) {
                                 `type` TEXT NOT NULL,
                                 `subject` TEXT NOT NULL,
                                 `message` TEXT NOT NULL,
-                                `list_id` INT(5) NOT NULL DEFAULT "0",
-                                PRIMARY KEY (`id`),
-                                KEY `list_id` (`list_id`)
+                                `list_id` INT(7) NOT NULL DEFAULT "0",
+                                UNIQUE KEY `id_list_mail` (`id`,`list_id`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "archives") .' '.tr("DONE").'</h4>';
@@ -441,7 +440,7 @@ if (empty($langfile)) {
                         die("<h4 class='alert_error'>" . tr("ERROR_SQL", $db->DbError()) . "<br>" . tr("QUERY") . " : " . $sql . "<br>" . tr("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'autosave (
-                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `list_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 `subject` TEXT NOT NULL,
                                 `textarea` TEXT NOT NULL,
                                 `type` TEXT NOT NULL,
@@ -455,7 +454,7 @@ if (empty($langfile)) {
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'email (
                                 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
-                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `list_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 `hash` VARCHAR(40) NOT NULL DEFAULT "",
                                 `error` ENUM("N","Y") NOT NULL DEFAULT "N",
                                 `status` VARCHAR(255) DEFAULT NULL,
@@ -480,7 +479,7 @@ if (empty($langfile)) {
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'email_deleted (
                                 `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
-                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `list_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 `hash` VARCHAR(40) NOT NULL DEFAULT "",
                                 `error` ENUM("N","Y") NOT NULL DEFAULT "N",
                                 `status` VARCHAR(255) DEFAULT NULL,
@@ -520,7 +519,7 @@ if (empty($langfile)) {
                                 `smtp_auth`         ENUM("0","1") NOT NULL DEFAULT "0",
                                 `smtp_login`        VARCHAR(255) NOT NULL DEFAULT "",
                                 `smtp_pass`         VARCHAR(255) NOT NULL DEFAULT "",
-                                `sending_limit`     INT(4) NOT NULL DEFAULT "3",
+                                `sending_limit`     INT(3) NOT NULL DEFAULT "3",
                                 `validation_period` TINYINT(4) NOT NULL DEFAULT "0",
                                 `sub_validation`    ENUM("0","1") NOT NULL DEFAULT "1",
                                 `unsub_validation`  ENUM("0","1") NOT NULL DEFAULT "1",
@@ -545,7 +544,7 @@ if (empty($langfile)) {
                         die("<h4 class='alert_error'>" . tr("ERROR_SQL", $db->DbError()) . "<br>" . tr("QUERY") . " : " . $sql . "<br>" . tr("INSTALL_REFRESH") . " !</h4>");            
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'listsconfig (
-                                `list_id` INT(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+                                `list_id` INT(7) UNSIGNED NOT NULL AUTO_INCREMENT,
                                 `newsletter_name` VARCHAR(255) NOT NULL DEFAULT "",
                                 `from_addr` VARCHAR(255) NOT NULL DEFAULT "",
                                 `from_name` VARCHAR(255) NOT NULL DEFAULT "",
@@ -568,7 +567,7 @@ if (empty($langfile)) {
                     }
                     $sql = ' CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'sub (
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
-                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `list_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 KEY `list_id` (`list_id`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
@@ -578,7 +577,7 @@ if (empty($langfile)) {
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'temp (
                                 `email` VARCHAR(255) NOT NULL DEFAULT "",
-                                `list_id` INT(5) UNSIGNED NOT NULL DEFAULT "0",
+                                `list_id` INT(7) UNSIGNED NOT NULL DEFAULT "0",
                                 `hash` VARCHAR(40) NOT NULL DEFAULT "",
                                 `date` date NOT NULL DEFAULT "0000-00-00",
                                 KEY `email` (`email`),
@@ -626,9 +625,7 @@ if (empty($langfile)) {
                                 `cpt` int(7) NOT NULL, 
                                 `error` int(7) UNSIGNED NOT NULL DEFAULT 0,
                                 `leave` int(7) UNSIGNED NOT NULL DEFAULT 0,
-                                PRIMARY KEY (`id`),
-                                UNIQUE KEY `id_mail` (`id_mail`), 
-                                KEY `id_list` (`id_list`),
+                                UNIQUE KEY `id_list_mail` (`id`,`id_list`,`id_mail`)
                                 KEY `cpt` (`cpt`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
@@ -638,7 +635,7 @@ if (empty($langfile)) {
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'send_suivi (
                                 `id` int(9) UNSIGNED NOT NULL AUTO_INCREMENT,
-                                `list_id` int(5) UNSIGNED NOT NULL,
+                                `list_id` int(7) UNSIGNED NOT NULL,
                                 `msg_id` int(7) UNSIGNED NOT NULL,
                                 `last_id_send` int(9) UNSIGNED NOT NULL,
                                 `nb_send` int(9) UNSIGNED NOT NULL,
@@ -657,7 +654,7 @@ if (empty($langfile)) {
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'track_links (
                                `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                               `list_id` int(5) unsigned NOT NULL DEFAULT 0,
+                               `list_id` int(7) unsigned NOT NULL DEFAULT 0,
                                `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                                `link` varchar(20000) DEFAULT NULL,
                                `hash` varchar(40) DEFAULT NULL,
@@ -676,7 +673,7 @@ if (empty($langfile)) {
                     }
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'upload (
                               `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-                              `list_id` int(5) unsigned NOT NULL DEFAULT 0,
+                              `list_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `name` varchar(20000) DEFAULT NULL,
                               `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
@@ -694,7 +691,7 @@ if (empty($langfile)) {
                     $sql = 'CREATE TABLE IF NOT EXISTS ' . $table_prefix . 'crontab (
                               `id` int(7) NOT NULL AUTO_INCREMENT,
                               `job_id` varchar(12) NOT NULL,
-                              `list_id` int(5) unsigned NOT NULL DEFAULT 0,
+                              `list_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `min` tinyint(2) NOT NULL DEFAULT 0,
                               `hour` tinyint(2) NOT NULL DEFAULT 0,

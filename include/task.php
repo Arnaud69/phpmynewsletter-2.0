@@ -45,13 +45,19 @@ if(count($detail_task)==0){
     /*
     5/ on met l'envoi dans les archives
     // on va mettre le message de la table sauvegarde dans la table archives :
-    // cette requête sera faite dans l'envoi
     */
+    $date = date("Y-m-d H:i:s");
     $cnx->query('INSERT INTO '.$row_config_globale['table_archives'].' (id,date,type,subject,message,list_id)
                     SELECT "'.$detail_task[0]['msg_id'].'",CURTIME(),type,mail_subject,mail_body,list_id FROM '.$row_config_globale['table_crontab'].'
                         WHERE list_id = "'.$detail_task[0]['list_id'].'" AND job_id = "'.$task_id.'"');
+    $daylog = @fopen(DOCROOT.'/logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+    $daylogmsg=date("d M Y"). " : message sauvegardé sous Numéro d'envoi : ".$detail_task[0]['msg_id']."\n";
+    fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+    $daylogmsg="\r\n**********************************************************\r\n".$date. " : initialisation envoi message ".$detail_task[0]['msg_id']." liste ".$detail_task[0]['list_id']."\n";
+    fwrite($daylog, $daylogmsg, strlen($daylogmsg));
     // on récupère le nombre total de destinataire :
-    $total_suscribers    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id']);
+    $total_suscribers    = get_newsletter_total_subscribers($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id'],$detail_task[0]['msg_id']);
+    $daylogmsg="\r\n $total_suscribers destinataires.\n";
     /*                  
     6/ on créée l'entrée dans la table send
     */
@@ -95,6 +101,7 @@ if(count($detail_task)==0){
     if (!$dontlog){
         fwrite($handler, $errstr, strlen($errstr));
     }
+    fwrite($daylog, $errstr, strlen($errstr));
     /*
     8/ on crée la boucle d'envoi, cadencée selon la même norme que l'envoi normal.
     */
@@ -143,7 +150,7 @@ if(count($detail_task)==0){
     DEBUT DELA BOUCLE GLOBALE DES ENVOIS, DEBUT DE LA TASK
     */
     while($begin<$total_suscribers){
-        $addr    = getAddress($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id'],$begin,$limit);
+        $addr    = getAddress($cnx, $row_config_globale['table_email'],$detail_task[0]['list_id'],$begin,$limit,$detail_task[0]['msg_id']);
         $to_send = count($addr);
         $start   = microtime(true);
         for ($i = 0; $i < $to_send; $i++) {
@@ -201,6 +208,8 @@ if(count($detail_task)==0){
                                 SET error='Y',long_desc='".$cnx->CleanInput($ms_err_info)."',campaign_id='".$detail_task[0]['msg_id']."' 
                             WHERE email='".$addr[$i]['email']."' 
                                 AND list_id='".$detail_task[0]['list_id']."'");
+                $daylogmsg=date("Y-m-d H:i:s") . " : envoi à ".$addr[$i]['email']." en erreur $ms_err_info\n";
+                fwrite($daylog, $daylogmsg, strlen($daylogmsg));
             } else {
                 $cnx->query("UPDATE ".$row_config_globale['table_email']." 
                                 SET campaign_id='".$detail_task[0]['msg_id']."' 
@@ -211,6 +220,8 @@ if(count($detail_task)==0){
                             WHERE id_mail='".$detail_task[0]['msg_id']."' 
                                 AND id_list='".$detail_task[0]['list_id']."'");
                 $ms_err_info = 'OK';
+                $daylogmsg=date("Y-m-d H:i:s") . " : envoi à ".$addr[$i]['email']." OK\n";
+                fwrite($daylog, $daylogmsg, strlen($daylogmsg));
             }
             $cnx->query('UPDATE '.$row_config_globale['table_send_suivi'].' 
                         SET nb_send=nb_send+1,last_id_send='.$addr[$i]['id'].' 
@@ -251,6 +262,7 @@ if(count($detail_task)==0){
         fwrite($handler, $errstr, strlen($errstr));
         fclose($handler);
     }
+    fclose($daylog);
     /*
     10/ on supprime la tâche de la crontab :
     */

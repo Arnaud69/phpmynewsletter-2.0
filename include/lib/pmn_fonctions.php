@@ -390,7 +390,7 @@ function get_stats_send($cnx,$list_id,$param_global){
     $cnx->query("SET NAMES UTF8");
     return $cnx->query("SELECT a.id, DATE_FORMAT(a.date,'%Y-%m-%d') as dt, a.subject, s.cpt, s.error, s.`leave`,s.id_mail,
                             (SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject=a.id) AS TID,
-                            (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id) AS TOPEN,
+                            (SELECT SUM(open_count) FROM ".$param_global['table_send']." WHERE id_mail=a.id AND id_list = '".$list_id."') AS TOPEN,
                             (SELECT SUM(cpt) FROM ".$param_global['table_track_links']." WHERE list_id=$list_id AND msg_id=a.id) AS CPT_CLICKED
                         FROM ".$param_global['table_send']." s
                             LEFT JOIN ".$param_global['table_archives']." a 
