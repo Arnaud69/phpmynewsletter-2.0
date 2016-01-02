@@ -31,9 +31,21 @@ switch($op){
         }
         echo "<form method='get' action='send_preview.php' id='mailform' name='mailform'>";
         echo "<div align='center'><h4 class='alert_info'>".tr("STEP_SEND_PREVIEW", $newsletter['preview_addr']).".</h4></div>";
+        echo "<article class='module width_full'><div style='margin:3px;'>";
+        echo "Preview for : <a href='' onClick='xx(320);return false;'>iPhone 4/5 (320x480),</a> "
+                         . "<a href='' onClick='xx(360);return false;'>Nexus 5 (360x598),</a> "
+                         . "<a href='' onClick='xx(375);return false;'>iPhone 6 (375x667),</a> " 
+                         . "<a href='' onClick='xx(384);return false;'>Nexus 4 (384x598),</a> " 
+                         . "<a href='' onClick='xx(414);return false;'>iPhone 6 Plus (414x736),</a> "
+                         . "<a href='' onClick='xx(600);return false;'>Nexus 7 2013 (600x960),</a> "
+                         . "<a href='' onClick='xx(750);return false;'>iPhone 6S (750x1334),</a> "
+                         . "<a href='' onClick='xx(768);return false;'>iPad 3 (768x1024),</a> "
+                         . "<a href='' onClick='xx(800);return false;'>Nexus 10 (800x1280)</a> ";
+        echo "</div></article>";
+        echo '<script>function xx(e,f){$("#_preview").attr("width",e);}</script>';
         echo '<article class="module width_3_quarter">';
-        echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").'</h3></header>';
-        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='400px' style='border:0;'><p>".tr("ERROR_IFRAME")."...</p></iframe></div>";
+        echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").' : ' . $subj . '</h3></header>';
+        echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='650px' style='border:0;' id='_preview'><p>".tr("ERROR_IFRAME")."...</p></iframe></div>";
         echo "<input type='hidden' name='list_id' value='$list_id'>
               <input type='hidden' name='encode' value='$encode'>
               <input type='hidden' name='op' value='send_preview'>
@@ -127,7 +139,7 @@ switch($op){
                 $('.button').hide('slow');
                 $('html,body').animate({scrollTop:'0px'},500);
                 $('#msg').show();
-                $('#smail').html('<?=tr("PROGRESSION_OF_CURRENT_SEND");?>');
+                $('#smail').html("<?=tr("PROGRESSION_OF_CURRENT_SEND");?>");
                 $(function(){
                     var begin   = 0;
                     var sn      = 0;

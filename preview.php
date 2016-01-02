@@ -44,19 +44,31 @@ $format         = $msg['type'];
 if(empty($subject)){
     $subject    = stripslashes($msg['subject']);
 }
-$_SESSION['message']=$message;
-$_SESSION['subject']=$subject;
-$_SESSION['format']=$format;
-$subj           = htmlspecialchars($subject);
+$_SESSION['message'] = $message;
+$_SESSION['subject'] = $subject;
+$_SESSION['format']  = $format;
+$subj                = htmlspecialchars($subject);
 if($format == "html"){
     $Vmsg = $message;
 } else {
     $Vmsg = htmlspecialchars($message);
 }
-echo "<u>".tr("COMPOSE_SUBJECT")."</u> : ".stripslashes($subj)."<br /><br />"; 
+//echo "<u>".tr("COMPOSE_SUBJECT")."</u> : ".stripslashes($subj)."<br><br>"; 
 if($format == "html"){
     echo stripslashes($Vmsg);
 } else {
     echo nl2br(stripslashes($Vmsg));
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
