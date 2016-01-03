@@ -118,7 +118,7 @@
             }
             echo '<td>'. $row['id_mail'].                       '</td>';
             echo '<td>';
-            if($row['CPT_CLICKED']>0){
+            if($row_cnt['CPTID']>0){
                 echo '<a class="iframe tooltip" href="tracklinks.php?id_mail='.$row['id_mail'].'&list_id='.$list_id.'&token='
                      .$token.'" title="'. tr( "TRACKING_DETAILLED_CLICKED_LINKS" ) .'">'.$row['subject'].'</a>';
             } else {

@@ -95,27 +95,29 @@ if(empty($id_mail)&&empty($list_id)){
                         echo '</tr>';
                         $chart_data.='{"data": "'.$clicked_link.'", "value": '.$row['CPT_PER_LINK'].'},';
                     }
-                    echo '</table>';
+                    ?></table>
+                        </article>
+                        <div class="spacer"></div>
+                        </section>
+                        <section>                                                                            
+                            <article class="module width_full">
+                                <header>
+                                    <h3> <?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
+                                </header>
+                                <div id="chartdiv"></div>
+                                <script>
+                                    var chartLinks = AmCharts.makeChart("chartdiv",{"type":"pie","theme":"none","dataProvider":[<?=$chart_data;?>],"valueField":"value",
+                                    "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
+                                </script>
+                            </article>
+                        </section>
+                    <?php
                 } else {
-                    echo '<h4 class="alert_warning">'.tr("CLICKED_LINK_NO_LINK").'</h4>';
+                    echo '<h4 class="alert_warning">'.tr("CLICKED_LINK_NO_LINK").'</h4>
+                        </article>
+                        <div class="spacer"></div>
+                    </section>';
                 }
-                ?>
-            </article>
-            <div class="spacer"></div>
-        </section>
-        <section>                                                                            
-            <article class="module width_full">
-                <header>
-                    <h3> <?=tr("CLICKED_LINK_REPORT_GRAPHIC");?></h3>
-                </header>
-                <div id="chartdiv"></div>
-                <script>
-                    var chartLinks = AmCharts.makeChart("chartdiv",{"type":"pie","theme":"none","dataProvider":[<?=$chart_data;?>],"valueField":"value",
-                    "titleField":"data","outlineAlpha":0.4,"depth3D": 15,"balloonText":"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>","angle":30});
-                </script>
-            </article>
-        </section>
-        <?php
         $env = $cnx->query("SELECT COUNT(CONCAT(browser,' ', version)) AS CPT,CONCAT(browser,' ',version) AS VERS
                                 FROM ".$row_config_globale['table_tracking']." 
                                     WHERE subject=$id_mail
@@ -189,9 +191,11 @@ if(empty($id_mail)&&empty($list_id)){
                     </script>
                 </article>
             </section>
+            
         <?php
         }
-        ?>        
+        ?>
+        <div class="spacer"></div>
     </body>
 </html>
 
