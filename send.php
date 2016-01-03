@@ -42,7 +42,7 @@ $begin   = (!empty($_GET['begin']) && empty($begin)) ? (($_GET['begin'])+0) : 0;
 $msg_id  = (!empty($_GET['msg_id'])) ? (($_GET['msg_id'])+0) : '';
 $sn      = (!empty($_GET['sn'])) ? (($_GET['sn'])+0) : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
-$encode  = (!empty($_GET['encode'])) ? $_GET['encode'] : '';
+$encode  = (!empty($_GET['encode'])&&$_GET['encode']=='base64')  ? 'base64' : '8bit';
 switch ($step) {
     case "send":
         $tts = 0;
@@ -114,8 +114,12 @@ switch ($step) {
             $mail->AddAddress($dest_adresse);
             $mail->XMailer = ' ';
             $body = "";
-            $trac = "<img style='border:0' src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" 
-                  . $addr[$i]['hash'] . "' width='1'  height='1 alt='".$list_id."' />";
+            if ( $row_config_globale['active_tracking'] == '1' ) {
+                $trac = "<img style='border:0' src='" . $row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=" 
+                      . $addr[$i]['hash'] . "' width='1'  height='1 alt='".$list_id."' />";
+            } else {
+                $trac = "";
+            }
             if ($format == "html"){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";

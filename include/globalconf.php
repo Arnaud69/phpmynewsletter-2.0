@@ -15,7 +15,6 @@ if ($op == "saveGlobalconfig") {
 }
 include 'include/lib/constantes.php';
 echo "<form method='post' name='global_config' enctype='multipart/form-data'>";
-$config_writable = is_writable("include/config.php");
 echo '<article class="module width_3_quarter">
     <header><h3 class="tabs_involved">' . tr("GCONFIG_TITLE") . '</h3></header>
     <header>
@@ -32,6 +31,7 @@ echo '<article class="module width_3_quarter">
         <div id="tab1" class="tab_content" style="display: block;">';
         echo "<div class='module_content'>";
         echo "<h2>" . tr("GCONFIG_DB_TITLE"). "</h2>";
+        $config_writable = is_writable("include/config.php");
         if (!$config_writable) {
             echo "<h4 class='alert_error'>" . tr("GCONFIG_DB_CONFIG_UNWRITABLE", $row_config_globale['path'] . "include/config.php") . "</h4>";
             echo "<input type='hidden' name='file' value='0'>";
@@ -102,6 +102,13 @@ echo '<article class="module width_3_quarter">
             echo "<option value='$local'" . ($row_config_globale['charset'] == $local ? ' selected' : '') . ">$local</option>";
         }
         echo "</select></fieldset>";
+        echo "<fieldset><label>Tracking ?</label>";
+        if($row_config_globale['active_tracking']=='0'){
+            echo "<input type='radio' class='radio' name='active_tracking' value='0' checked='checked'>" . tr("NO") . "&nbsp;<input type='radio' class='radio' name='active_tracking' value='1'>" . tr("YES")."";
+        }elseif($row_config_globale['active_tracking']=='1'){
+            echo "<input type='radio' class='radio' name='active_tracking' value='0'>" . tr("NO") . "&nbsp;<input type='radio' class='radio' name='active_tracking' value='1' checked='checked'>" . tr("YES")."";
+        }
+        echo "</fieldset>";
         echo "<fieldset><label>".tr("GCONFIG_MESSAGE_NUM_LOOP")."</label>";
         echo "<input type='text' name='sending_limit' size='3' value='".$row_config_globale['sending_limit']."' /></fieldset>";
         echo "<fieldset><label>".tr("GCONFIG_MESSAGE_SEND_METHOD")."</label>";

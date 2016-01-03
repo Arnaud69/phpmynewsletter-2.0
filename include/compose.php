@@ -4,9 +4,196 @@ $message = ( !empty($_POST['message']) ) ? $_POST['message'] : '';
 $format  = ( !empty($_POST['format']) )  ? $_POST['format']  : '';
 $encode  = ( !empty($_POST['encode']) ) ? 'base64'  : '8bit';
 switch($op){
+    case 'init':
+        $newsletter=getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
+        $newsletter_autosave=getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
+        if (!empty($_POST['import_id'])) {
+            $import_id  =  $_POST['import_id'];
+        }
+        $reset  = (!empty($_GET['reset'])&&$_GET['reset']=='true') ? 'true' : 'false';
+        $ft  = (!empty($_GET['ft'])) ? $_GET['ft'] : '';
+        if(getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id)){
+            if (isset($import_id) && is_numeric($import_id)) {
+                $row = $cnx->query("SELECT date, type, subject, message, list_id FROM "
+                    . $row_config_globale['table_archives']." WHERE id='$import_id'")->fetch(PDO::FETCH_ASSOC);
+                $textarea = addslashes(@htmlspecialchars($row['message']));
+                $subject  = addslashes(@htmlspecialchars($row['subject']));
+                $type     = $row['type'];
+                $cnx->query("INSERT INTO "
+                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
+            } elseif(isset($newsletter_autosave['textarea'])&&trim($newsletter_autosave['textarea'])!=''&&$reset=='false') {
+                $textarea = $newsletter_autosave['textarea'];
+                $type    = 'html';
+                $subject = @htmlspecialchars($newsletter_autosave['subject']);
+            } else {
+                $textarea = addslashes($newsletter['header']."\n\n\n".$newsletter['footer']);
+                $subject = @addslashes(htmlspecialchars($newsletter['subject']));
+                $type    = 'html';
+                $cnx->query("INSERT INTO "
+                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
+            }
+            echo "<form id='mailform' name='mailform' method='post' action='' class='post_message'>";
+            echo "<div align='center'><h4 class='alert_info'>".tr("COMPOSE_AND_PREVIEW").".</h4></div>";
+            echo '<article class="module width_3_quarter">';
+            echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_NEW").'</h3></header>';
+            echo tr("COMPOSE_SUBJECT")." : ".tr("RFC_2822")."<br><br>
+                <input type='text' name='subject' value=\"".  stripslashes($subject)  
+                . "\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
+                <br><br>".tr("COMPOSE_MSG_BODY")." :";
+            if($ft=="") {
+                echo " (<a href='".$_SERVER['PHP_SELF']
+                    . "?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
+            } elseif($ft=='else') {
+                echo " (<a href='".$_SERVER['PHP_SELF']
+                    . "?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
+            }
+            echo "<textarea name='message' id='redac' rows='20' cols='70'>".   stripslashes($textarea)  ."</textarea>";
+            echo "<div id='as'><h4 class='alert_info'>".tr("START_INITIALISATION")."...</h4></div><br>&nbsp;</article>";
+            echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
+            echo '<header><h3>'.tr("ACTIONS").' :</h3></header><div align="center">';
+            echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />"
+                ."<br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF'] 
+                ."?page=compose&token=$token&list_id=$list_id&reset=true'\" />"
+                ."<br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' disabled id='send_preview' />";
+            echo "<br><br><input type='checkbox' name='encode' value='base64'><b>".tr("COMPOSE_ENCODE")." ?</b>";
+            echo "</div>";
+            echo '<header></header>';
+            echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
+            echo "<div id='pjs'></div>";
+            echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
+            echo "</div></article>";
+            echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", 
+                data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});</script>";
+            echo "<input type='hidden' id='type' name='format' value='html' />
+            <input type='hidden' name='op' value='preview' />
+            <input type='hidden' name='action' value='compose' />
+            <input type='hidden' name='page' value='compose' />
+            <input type='hidden' id='list_id' name='list_id' value='$list_id' />
+            <input type='hidden' id='token' name='token' value='$token' />
+            </form>";
+            if($ft==""){
+                echo "<script src='/".$row_config_globale['path']."js/tinymce/tinymce.min.js'></script>
+                    <script>
+                    tinymce.init({
+                        selector: 'textarea#redac', theme: 'modern',
+                        plugins: [
+                            'advlist autolink lists link image charmap print preview anchor',
+                            'searchreplace visualblocks code fullscreen textcolor emoticons',
+                            'insertdatetime media table contextmenu paste filemanager colorpicker template'
+                        ],
+                        toolbar1: 'insertfile undo redo | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+                        toolbar2: 'styleselect | fontselect fontsizeselect | emoticons | link image | filemanager | template',
+                        style_formats: [
+                            {title: 'Open Sans', inline: 'span', styles: { 'font-family':'Open Sans'}},
+                            {title: 'Arial', inline: 'span', styles: { 'font-family':'arial'}},
+                            {title: 'Book Antiqua', inline: 'span', styles: { 'font-family':'book antiqua'}},
+                            {title: 'Comic Sans MS', inline: 'span', styles: { 'font-family':'comic sans ms,sans-serif'}},
+                            {title: 'Courier New', inline: 'span', styles: { 'font-family':'courier new,courier'}},
+                            {title: 'Georgia', inline: 'span', styles: { 'font-family':'georgia,palatino'}},
+                            {title: 'Helvetica', inline: 'span', styles: { 'font-family':'helvetica'}},
+                            {title: 'Impact', inline: 'span', styles: { 'font-family':'impact,chicago'}},
+                            {title: 'Symbol', inline: 'span', styles: { 'font-family':'symbol'}},
+                            {title: 'Tahoma', inline: 'span', styles: { 'font-family':'tahoma'}},
+                            {title: 'Terminal', inline: 'span', styles: { 'font-family':'terminal,monaco'}},
+                            {title: 'Times New Roman', inline: 'span', styles: { 'font-family':'times new roman,times'}},
+                            {title: 'Verdana', inline: 'span', styles: { 'font-family':'Verdana'}}
+                        ],
+                        templates : [
+                            {title: 'Basic',url: '/".$row_config_globale['path']."js/tinymce/templates/basic.html',description: 'MODULE EN TEST !'},
+                            {title: 'Hero',url: '/".$row_config_globale['path']."js/tinymce/templates/hero.html',description: 'MODULE EN TEST !'},
+                            {title: 'Newsletter',url: '/".$row_config_globale['path']."js/tinymce/templates/newsletter.html',description: 'MODULE EN TEST !'}
+                        ],
+                        relative_urls: false,
+                        remove_script_host: false,
+                        language : 'fr_FR',
+                        image_advtab: true ,
+                        external_filemanager_path:'/".$row_config_globale['path']."js/tinymce/plugins/filemanager/',
+                        filemanager_title:'Responsive Filemanager' ,
+                        external_plugins: { 'filemanager' : '/".$row_config_globale['path']."js/tinymce/plugins/filemanager/plugin.min.js'},
+                        extended_valid_elements: 'style',
+                        custom_elements: 'style',
+                        /* http://stackoverflow.com/questions/10290121/how-to-prevent-tinymce-from-stripping-the-style-attribute-from-input-element */
+                        valid_elements : '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
+                                + '+body[style],'
+                                + 'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],strong/b,em/i,strike,u,'
+                                + '#p[style],-ol[type|compact],-ul[type|compact],-li,br,img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align],-sub,-sup,'
+                                + '-blockquote,-table[border=0|cellspacing|cellpadding|width|frame|rules|'
+                                + 'height|align|summary|bgcolor|background|bordercolor],-tr[rowspan|width|height|align|valign|bgcolor|background|bordercolor],tbody,thead,tfoot,'
+                                + '#td[colspan|rowspan|width|height|align|valign|bgcolor|background|bordercolor|scope],#th[colspan|rowspan|width|height|align|valign|scope],caption,-div,'
+                                + '-span,-code,-pre,address,-h1,-h2,-h3,-h4,-h5,-h6,hr[size|noshade],-font[face|size|color],dd,dl,dt,cite,abbr,acronym,del[datetime|cite],ins[datetime|cite],'
+                                + 'object[classid|width|height|codebase|*],param[name|value|_value],embed[type|width|height|src|*],map[name],area[shape|coords|href|alt|target],bdo,'
+                                + 'button,col[align|char|charoff|span|valign|width],colgroup[align|char|charoff|span|valign|width],dfn,fieldset,form[action|accept|accept-charset|enctype|method],'
+                                + 'input[accept|alt|checked|disabled|maxlength|name|readonly|size|src|type|value],'
+                                + 'kbd,label[for],legend,noscript,optgroup[label|disabled],option[disabled|label|selected|value],'
+                                + 'q[cite],samp,select[disabled|multiple|name|size],small,'
+                                + 'textarea[cols|rows|disabled|name|readonly],tt,var,big',
+                                extended_valid_elements : 'p[style]',
+                                inline_styles : true,
+                                verify_html : false
+                                
+                    });
+                    var elem=$('#chars');
+                    $('#subject').limiter(78,elem);
+                    $(document).ready(function() { Si=setInterval(save,10000); });
+                    function save(){
+                        tinyMCE.triggerSave();
+                        //$('#as').html('".tr("SAVE_PROCESS")."...').show();
+                        var ds=$('#mailform').serialize();
+                        $.ajax({
+                            type: 'POST',
+                            url: 'autosave.php',
+                            data: ds,
+                            cache: false,
+                            success: function(msg) {
+                                $('#as').html(msg).show();
+                                $('#send_preview').removeAttr('disabled');
+                            },
+                            error: function() {
+                                $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
+                            }
+                        });
+                    }
+                    $('#rec').click(function(){ save(); });
+                    </script>";
+            } elseif($ft=='else') {
+                echo "<script>var elem=$('#chars');$('#subject').limiter(78,elem);
+                        $(document).ready(function() { Si=setInterval(save,10000); });
+                        function save(){";
+                            echo ($ft=='else'?"":"tinyMCE.triggerSave();");
+                            echo "
+                            $('#as').html('".tr("SAVE_PROCESS")."...').show();
+                            var ds=$('#mailform').serialize();
+                            $.ajax({
+                                type: 'POST',
+                                url: 'autosave.php',
+                                data: ds,
+                                cache: false,
+                                success: function(msg) {
+                                    $('#as').html(msg).show();
+                                },
+                                error: function() {
+                                    $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
+                                }
+                            });
+                        }
+                        $('#rec').click(function(){ save(); });
+                    </script>";
+            }
+            echo "<script>
+            function Soumettre(){
+                if ( (document.mailform.subject.value=='') || (document.mailform.message.value=='') )
+                    alert('".tr("ERROR_ALL_FIELDS_REQUIRED")."');
+                else {
+                    document.mailform.submit();
+                }
+            }
+            </script>";
+        } else {
+            echo "<h4 class='alert_error'>".tr("ERROR_UNABLE_TO_SEND")."</h4>";
+        }
+    break;
     case "preview":
         $up = @($_GET['up']=='false' ? false : true);
-        $_SESSION['encode'] = $encode;
         if($up){
             $cnx->query("UPDATE ".$row_config_globale['table_sauvegarde']." 
                     SET textarea = '".addslashes($message)."',
@@ -42,7 +229,6 @@ switch($op){
                          . "<a href='' onClick='xx(768);return false;'>iPad 3 (768x1024),</a> "
                          . "<a href='' onClick='xx(800);return false;'>Nexus 10 (800x1280)</a> ";
         echo "</div></article>";
-        echo '<script>function xx(e,f){$("#_preview").attr("width",e);}</script>';
         echo '<article class="module width_3_quarter">';
         echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_PREVIEW_TITLE").' : ' . $subj . '</h3></header>';
         echo "<iframe src='preview.php?list_id=$list_id&token=$token' width='100%' height='650px' style='border:0;' id='_preview'><p>".tr("ERROR_IFRAME")."...</p></iframe></div>";
@@ -212,204 +398,7 @@ switch($op){
         </div>
         <?php
     break;
-    case 'init':
-    default:
-        $newsletter=getConfig($cnx,$list_id,$row_config_globale['table_listsconfig']);
-        $newsletter_autosave=getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
-        $import_id  = (!empty($_POST['import_id'])) ? $_POST['import_id'] : '';
-        $reset  = (!empty($_GET['reset'])&&$_GET['reset']=='true') ? 'true' : 'false';
-        $ft  = (!empty($_GET['ft'])) ? $_GET['ft'] : '';
-        if(getSubscribersNumbers($cnx,$row_config_globale['table_email'],$list_id)){
-            if (isset($import_id) && is_numeric($import_id)) {
-                $row = $cnx->query("SELECT date, type, subject, message, list_id FROM "
-                    . $row_config_globale['table_archives']." WHERE id='$import_id'")->fetch(PDO::FETCH_ASSOC);
-                $textarea = addslashes(@htmlspecialchars($row['message']));
-                $subject  = addslashes(@htmlspecialchars($row['subject']));
-                $type     = $row['type'];
-                $cnx->query("INSERT INTO "
-                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
-            } elseif(isset($newsletter_autosave['textarea'])&&trim($newsletter_autosave['textarea'])!=''&&$reset=='false') {
-                $textarea = $newsletter_autosave['textarea'];
-                $type    = 'html';
-                $subject = @htmlspecialchars($newsletter_autosave['subject']);
-            } else {
-                $textarea = addslashes($newsletter['header']."\n\n\n".$newsletter['footer']);
-                $subject = @addslashes(htmlspecialchars($newsletter['subject']));
-                $type    = 'html';
-                $cnx->query("INSERT INTO "
-                    . $row_config_globale['table_sauvegarde']."(list_id,subject,textarea,type) VALUES ('$list_id','$subject','$textarea','$type')");
-            }
-            echo "<form id='mailform' name='mailform' method='post' action='' class='post_message'>";
-            echo "<div align='center'><h4 class='alert_info'>".tr("COMPOSE_AND_PREVIEW").".</h4></div>";
-            echo '<article class="module width_3_quarter">';
-            echo '<header><h3 class="tabs_involved">'.tr("COMPOSE_NEW").'</h3></header>';
-            echo tr("COMPOSE_SUBJECT")." : ".tr("RFC_2822")."<br><br>
-                <input type='text' name='subject' value=\"".  stripslashes($subject)  
-                . "\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
-                <br><br>".tr("COMPOSE_MSG_BODY")." :";
-            if($ft=="") {
-                echo " (<a href='".$_SERVER['PHP_SELF']
-                    . "?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
-            } elseif($ft=='else') {
-                echo " (<a href='".$_SERVER['PHP_SELF']
-                    . "?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
-            }
-            echo "<textarea name='message' id='redac' rows='20' cols='70'>".   stripslashes($textarea)  ."</textarea>";
-            echo "<div id='as'><h4 class='alert_info'>".tr("START_INITIALISATION")."...</h4></div><br>&nbsp;</article>";
-            echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
-            echo '<header><h3>'.tr("ACTIONS").' :</h3></header><div align="center">';
-            echo "<input type='button' value='".tr("SAVE_THIS_MESSAGE")."' id='rec' type='button' class='button' />"
-                ."<br><br><input type='button' value='".tr("COMPOSE_RESET")."' onClick=\"parent.location='".$_SERVER['PHP_SELF'] 
-                ."?page=compose&token=$token&list_id=$list_id&reset=true'\" />"
-                ."<br><br><input type='button' value='".tr("COMPOSE_PREVIEW")." &gt;&gt;' onclick='Soumettre()' disabled id='send_preview' />";
-            if ( isset( $_SESSION['encode'] ) && $_SESSION['encode'] == 'base64' ) {
-                echo "<br><br><input type='checkbox' name='encode' value='base64' checked='checked'><b>".tr("COMPOSE_ENCODED")."</b>";
-            } else {
-                echo "<br><br><input type='checkbox' name='encode' value='base64'><b>".tr("COMPOSE_ENCODE")." ?</b>";
-            }
-            echo "</div>";
-            echo '<header></header>';
-            echo '<header><h3>'.tr("ATTACHMENTS").'</h3></header>';
-            echo "<div id='pjs'></div>";
-            echo "<div align='center'><a href='upload.php?token=$token&list_id=$list_id' class='iframe'>".tr("ADD_ONE_OR_MORE_ATTACHMENT")."</a></div>";
-            echo "</div></article>";
-            echo "<script>$(function(){function pjs(){ $.ajax({type:\"POST\", url:\"include/pjq.php\", 
-                data:\"token=$token&list_id=$list_id\",success:function(data){ $('#pjs').html(data);}});setTimeout(pjs,10000);}pjs();});</script>";
-            echo "<input type='hidden' id='type' name='format' value='html' />
-            <input type='hidden' name='op' value='preview' />
-            <input type='hidden' name='action' value='compose' />
-            <input type='hidden' name='page' value='compose' />
-            <input type='hidden' id='list_id' name='list_id' value='$list_id' />
-            <input type='hidden' id='token' name='token' value='$token' />
-            </form>";
-            if($ft==""){
-                echo "<script src='/".$row_config_globale['path']."js/tinymce/tinymce.min.js'></script>
-                    <script>
-                    tinymce.init({
-                        selector: 'textarea#redac', theme: 'modern',
-                        plugins: [
-                            'advlist autolink lists link image charmap print preview anchor',
-                            'searchreplace visualblocks code fullscreen textcolor emoticons',
-                            'insertdatetime media table contextmenu paste filemanager colorpicker template'
-                        ],
-                        toolbar1: 'insertfile undo redo | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
-                        toolbar2: 'styleselect | fontselect fontsizeselect | emoticons | link image | filemanager | template',
-                        style_formats: [
-                            {title: 'Open Sans', inline: 'span', styles: { 'font-family':'Open Sans'}},
-                            {title: 'Arial', inline: 'span', styles: { 'font-family':'arial'}},
-                            {title: 'Book Antiqua', inline: 'span', styles: { 'font-family':'book antiqua'}},
-                            {title: 'Comic Sans MS', inline: 'span', styles: { 'font-family':'comic sans ms,sans-serif'}},
-                            {title: 'Courier New', inline: 'span', styles: { 'font-family':'courier new,courier'}},
-                            {title: 'Georgia', inline: 'span', styles: { 'font-family':'georgia,palatino'}},
-                            {title: 'Helvetica', inline: 'span', styles: { 'font-family':'helvetica'}},
-                            {title: 'Impact', inline: 'span', styles: { 'font-family':'impact,chicago'}},
-                            {title: 'Symbol', inline: 'span', styles: { 'font-family':'symbol'}},
-                            {title: 'Tahoma', inline: 'span', styles: { 'font-family':'tahoma'}},
-                            {title: 'Terminal', inline: 'span', styles: { 'font-family':'terminal,monaco'}},
-                            {title: 'Times New Roman', inline: 'span', styles: { 'font-family':'times new roman,times'}},
-                            {title: 'Verdana', inline: 'span', styles: { 'font-family':'Verdana'}}
-                        ],
-                        templates : [
-                            {title: 'Basic',url: '/".$row_config_globale['path']."js/tinymce/templates/basic.html',description: 'MODULE EN TEST !'},
-                            {title: 'Hero',url: '/".$row_config_globale['path']."js/tinymce/templates/hero.html',description: 'MODULE EN TEST !'},
-                            {title: 'Newsletter',url: '/".$row_config_globale['path']."js/tinymce/templates/newsletter.html',description: 'MODULE EN TEST !'}
-                        ],
-                        relative_urls: false,
-                        remove_script_host: false,
-                        language : 'fr_FR',
-                        image_advtab: true ,
-                        external_filemanager_path:'/".$row_config_globale['path']."js/tinymce/plugins/filemanager/',
-                        filemanager_title:'Responsive Filemanager' ,
-                        external_plugins: { 'filemanager' : '/".$row_config_globale['path']."js/tinymce/plugins/filemanager/plugin.min.js'},
-                        extended_valid_elements: 'style',
-                        custom_elements: 'style',
-                        /* http://stackoverflow.com/questions/10290121/how-to-prevent-tinymce-from-stripping-the-style-attribute-from-input-element */
-                        valid_elements : '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
-                                + '+body[style],'
-                                + 'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],strong/b,em/i,strike,u,'
-                                + '#p[style],-ol[type|compact],-ul[type|compact],-li,br,img[longdesc|usemap|'
-                                + 'src|border|alt=|title|hspace|vspace|width|height|align],-sub,-sup,'
-                                + '-blockquote,-table[border=0|cellspacing|cellpadding|width|frame|rules|'
-                                + 'height|align|summary|bgcolor|background|bordercolor],-tr[rowspan|width|'
-                                + 'height|align|valign|bgcolor|background|bordercolor],tbody,thead,tfoot,'
-                                + '#td[colspan|rowspan|width|height|align|valign|bgcolor|background|bordercolor'
-                                + '|scope],#th[colspan|rowspan|width|height|align|valign|scope],caption,-div,'
-                                + '-span,-code,-pre,address,-h1,-h2,-h3,-h4,-h5,-h6,hr[size|noshade],-font[face'
-                                + '|size|color],dd,dl,dt,cite,abbr,acronym,del[datetime|cite],ins[datetime|cite],'
-                                + 'object[classid|width|height|codebase|*],param[name|value|_value],embed[type|width'
-                                + '|height|src|*],map[name],area[shape|coords|href|alt|target],bdo,'
-                                + 'button,col[align|char|charoff|span|valign|width],colgroup[align|char|charoff|span|'
-                                + 'valign|width],dfn,fieldset,form[action|accept|accept-charset|enctype|method],'
-                                + 'input[accept|alt|checked|disabled|maxlength|name|readonly|size|src|type|value],'
-                                + 'kbd,label[for],legend,noscript,optgroup[label|disabled],option[disabled|label|selected|value],'
-                                + 'q[cite],samp,select[disabled|multiple|name|size],small,'
-                                + 'textarea[cols|rows|disabled|name|readonly],tt,var,big',
-                                extended_valid_elements : 'p[style]',
-                                inline_styles : true,
-                                verify_html : false
-                                
-                    });
-                    var elem=$('#chars');
-                    $('#subject').limiter(78,elem);
-                    $(document).ready(function() { Si=setInterval(save,10000); });
-                    function save(){
-                        tinyMCE.triggerSave();
-                        //$('#as').html('".tr("SAVE_PROCESS")."...').show();
-                        var ds=$('#mailform').serialize();
-                        $.ajax({
-                            type: 'POST',
-                            url: 'autosave.php',
-                            data: ds,
-                            cache: false,
-                            success: function(msg) {
-                                $('#as').html(msg).show();
-                                $('#send_preview').removeAttr('disabled');
-                            },
-                            error: function() {
-                                $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
-                            }
-                        });
-                    }
-                    $('#rec').click(function(){ save(); });
-                    </script>";
-            } elseif($ft=='else') {
-                echo "<script>var elem=$('#chars');$('#subject').limiter(78,elem);
-                        $(document).ready(function() { Si=setInterval(save,10000); });
-                        function save(){";
-                            echo ($ft=='else'?"":"tinyMCE.triggerSave();");
-                            echo "
-                            $('#as').html('".tr("SAVE_PROCESS")."...').show();
-                            var ds=$('#mailform').serialize();
-                            $.ajax({
-                                type: 'POST',
-                                url: 'autosave.php',
-                                data: ds,
-                                cache: false,
-                                success: function(msg) {
-                                    $('#as').html(msg).show();
-                                },
-                                error: function() {
-                                    $('#as').html('<h4 class=alert_error>".tr("UNSAVED_MESSAGE")." !</h4>').show();
-                                }
-                            });
-                        }
-                        $('#rec').click(function(){ save(); });
-                    </script>";
-            }
-            echo "<script>
-            function Soumettre(){
-                if ( (document.mailform.subject.value=='') || (document.mailform.message.value=='') )
-                    alert('".tr("ERROR_ALL_FIELDS_REQUIRED")."');
-                else {
-                    document.mailform.submit();
-                }
-            }
-            </script>";
-        } else {
-            echo "<h4 class='alert_error'>".tr("ERROR_UNABLE_TO_SEND")."</h4>";
-        }
-    break;
-    case "done":
+    /*case "done":
         echo "<div align='center' class='info'>".tr("COMPOSE_SENDING")."</div>";
         $error=(empty($_GET['error']) ? "0" : $_GET['error']);
         $errorlog=(empty($_GET['errorlog']) ? "0" : $_GET['errorlog']);
@@ -422,6 +411,9 @@ switch($op){
             echo "<h4 class=alert_error>".tr("ERROR_LOG_CREATE")."</h4>";
         }
         echo "<br><div align='center'><img align='middle' src='css/puce.gif'> <a href='?page=compose&list_id=".$list_id."&token=$token'>".tr("BACK")."</a></div>";
+    break;*/
+    default :
+        echo 'oups !';
     break;
 }
 ?>

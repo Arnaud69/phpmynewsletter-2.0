@@ -166,6 +166,7 @@ if($page=='listes'){
 }
 $op_true = array(
     'createConfig',
+    'init',
     'preview',
     'SaveConfig',
     'saveGlobalconfig',
@@ -210,7 +211,8 @@ if(in_array($op,$op_true)){
                                $_POST['sending_method'],$smtp_host,$smtp_port,$smtp_auth,$smtp_login,$smtp_pass,$_POST['sending_limit'],
                                $_POST['validation_period'],$_POST['sub_validation'],$_POST['unsub_validation'],$_POST['admin_email'],
                                $_POST['admin_name'],$_POST['mod_sub'],$_POST['table_sub'],$_POST['charset'],$_POST['table_track'],
-                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'],$_POST['table_email_deleted'],$_POST['alert_sub'])){
+                               $_POST['table_send'],$_POST['table_sauvegarde'],$_POST['table_upload'],$_POST['table_email_deleted'],
+                               $_POST['alert_sub'],$_POST['active_tracking'])){
                 $configSaved=true;
                 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
             }else{
@@ -220,12 +222,11 @@ if(in_array($op,$op_true)){
                 $configFile =saveConfigFile($PMNL_VERSION,$_POST['db_host'],$_POST['db_login'],
                                             $_POST['db_pass'],$_POST['db_name'],
                                             $_POST['table_config'],$_POST['db_type'],
-                                            $_POST['type_serveur'],$_POST['type_env'],$timezone);
-                $forceUpdate=1;
-                include("include/config.php");
-                unset($forceUpdate);
+                                            $_POST['type_serveur'],$_POST['type_env'],
+                                            $timezone);
             }
             saveBounceFile($_POST['bounce_host'],$_POST['bounce_user'],$_POST['bounce_pass'],$_POST['bounce_port'],$_POST['bounce_service'],$_POST['bounce_option']);
+            include("include/config.php");
             $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
         break;
         case 'subscriber_add':
@@ -584,7 +585,7 @@ if(!$list&&$page!="config"){
         ?>
         <div class="draft">
             <p>
-            <?=($nbDraft['NB']==0 ? tr("NO_CURRENT_DRAFT") : '<a href="?page=compose&token='.$token.'&list_id='.$list_id.'" class="tooltip" title="'.tr("ACCESS_DRAFT_CONTINUE_WRITING").'">1 '.tr("CURRENT_DRAFT").'</a>');?>
+            <?=($nbDraft['NB']==0 ? tr("NO_CURRENT_DRAFT") : '<a href="?page=compose&token='.$token.'&list_id='.$list_id.'&op=init" class="tooltip" title="'.tr("ACCESS_DRAFT_CONTINUE_WRITING").'">1 '.tr("CURRENT_DRAFT").'</a>');?>
             </p>
         </div>
         <div class="breadcrumbs_container">
@@ -660,13 +661,15 @@ if(!$list&&$page!="config"){
         <h3><?=tr("MENU_SUBSCRIBERS");?></h3>
         <ul class="toggle">
             <li class="icn_add_user"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("SUBSCRIBER_MANAGEMENT");?></a></li>
-            <?php /*
+            <?php 
+            /*
             <li class="icn_view_users"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=i"><?=tr("SUBSCRIBER_BULK_IMPORT");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=s"><?=tr("SUBSCRIBER_DELETE_TITLE");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=e"><?=tr("SUBSCRIBER_EXPORT_TITLE_SIMPLE");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=x"><?=tr("SUBSCRIBER_BOUNCERS");?></a></li>
             <li class="icn_profile"><a href="?page=subscribers&token=<?=$token;?>&list_id=<?=$list_id;?>&t=t"><?=tr("SUBSCRIBER_NOT_CONFIRMED");?></a></li>
-            */ ?>
+            */ 
+            ?>
         </ul>
         <h3><?=tr("MENU_NEWSLETTER");?></h3>
         <ul class="toggle">
@@ -675,7 +678,7 @@ if(!$list&&$page!="config"){
         </ul>
         <h3><?=tr("WRITING");?></h3>
         <ul class="toggle">
-            <li class="icn_write"><a href="?page=compose&token=<?=$token;?>&list_id=<?=$list_id;?>"><?=tr("WRITE_AND_SEND_A_MAIL");?></a></li>
+            <li class="icn_write"><a href="?page=compose&token=<?=$token;?>&list_id=<?=$list_id;?>&op=init"><?=tr("WRITE_AND_SEND_A_MAIL");?></a></li>
         </ul>
         <h3><?=tr("TRACKING");?></h3>
         <ul class="toggle">
@@ -714,7 +717,6 @@ if(!$list&&$page!="config"){
             ?>
             <li class="icn_jump_back"><a href="logout.php"><?=tr("MENU_LOGOUT");?></a></li>
         </ul>
-        
         <footer>
         </footer>
     </aside>

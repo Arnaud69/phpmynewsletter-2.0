@@ -1,4 +1,6 @@
 function mq(){ $.ajax({url:"include/mailq.php",success:function(data){ $('#mailq').html(data);}});setTimeout(mq,10000);}mq();
+/* PREVIEW SIZE */
+function xx(e){$("#_preview").attr("width",e);$("#_preview").attr("src", $("#_preview").attr("src"));}
 (function($){
     // add a new method to JQuery
     $.fn.equalHeight = function() {
@@ -10,7 +12,6 @@ function mq(){ $.ajax({url:"include/mailq.php",success:function(data){ $('#mailq
             if( thisHeight > tallest)
                 tallest = thisHeight;
         });
-
         // set each items height to use the tallest value found
         this.each(function(){
             $(this).height(tallest);

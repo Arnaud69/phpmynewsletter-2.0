@@ -536,7 +536,8 @@ if (empty($langfile)) {
                                 `table_upload`      VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_crontab`     VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_email_deleted` VARCHAR(255) NOT NULL DEFAULT "",
-                                `alert_sub`         ENUM("0","1") NOT NULL DEFAULT "1"
+                                `alert_sub`         ENUM("0","1") NOT NULL DEFAULT "1",
+                                `active_tracking`   ENUM("0","1") NOT NULL DEFAULT "1"
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "config") .' '.tr("DONE").'</h4>';
@@ -758,22 +759,22 @@ if (empty($langfile)) {
             }else{
                 die('<h4 class="alert_error">' . tr("ERROR_SQL", $db->DbError()) . '<br>' . tr("QUERY") . ' : ' . $sql . '<br>' . tr("INSTALL_REFRESH") . ' !</h4>');            
             }
-            $configfile = "<?php\nif(!defined('_CONFIG')){\n\tdefine('_CONFIG', 1);";
-            $configfile .= "\n\t$"."db_type = '$db_type';";
-            $configfile .= "\n\t$"."hostname = '$hostname';";
-            $configfile .= "\n\t$"."login = '$login';";
-            $configfile .= "\n\t$"."pass = '$pass';";
-            $configfile .= "\n\t$"."database = '$database';";
-            $configfile .= "\n\t$"."type_serveur = '$type_serveur';";
-            $configfile .= "\n\t$"."type_env = '$type_env';";
-            $configfile .= "\n\t$"."timezone = '$timezone';";
-            $configfile .= "\n\t$"."table_global_config='" . $table_prefix . "config';";
+            $configfile = "<?php\nif (!defined( '_CONFIG' ) || \$forceUpdate == 1 ) {\n\tif (!defined( '_CONFIG' ))\n\t\tdefine('_CONFIG', 1);";
+            $configfile .= "\n\t$" . "db_type            = '$db_type';";
+            $configfile .= "\n\t$" . "hostname           = '$hostname';";
+            $configfile .= "\n\t$" . "login              = '$login';";
+            $configfile .= "\n\t$" . "pass               = '$pass';";
+            $configfile .= "\n\t$" . "database           = '$database';";
+            $configfile .= "\n\t$" . "type_serveur       = '$type_serveur';";
+            $configfile .= "\n\t$" . "type_env           = '$type_env';";
+            $configfile .= "\n\t$" . "timezone           = '$timezone';";
+            $configfile .= "\n\t$" . "table_global_config='" . $table_prefix . "config';";
             if(is_exec_available()){
-                $configfile .= "\n\t$"."exec_available = true;";
+                $configfile .= "\n\t$" . "exec_available     = true;";
             }else{
-                $configfile .= "\n\t$"."exec_available = false;";
+                $configfile .= "\n\t$" . "exec_available     = false;";
             }
-            $configfile .= "\n\t$"."pmnl_version ='$version';\n\n\t}\n\n?>";
+            $configfile .= "\n\t$" . "pmnl_version       = '$version';\n}";
             if (is_writable("include/")) {
                 $fc = fopen("include/config.php", "w");
                 $w  = fwrite($fc, $configfile);

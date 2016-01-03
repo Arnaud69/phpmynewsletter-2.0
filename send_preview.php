@@ -1,5 +1,4 @@
 <?php
-
 if(!file_exists("include/config.php")) {
     header("Location:install.php");
     exit;
@@ -40,7 +39,7 @@ $begin   = (!empty($_GET['begin']) && empty($begin)) ? $_GET['begin'] : 0;
 $msg_id  = (!empty($_GET['msg_id'])) ? $_GET['msg_id'] : '';
 $sn      = (!empty($_GET['sn'])) ? $_GET['sn'] : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
-$encode  = (!empty($_GET['encode']))  ? 'base64' : '8bit' ;
+$encode  = (!empty($_GET['encode'])&&$_GET['encode']=='base64')  ? 'base64' : '8bit';
 switch ($step) {
     case "sendpreview":
         $mail          = new PHPMailer;

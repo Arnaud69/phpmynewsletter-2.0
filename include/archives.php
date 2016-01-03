@@ -107,9 +107,6 @@ if (!empty($msg_id) && empty($action)) {
     }
     getArchiveMsg($cnx, $row_config_globale['table_archives'], $msg_id, $token, $list);
 }
-
-
-
 if (!empty($msg_id) && $action == "delete") {
     if ($deleted){
         echo "<h4 class='alert_success'>" . tr("ARCHIVE_DELETED") . "</h4>";

@@ -446,6 +446,7 @@ function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list) {
         echo "</select>";
         echo "<input type='hidden' name='import_id' value='".$row['id']."' />";
         echo "<input type='hidden' name='page' value='compose' />";
+        echo "<input type='hidden' name='op' value='init' />";
         echo "<input type='hidden' name='token' value='$token' />";
         echo "<div align='center'><input type='submit' value=' O K ' class='button' /></div>";
         echo "</form></div>";
@@ -800,7 +801,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
                     $smtp_host,$smtp_port,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,
                     $validation_period,$sub_validation,$unsub_validation,$admin_email,
                     $admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,
-                    $table_sauvegarde,$table_upload,$table_email_deleted,$alert_sub) {
+                    $table_sauvegarde,$table_upload,$table_email_deleted,$alert_sub,$active_tracking) {
     $base_url          = escape_string($cnx,$base_url);
     $path              = escape_string($cnx,$path);
     $smtp_host         = escape_string($cnx,$smtp_host);
@@ -823,37 +824,24 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $table_send        = escape_string($cnx,$table_send);
     $table_sauvegarde  = escape_string($cnx,$table_sauvegarde);
     $table_upload      = escape_string($cnx,$table_upload);
-    $table_email_deleted= escape_string($cnx,$table_email_deleted);
+    $table_email_deleted=escape_string($cnx,$table_email_deleted);
     $alert_sub         = escape_string($cnx,$alert_sub);
+    $active_tracking   = escape_string($cnx,$active_tracking);
     $sql = "UPDATE $config_table SET ";
     if (!empty($admin_pass)) {
         $sql .= "admin_pass='" . md5($admin_pass) . "', ";
         setcookie("PMNLNG_admin_password", md5($admin_pass));
     }
-    $sql .= "archive_limit=$archive_limit, ";
-    $sql .= "base_url=$base_url, ";
-    $sql .= "path=$path,";
-    $sql .= "language=$language, ";
-    $sql .= "table_email=$table_email, ";
-    $sql .= "table_temp=$table_temp, ";
-    $sql .= "table_listsconfig=$table_listsconfig, ";
-    $sql .= "table_archives=$table_archives, ";
-    $sql .= "sending_limit=$sending_limit, ";
-    $sql .= "sending_method=$sending_method, ";
-    $sql .= "sub_validation='$sub_validation', ";
-    $sql .= "unsub_validation='$unsub_validation', ";
-    $sql .= "admin_email=$admin_email, ";
-    $sql .= "admin_name=$admin_name ,";
-    $sql .= "mod_sub='$mod_sub' , ";
-    $sql .= "charset=$charset, ";
-    $sql .= "mod_sub_table='$table_sub', ";
-    $sql .= "validation_period=$validation_period, ";
-    $sql .= "table_tracking=$table_track, ";
-    $sql .= "table_send=$table_send, ";
-    $sql .= "table_sauvegarde=$table_sauvegarde, ";
-    $sql .= "table_upload=$table_upload, ";
-    $sql .= "alert_sub='$alert_sub', ";
-    $sql .= "table_email_deleted=$table_email_deleted ";
+    $sql .= "archive_limit=$archive_limit, base_url=$base_url, path=$path, 
+                language=$language, table_email=$table_email, table_temp=$table_temp, 
+                table_listsconfig=$table_listsconfig, table_archives=$table_archives, 
+                sending_limit=$sending_limit, sending_method=$sending_method, 
+                sub_validation='$sub_validation', unsub_validation='$unsub_validation', 
+                admin_email=$admin_email, admin_name=$admin_name, mod_sub='$mod_sub' , 
+                charset=$charset, mod_sub_table='$table_sub', validation_period=$validation_period, 
+                table_tracking=$table_track, table_send=$table_send, table_sauvegarde=$table_sauvegarde, 
+                table_upload=$table_upload, alert_sub='$alert_sub', active_tracking='$active_tracking', 
+                table_email_deleted=$table_email_deleted";
     if($sending_method == 'mail') {
         $sql .= ", smtp_host='', ";
         $sql .= "smtp_auth='0' ";
@@ -878,23 +866,24 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
         return false;
     }
 }
-function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_config_table, $db_type = 'mysql',$serveur='shared',$environnement='dev',$timezone) {
-    $configfile = "<?php\nif (!defined( \"_CONFIG\" ) || \$forceUpdate == 1 )\n\t{\nif (!defined( \"_CONFIG\" )) define(\"_CONFIG\", 1);";
-    $configfile .= "\n\t$" . "db_type = \"$db_type\";";
-    $configfile .= "\n\t$" . "hostname = \"$db_host\";";
-    $configfile .= "\n\t$" . "login = \"$db_login\";";
-    $configfile .= "\n\t$" . "pass = \"$db_pass\";";
-    $configfile .= "\n\t$" . "database = \"$db_name\";";
-    $configfile .= "\n\t$" . "type_serveur = \"$serveur\";";
-    $configfile .= "\n\t$" . "type_env = \"$environnement\";";
-    $configfile .= "\n\t$" . "timezone = '$timezone';";
-    $configfile .= "\n\t$" . "table_global_config=\"$db_config_table\";";
+function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_config_table, $db_type = 'mysql', 
+                        $serveur='shared', $environnement='dev', $timezone) {
+    $configfile = "<?php\nif (!defined( '_CONFIG' ) || \$forceUpdate == 1 ) {\n\tif (!defined( '_CONFIG' ))\n\t\tdefine('_CONFIG', 1);";
+    $configfile .= "\n\t$" . "db_type            = '$db_type';";
+    $configfile .= "\n\t$" . "hostname           = '$db_host';";
+    $configfile .= "\n\t$" . "login              = '$db_login';";
+    $configfile .= "\n\t$" . "pass               = '$db_pass';";
+    $configfile .= "\n\t$" . "database           = '$db_name';";
+    $configfile .= "\n\t$" . "type_serveur       = '$serveur';";
+    $configfile .= "\n\t$" . "type_env           = '$environnement';";
+    $configfile .= "\n\t$" . "timezone           = '$timezone';";
+    $configfile .= "\n\t$" . "table_global_config= '$db_config_table';";
     if(is_exec_available()){
-        $configfile .= "\n\t$"."exec_available = true;";
+        $configfile .= "\n\t$" . "exec_available     = true;";
     }else{
-        $configfile .= "\n\t$"."exec_available = false;";
+        $configfile .= "\n\t$" . "exec_available     = false;";
     }
-    $configfile .= "\n\t$" . "pmnl_version = \"$version\";\n\n\t}\n\n?>";
+    $configfile .= "\n\t$" . "pmnl_version       = '$version';\n}";
     if (is_writable("include/config.php")) {
         $fc = fopen("include/config.php", "w");
         $w  = fwrite($fc, $configfile);
