@@ -289,7 +289,7 @@ if (empty($langfile)) {
             echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
             echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
-            echo "<option value='php_mail_infomaniak' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . " infomaniak</option>";
+            echo "<option value='php_mail_infomaniak'>mail() PHP infomaniak</option>";
             echo "</select>";
             echo '</fieldset>';
             echo '<fieldset>';
@@ -754,7 +754,7 @@ if (empty($langfile)) {
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
                         '" . $table_prefix . "track_links', '" . $table_prefix . "upload',
-                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub')";
+                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub','1')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG") . ' ' .tr("DONE").'</h4>';
             }else{
