@@ -401,7 +401,7 @@ if (empty($langfile)) {
             include_once("include/db/db_connector.inc.php");
             // Built directory :
             if(!is_dir("upload")){
-                if(mkdir("upload",0755)){
+                if(mkdir("upload",0775)){
                     echo '<h4 class="alert_success">'.tr("UPLOAD_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' 
@@ -409,7 +409,7 @@ if (empty($langfile)) {
                 }
             }
             if(!is_dir("include/DKIM")){
-                if(mkdir("include/DKIM",0755)){
+                if(mkdir("include/DKIM",0775)){
                     echo '<h4 class="alert_success">'.tr("DKIM_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'include/DKIM".<br>' 
@@ -417,7 +417,7 @@ if (empty($langfile)) {
                 }
             }
             if(!is_dir("include/backup_crontab")){
-                if(mkdir("include/backup_crontab",0755)){
+                if(mkdir("include/backup_crontab",0775)){
                     echo '<h4 class="alert_success">'.tr("BK_CRONTAB_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("BK_CRONTAB_DIRECTORY").' : "'.$path.'include/backup_crontab".<br>' 
