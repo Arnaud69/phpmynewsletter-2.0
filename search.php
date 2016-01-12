@@ -28,7 +28,7 @@ include("include/lang/".$row_config_globale['language'].".php");
 !empty($_POST['search']) ? $q=$_POST['search'] : $q='';
 if(!empty($q)){
     $tabMails = getEmail($cnx, $q, $row_config_globale['table_email']);
-    if(sizeof($tabMails)){
+    if(count($tabMails)>0){
         foreach($tabMails as $row){
             $q_strong = '<strong>'.$q.'</strong>';
             $show_mail = str_ireplace($q, $q_strong, $row['email']);

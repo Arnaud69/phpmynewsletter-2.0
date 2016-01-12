@@ -289,6 +289,7 @@ if (empty($langfile)) {
             echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
             echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
+            echo "<option value='php_mail_infomaniak' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . " infomaniak</option>";
             echo "</select>";
             echo '</fieldset>';
             echo '<fieldset>';
@@ -506,7 +507,7 @@ if (empty($langfile)) {
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","smtp_gmail_tls","smtp_gmail_ssl",
+                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","php_mail_infomaniak","smtp_gmail_tls","smtp_gmail_ssl",
                                                          "smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online",
                                                          "smtp_mutu_infomaniak") NOT NULL DEFAULT "smtp",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
@@ -626,7 +627,7 @@ if (empty($langfile)) {
                                 `cpt` int(7) NOT NULL, 
                                 `error` int(7) UNSIGNED NOT NULL DEFAULT 0,
                                 `leave` int(7) UNSIGNED NOT NULL DEFAULT 0,
-                                UNIQUE KEY `id_list_mail` (`id`,`id_list`,`id_mail`)
+                                UNIQUE KEY `id_list_mail` (`id`,`id_list`,`id_mail`),
                                 KEY `cpt` (`cpt`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
@@ -780,7 +781,7 @@ if (empty($langfile)) {
                 $w  = fwrite($fc, $configfile);
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG_FILE") . ' : ' . tr("OK_BTN") . ' </div> ';
             } else {
-                echo tr("INSTALL_CONFIG_MANUALLY");
+                echo tr("INSTALL_CONFIG_MANUALLY").'<br>';
                 echo "<textarea cols=60 rows=18>" . $configfile . "</textarea>";
                 die("<h4 class='alert_error'>" . tr("INSTALL_UNABLE_TO_SAVE_CONFIG_FILE") . "<br>" . tr("MANUALLY_SAVE_CONF", $base_url) . ".</div>");  
             }

@@ -482,9 +482,7 @@ function getConfig($cnx, $list_id, $list_table) {
 function getEmail($cnx, $mail, $table_email) {
     $cnx->query("SET NAMES UTF8");
     $x = $cnx->query("SELECT email FROM $table_email WHERE email like '%$mail%' LIMIT 0,5")->fetchAll(PDO::FETCH_ASSOC);
-    if(!$x){
-        return -1;
-    } else {
+    if(count($x)>0){
         return $x;
     }
 }
@@ -1089,9 +1087,7 @@ function tok_val($token){
 }
 function tr($s, $i="") {
     global $lang_array;
-    $xxx=fopen('/home/www/phpmynewsletter.com/dev/logs/a-traduire.txt', 'a+');
     if (!isset($lang_array[$s])){
-        fwrite($xxx, "\n$s",150);
         return ("[Translation required] : $s");
     }
     if ($lang_array[$s] != "") {
@@ -1101,10 +1097,8 @@ function tr($s, $i="") {
         $sprint = $lang_array[$s];
         return sprintf("$sprint" , $i);
     } else {
-        fwrite($xxx, "\n$s",150);
         return ("[Translation required] : $s");
     }
-    fclose($xxx);
 }
 function unique_id() {
     mt_srand((double) microtime() * 1000000);

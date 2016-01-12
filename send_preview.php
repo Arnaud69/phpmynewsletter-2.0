@@ -52,8 +52,10 @@ switch ($step) {
         $mail->FromName = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $newsletter['from_name'] : iconv("UTF-8", $row_config_globale['charset'], $newsletter['from_name']));
         $addr = $dest_adresse = $newsletter['preview_addr'];
         include("include/lib/switch_smtp.php");
-        $mail->Sender = $newsletter['from_addr'];
-        $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
+        if ( $row_config_globale['sending_method'] != 'php_mail_infomaniak' ) {
+            $mail->Sender = $newsletter['from_addr'];
+            $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
+        }
         $msg            = getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
         $format         = $msg['type'];
         $list_pj = $cnx->query("SELECT *

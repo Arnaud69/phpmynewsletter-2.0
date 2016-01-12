@@ -97,7 +97,7 @@ if($cpt_suscribers==0){
     <br><div align='center'>
     <form>
     <input type='input' id='searchid' placeholder='".tr("SUBSCRIBER_FIND")."' size='30' maxlength='255' style='width:300px' />
-    &nbsp;<input type='button' name='action' class='actionMail' value='".tr("LIST_DELETE")."' id='delete' />
+    &nbsp;<input type='button' name='action' class='actionMail' value='".tr("SUBSCRIBER_DELETE_BTN")."' id='delete' />
     &nbsp;<span id='resultdel'></span>
     </form>
     <div id='result'></div>

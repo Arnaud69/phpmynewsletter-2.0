@@ -1,13 +1,4 @@
 <?php
-/*
-usage :
-$browser = new Browser();
-echo '<br>Browser : ';
-var_dump($browser->getBrowser().' '.$browser->getVersion().' '.$browser->getPlatform().' '.$browser->getUserAgent());
-*/
-
-
-
 /**
  * File: Browser.php
  * Author: Chris Schuld (http://chrisschuld.com/)
@@ -119,7 +110,8 @@ class Browser
 
     const OPERATING_SYSTEM_UNKNOWN = 'unknown';
 
-    public function Browser($userAgent = "")
+    //public function Browser($userAgent = "")
+    public function __construct($userAgent = "")
     {
         $this->reset();
         if ($userAgent != "") {

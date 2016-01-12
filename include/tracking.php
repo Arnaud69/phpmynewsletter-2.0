@@ -129,13 +129,13 @@
             echo '<td>'. ($row['TOPEN']!=''?$row['TOPEN']:0).   '</td>';
             echo '<td>'. $row['TID'].                           '</td>';
             
-            $OPENRATE = round(($row['TOPEN']/($row['cpt']-$row['error'])*100),1);//OPEN RATE
+            $OPENRATE = @round(($row['TOPEN']/($row['cpt']-$row['error'])*100),1);//OPEN RATE
             echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_OPEN_RATE" ) .'">'.($OPENRATE>0?'<b>'.$OPENRATE.'</b>':0).'%</a></td>';
             
-            $CTR = round(($row['CPT_CLICKED']/$row['cpt']*100),1);//CTR
+            $CTR = @round(($row['CPT_CLICKED']/$row['cpt']*100),1);//CTR
             echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_CTR" ) .'">'.($CTR>0?'<b>'.$CTR.'</b>':0).'%</a></td>';
             
-            $ACTR = round(($row['CPT_CLICKED']/$row['TOPEN']*100),1);//ACTR
+            $ACTR = @round(($row['CPT_CLICKED']/$row['TOPEN']*100),1);//ACTR
             echo '<td><a class="tooltip" title="'. tr( "TRACKING_BULLE_ACTR" ) .'">'.($ACTR>0?'<b>'.$ACTR.'</b>':0).'%</a></td>';
             
             echo '<td>'. $row['error'].                         '</td>';

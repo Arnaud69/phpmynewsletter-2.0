@@ -69,8 +69,10 @@ switch ($step) {
             $daylogmsg        ="LIST_ID : $list_id\tBEGIN : $begin\tLIMIT : $limit\tMSG_ID : $msg_id\n";
             fwrite($daylog, $daylogmsg, strlen($daylogmsg));
         }
-        $mail->Sender    = $newsletter['from_addr'];
-        $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
+        if ( $row_config_globale['sending_method'] != 'php_mail_infomaniak' ) {
+            $mail->Sender    = $newsletter['from_addr'];
+            $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
+        }
         $msg             = get_message($cnx, $row_config_globale['table_archives'], $msg_id);
         $format          = $msg['type'];
         $list_pj = $cnx->query("SELECT * 
@@ -229,6 +231,7 @@ switch ($step) {
                     'begin'  => $sn,
                     'list_id'=> $list_id,
                     'msg_id' => $msg_id,
+                    'encode' => $encode,
                     'sn'     => $sn,
                     'token'  => $token,
                     'pct'    => 100,
@@ -300,7 +303,7 @@ switch ($step) {
                 'begin'   => 0,
                 'list_id' => ( ($list_id)+0 ),
                 'msg_id'  => ( ($msg_id)+0 ),
-                'ecnode'  => $encode,
+                'encode'  => $encode,
                 'sn'      => ( ($num)+0 ),
                 'token'   => $token,
                 'pct'     => 0)
