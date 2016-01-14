@@ -15,6 +15,7 @@ if(!file_exists("include/config.php")) {
         quick_Exit();
     }
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
@@ -95,7 +96,7 @@ switch ($step) {
             $mail->IsHTML(true);
         }
         $AltMessage = $message;
-        $mail->WordWrap = 70;    
+        $mail->WordWrap = 78;    
         if ( file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail') ) {
             include("DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
@@ -122,7 +123,7 @@ switch ($step) {
             } else {
                 $trac = "";
             }
-            if ($format == "html"){
+            if ( $format == "html" ){
                 $body .= "<html><head></head><body>";
                 $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
                 $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url']
@@ -135,14 +136,14 @@ switch ($step) {
                     '/href="(http:\/\/)([^"]+)"/',
                     function($matches) {
                         global $new_url;
-                        return $new_url.(urlencode(@$matches[1].$matches[2])).'"';
+                        return $new_url . (urlencode(@$matches[1] . $matches[2])) . '"';
                     },$AltMessage);
                 $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'>
                            <hr noshade='' color='#D4D4D4' width='90%' size='1'>"
-                           .tr("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']
-                           ."subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=".$addr[$i]['email']."&h="
-                           .$addr[$i]['hash']."' style='' target='_blank'>")
-                           ."<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+                           . tr("UNSUBSCRIBE_LINK", "<a href='".$row_config_globale['base_url'] . $row_config_globale['path']
+                           . "subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=" . $addr[$i]['email'] 
+                           . "&h=" . $addr[$i]['hash']."' style='' target='_blank'>")
+                           . "<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
             } else {
                 $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']
                       ."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr[$i]['email']."&h=".$addr[$i]['hash']."'>")."<br />";
@@ -156,6 +157,7 @@ switch ($step) {
             $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
+            $mail->addCustomHeader();
             $mail->addCustomHeader("List-Unsubscribe",'<'. $row_config_globale['base_url'] . $row_config_globale['path'] 
                   . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>');
             @set_time_limit(300);
@@ -310,4 +312,14 @@ switch ($step) {
             );
         break;
 }
-?>
+
+
+
+
+
+
+
+
+
+
+
