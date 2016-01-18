@@ -157,7 +157,6 @@ switch ($step) {
             $body .= $message . $unsubLink . $trac ;
             $mail->Subject = $subject;
             $mail->Body    = $body;
-            $mail->addCustomHeader();
             $mail->addCustomHeader("List-Unsubscribe",'<'. $row_config_globale['base_url'] . $row_config_globale['path'] 
                   . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr=' . $addr[$i]['email'] . '&h=' . $addr[$i]['hash'] . '>');
             @set_time_limit(300);
