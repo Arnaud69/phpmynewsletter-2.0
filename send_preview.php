@@ -108,7 +108,7 @@ switch ($step) {
         $mail->AddAddress($addr);
         $mail->XMailer = ' ';
         $body = "";
-        if ( $row_config_globale['active_tracking'] == '1' ) 
+        if ( $row_config_globale['active_tracking'] == '1' ) {
             $trac = "<img style='border:0' src='".$row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=fake_hash' alt='' width='1'  height='1' />";
         } else {
             $trac = "";
