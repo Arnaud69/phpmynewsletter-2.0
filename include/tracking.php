@@ -7,9 +7,11 @@
         echo '<div class="module_content">';
         $array_stats=array_reverse($array_stats_tmp);
         ?>
-        <script type="text/javascript" src="//www.amcharts.com/lib/3/amcharts.js"></script>
-        <script type="text/javascript" src="//www.amcharts.com/lib/3/serial.js"></script>
-        <script type="text/javascript" src="//www.amcharts.com/lib/3/lang/fr.js"></script>
+        <script type="text/javascript" src="js/amcharts/amcharts.js"></script>
+        <script type="text/javascript" src="js/amcharts/serial.js"></script>
+        <script type="text/javascript" src="js/amcharts/lang/fr.js"></script>
+        <link   type="text/css" href="js/amcharts/plugins/export/export.css" rel="stylesheet">
+        <script type="text/javascript" src="js/amcharts/plugins/export/export.js"></script>
         <script type="text/javascript">
             AmCharts.makeChart("chartdiv",
                 {
@@ -20,35 +22,42 @@
                     "categoryAxis": {
                         "parseDates": false
                     },
+                    "export": {
+    	                "enabled": true
+                    },
                     "chartCursor": {},
-                    "chartScrollbar": {},
                     "trendLines": [],
                     "graphs": [
                         {
+                            "balloonText": "[[title]] : [[value]]",
                             "bullet": "round",
                             "id": "envois",
                             "title": "<?=tr("TRACKING_SEND");?>",
                             "valueField": "c1"
                         },
                         {
+                            "balloonText": "[[title]] : [[value]]",
                             "bullet": "round",
                             "id": "erreurs",
                             "title": "<?=tr("TRACKING_ERROR");?>",
                             "valueField": "c2"
                         },
                         {
+                            "balloonText": "[[title]] : [[value]]",
                             "bullet": "round",
                             "id": "ouvertures",
                             "title": "<?=tr("TRACKING_OPENED");?>",
                             "valueField": "c3"
                         },
                         {
+                            "balloonText": "[[title]] : [[value]]",
                             "bullet": "round",
                             "id": "lectures",
                             "title": "<?=tr("TRACKING_READ");?>",
                             "valueField": "c4"
                         },
                         {
+                            "balloonText": "[[title]] : [[value]]",
                             "bullet": "round",
                             "id": "abandons",
                             "title": "<?=tr("TRACKING_UNSUB");?>",
@@ -65,6 +74,7 @@
                     "allLabels": [],
                     "balloon": {},
                     "legend": {
+                        "enabled": true,
                         "useGraphSettings": true
                     },
                     "titles": [
@@ -89,13 +99,15 @@
                             },';
                         }
                         ?>
-                    ]
+                    ],
+                    "export": {
+                        "enabled": true
+                    }
                 }
             );
         </script>
         <div id="chartdiv" style="width: 100%; height: 500px; background-color: #FFFFFF;" ></div>
         <?php 
-        // full editor : http://live.amcharts.com/new/edit/ ;
         reset($array_stats_tmp);
         echo '<table class="tablesorter" cellspacing="0"> 
         <thead> 
@@ -150,21 +162,6 @@
     <div class="spacer"></div>
     <div class="clear"></div>
 </article>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
