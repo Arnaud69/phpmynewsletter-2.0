@@ -289,7 +289,6 @@ if (empty($langfile)) {
             echo "<option value='smtp_mutu_online'>smtp ".tr("INSTALL_SHARED")." ONLINE</option>";
             echo "<option value='smtp_mutu_infomaniak'>smtp ".tr("INSTALL_SHARED")." INFOMANIAK</option>";
             echo "<option value='php_mail' selected>" . tr("INSTALL_PHP_MAIL_FONCTION") . "</option>";
-            echo "<option value='php_mail_infomaniak'>mail() PHP infomaniak</option>";
             echo "</select>";
             echo '</fieldset>';
             echo '<fieldset>';
@@ -401,7 +400,7 @@ if (empty($langfile)) {
             include_once("include/db/db_connector.inc.php");
             // Built directory :
             if(!is_dir("upload")){
-                if(mkdir("upload",0775)){
+                if(mkdir("upload",0755)){
                     echo '<h4 class="alert_success">'.tr("UPLOAD_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("UPLOAD_DIRECTORY").' : "'.$path.'upload".<br>' 
@@ -409,7 +408,7 @@ if (empty($langfile)) {
                 }
             }
             if(!is_dir("include/DKIM")){
-                if(mkdir("include/DKIM",0775)){
+                if(mkdir("include/DKIM",0755)){
                     echo '<h4 class="alert_success">'.tr("DKIM_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("DKIM_DIRECTORY").' : "'.$path.'include/DKIM".<br>' 
@@ -417,7 +416,7 @@ if (empty($langfile)) {
                 }
             }
             if(!is_dir("include/backup_crontab")){
-                if(mkdir("include/backup_crontab",0775)){
+                if(mkdir("include/backup_crontab",0755)){
                     echo '<h4 class="alert_success">'.tr("BK_CRONTAB_DIRECTORY").' '.tr("DONE").'</h4>';
                 } else {
                     die('<h4 class="alert_error">'.tr("BK_CRONTAB_DIRECTORY").' : "'.$path.'include/backup_crontab".<br>' 
@@ -495,7 +494,7 @@ if (empty($langfile)) {
                                 KEY `error` (`error`),
                                 KEY `status` (`status`),
                                 KEY `type` (`type`),
-                                KEY `campaign_id` (`type`)
+                                KEY `campaign_id` (`campaign_id`)
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
                     if($cnx->Sql($sql)){
                         echo '<h4 class="alert_success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email_deleted") .' '.tr("DONE").'</h4>';
@@ -507,7 +506,7 @@ if (empty($langfile)) {
                                 `archive_limit`     VARCHAR(64) NOT NULL DEFAULT "",
                                 `base_url`          VARCHAR(64) NOT NULL DEFAULT "",
                                 `path`              VARCHAR(64) NOT NULL DEFAULT "",
-                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","php_mail_infomaniak","smtp_gmail_tls","smtp_gmail_ssl",
+                                `sending_method`    ENUM("smtp","lbsmtp","php_mail","smtp_gmail_tls","smtp_gmail_ssl",
                                                          "smtp_mutu_ovh","smtp_mutu_1and1","smtp_mutu_gandi","smtp_mutu_online",
                                                          "smtp_mutu_infomaniak") NOT NULL DEFAULT "smtp",
                                 `language`          VARCHAR(64) NOT NULL DEFAULT "",
@@ -754,7 +753,7 @@ if (empty($langfile)) {
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
                         '" . $table_prefix . "track_links', '" . $table_prefix . "upload',
-                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub','1')";
+                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG") . ' ' .tr("DONE").'</h4>';
             }else{

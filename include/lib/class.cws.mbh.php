@@ -913,7 +913,6 @@ class CwsMailBounceHandler
             $this->result['counter']['fetched'] = $this->max_messages;
             $this->output('Processing first <strong>' . $this->result['counter']['fetched'] . ' messages</strong>...');
         }
-        
         if ($this->test_mode) {
             $this->output('Running in <strong>test mode</strong>, not deleting messages from mailbox.');
         } else {
@@ -979,6 +978,7 @@ class CwsMailBounceHandler
         $this->output('<h2>End of process</h2>', CWSMBH_VERBOSE_SIMPLE, false);
         if ($this->isImapOpenMode()) {
             $this->output('Closing mailbox, and purging messages');
+            @imap_expunge($this->_handler);
             @imap_clearflag_full($this->_handler,$this->result['counter']['fetched'],'\\Seen');
             @imap_close($this->_handler);
         }

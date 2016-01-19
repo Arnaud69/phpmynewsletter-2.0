@@ -62,6 +62,9 @@
         'Microsoft Windows Live Mail 16.4.3522.110',
         'Microsoft Windows Live Mail 16.4.3505.912',
         
+    // X-Mailer=~ /^Microsoft Office Outlook
+        'X-Mailer: Microsoft Office Outlook 12.0',
+        
     //User-Agent  =~ /^Microsoft-Entourage\/\d{1,2}(?:\.\d){1,2}\.\d{4}$/
         'Microsoft-Entourage/11.4.0.080122',
         'Microsoft-Entourage/12.30.0.110427',

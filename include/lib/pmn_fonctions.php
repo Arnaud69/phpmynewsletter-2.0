@@ -15,12 +15,19 @@ if (!function_exists('iconv') && !function_exists('libiconv')) {
 function add_subscriber($cnx, $table_email, $list_id, $add_addr, $table_email_deleted) {
     $cnx->query("SET NAMES UTF8");
     $add_addr = trim(strtolower($add_addr));
-    $hash = @current($cnx->query("SELECT hash FROM $table_email WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
+    $hash = @current($cnx->query("SELECT hash 
+                                    FROM ".$table_email." 
+                                        WHERE list_id='".($cnx->CleanInput($list_id))."'
+                                            AND email='".($cnx->CleanInput($add_addr))."'")->fetch());
     if($hash==''){
-        $black_listed = @current($cnx->query("SELECT email FROM $table_email_deleted WHERE list_id='$list_id' AND email='$add_addr'")->fetch());
+        $black_listed = @current($cnx->query("SELECT email 
+                                                FROM ".$table_email_deleted."  
+                                                    WHERE list_id='".($cnx->CleanInput($list_id))."' 
+                                                        AND email='".($cnx->CleanInput($add_addr))."'")->fetch());
         if($black_listed==''){
             $hash = unique_id();
-            if($cnx->query("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$add_addr', '$list_id', '$hash')")){
+            if($cnx->query("INSERT INTO ".$table_email." (`email`, `list_id`, `hash`) 
+                                VALUES ('".($cnx->CleanInput($add_addr))."', '".($cnx->CleanInput($list_id))."', '".($cnx->CleanInput($hash))."')")){
                 return 2;
             } else {
                 return true;
@@ -1106,28 +1113,34 @@ function unique_id() {
 }
 function UpdateEmailError($cnx,$table_email,$list_id,$email,$status,$type,$categorie,$short_desc,$long_desc,$campaign_id,$table_email_deleted,$table_send){
     $cnx->query("SET NAMES UTF8");
-    if ($cnx->query("INSERT INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
-                        SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
-                                '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
-                                '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."'
-                            FROM ".$table_email."
-                                WHERE email = '".($cnx->CleanInput($email))."' 
-                                    AND list_id='".($cnx->CleanInput($list_id))."'")){
-        if ($cnx->query("DELETE FROM ".$table_email." 
-                            WHERE list_id = ''".($cnx->CleanInput($list_id))."'' 
-                                AND email='".($cnx->CleanInput($email))."'")) {
-            if ($cnx->query("UPDATE $table_send 
-                                SET error=error+1 
-                                    WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
-                return true;
+    $hash = @current($cnx->query("SELECT hash 
+                                    FROM ".$table_email_deleted." 
+                                        WHERE list_id='".($cnx->CleanInput($list_id))."' 
+                                            AND email='".($cnx->CleanInput($email))."'")->fetch());
+    if($hash==''){
+        if ($cnx->query("INSERT IGNORE INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
+                            SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
+                                    '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
+                                    '".($cnx->CleanInput($long_desc))."','".($cnx->CleanInput($campaign_id))."'
+                                FROM ".$table_email."
+                                    WHERE email = '".($cnx->CleanInput($email))."' 
+                                        AND list_id='".($cnx->CleanInput($list_id))."'")){
+            if ($cnx->query("DELETE FROM ".$table_email." 
+                                WHERE list_id = '".($cnx->CleanInput($list_id))."' 
+                                    AND email='".($cnx->CleanInput($email))."'")) {
+                if ($cnx->query("UPDATE $table_send 
+                                    SET error=error+1 
+                                        WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
         } else {
             return false;
         }
-    } else {
-        return false;
     }
 }
 function validEmailAddress($email) {
