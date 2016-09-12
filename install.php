@@ -859,7 +859,7 @@ if (empty($langfile)) {
                 if ($createtables == 1) {
                     $sql = 'CREATE TABLE IF NOT EXISTS `' . $table_prefix . 'archives` (
                                 `id` int(7) UNSIGNED NOT NULL DEFAULT  "0",
-                                `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                                `date` datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
                                 `type` TEXT NOT NULL,
                                 `subject` TEXT NOT NULL,
                                 `message` TEXT NOT NULL,
@@ -1069,7 +1069,7 @@ if (empty($langfile)) {
                               `list_id` int(5) unsigned NOT NULL DEFAULT 0,
                               `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `name` varchar(20000) DEFAULT NULL,
-                              `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                              `date` datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
                               PRIMARY KEY (`id`),
                               KEY `list_id` (`list_id`),
                               KEY `msg_id` (`msg_id`),
@@ -1102,7 +1102,7 @@ if (empty($langfile)) {
                               `mail_body` text NOT NULL,
                               `mail_subject` text NOT NULL,
                               `type` text NOT NULL,
-                              `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                              `date` datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
                               PRIMARY KEY (`id`),
                               KEY `job_id` (`job_id`(10)),
                               KEY `list_id` (`list_id`),
