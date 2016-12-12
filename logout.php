@@ -10,6 +10,3 @@ $leave = leaveAdmin();
 quick_Exit();
 
 
-
-
-

@@ -1,7 +1,9 @@
 phpmynewsletter-2.0
 ===================
 
-# CURRENT VERSION : 2.0.3
+# ON DEV : 2.0.4
+Don't use if you don't know what you do ! Just for dev !!!
+# CURRENT : 2.0.3
 # CHANGELOG :
   - Schedule task to send newsletter
   - Easy attachment to send (one or more !)
@@ -51,13 +53,10 @@ Official support on the forum, please go to http://www.phpmynewsletter.com/forum
 - opening geolocation
 - check suscribers with smtp
 - detect mail client
+- new send mod for scheduled tasks
 - ... What else ? Ask me !
 
 # LICENSE
 GNU GPL
 
 Please, star if you like ;-)
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Arnaud69/phpmynewsletter-2.0/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

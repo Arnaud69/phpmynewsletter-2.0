@@ -19,19 +19,21 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("include/lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("include/lang/".$row_config_globale['language'].".php");
-}
-$q = (!empty($_POST['search'])) ? $_POST['search'] : '';
-if(!empty($q)){
-    $tabMails = getEmail($cnx, $q, $row_config_globale['table_email']);
-    if(sizeof($tabMails)){
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("include/lang/".$row_config_globale['language'].".php");
+!empty($_POST['search']) ? $q=$_POST['search'] : $q='';
+!empty($_POST['list_id']) ? $list_id=$_POST['list_id'] : $list_id='';
+if(!empty($q) && !empty($list_id)){
+    //$tabMails = getEmail($cnx, $q, $row_config_globale['table_email']);
+    $tabMails = $cnx->query("SELECT email 
+                                 FROM ".$row_config_globale['table_email'] ."
+                                     WHERE email like '%$q%' 
+                                         AND LIST_ID='$list_id' LIMIT 0,5")->fetchAll(PDO::FETCH_ASSOC);
+    if(count($tabMails)>0){
         foreach($tabMails as $row){
             $q_strong = '<strong>'.$q.'</strong>';
             $show_mail = str_ireplace($q, $q_strong, $row['email']);
@@ -39,4 +41,3 @@ if(!empty($q)){
         }    
     }
 }
-
