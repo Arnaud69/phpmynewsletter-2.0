@@ -1,6 +1,6 @@
 <?php
 if(!file_exists("config.php")) {
-    header("Location:install.php");
+    header("Location:../install.php");
     exit;
 } else {
     include("../_loader.php");
@@ -11,19 +11,17 @@ if(!file_exists("config.php")) {
         exit;
     }
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
     include("lang/english.php");
-    echo "<div class='error'>".translate($r)."<br>";
+    echo "<div class='error'>".tr($r)."<br>";
     echo "</div>";
     exit;
 }
-if(empty($row_config_globale['language'])){
-    $row_config_globale['language']="english";
-}else{
-    include("lang/".$row_config_globale['language'].".php");
-}
+if(empty($row_config_globale['language']))$row_config_globale['language']="english";
+include("lang/".$row_config_globale['language'].".php");
 $ds          = DIRECTORY_SEPARATOR;
 $storeFolder = '../upload';
 if (!empty($_FILES)) {
@@ -36,7 +34,14 @@ if (!empty($_FILES)) {
     $targetFile =  $targetPath. $name;
     move_uploaded_file($tempFile,$targetFile);
     $list_id  = (!empty($_POST['list_id'])) ? $_POST['list_id'] : '';
-    $sql_pj = "INSERT INTO ".$row_config_globale['table_upload']."(id,list_id,name,date) VALUES ('','$list_id','".$name."',now())";
-    $cnx->query($sql_pj);
-     
+    $cnx->query("INSERT INTO ".$row_config_globale['table_upload']."(id,list_id,name,date) VALUES ('','$list_id','".$name."',now())");
 }
+
+
+
+
+
+
+
+
+
