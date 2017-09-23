@@ -1,20 +1,4 @@
-<?
-
-function translate($s, $i="") {
-    global $lang_array;
-
-    if(!isset($lang_array['norwegian'][$s]))
-      return ("[Translation required] : $s");
-
-    if($lang_array['norwegian'][$s]!="") {
-	if($i == "") return $lang_array['norwegian'][$s];
-        $sprint = $lang_array['norwegian'][$s];
-	return sprintf("$sprint" , $i);
-    }
-    else return ("[Translation required] : $s");
-}
-
-
+<?php
 $lang_array['norwegian'] = array(
 		   //BTN
 		   "OK_BTN" => "OK",
@@ -99,7 +83,7 @@ $lang_array['norwegian'] = array(
                    "NEWSLETTER_WELCOME_DEFAULT_SUBJECT" => "Velkommen til nyhetsbrevet!",
    		   "NEWSLETTER_WELCOME_DEFAULT_BODY" => "Vi takker for at du har valgt å motta et av Juridiske Kurs og Konferansers nyhetsbrev.  Ved å være abonnent, vil du motta tilbud om kurs i din landsdel, samt beskjed om eventuelle andre nyheter vi mener våre brukere vil ha nytte av å vite.  Du kan melde deg av og på de forskjellige nyhetsbrevene her: http://www.jurist.no/nl/ \n\nMed vennlig hilsen,\n\nJuridiske Kurs og Konferanser\nwww.jurist.no",
 		   "NEWSLETTER_UNSUB_DEFAULT_SUBJECT" => "Bekreft oppsigelse av nyhetsbrev",
-                   "NEWSLETTER_UNSUB_DEFAULT_BODY" => "Du får denne eposten fordi du har bedt om å ikke motta nyhetsbrevet vårt i fremtiden.  Følg instruksjonene under for å fullføre utmeldingen.\n\nMed vennlig hilsen,\n\nJuridiske Kurs og Konferanser\nwww.jurist.no",
+                   "NEWSLETTER_UNSUB_DEFAULT_BODY" => "Du får denne eposten fordi du har bedt om å ikke motta nyhetsbrevet vårt i fremtiden.  Følg instruksjonene under for å fullføre utmeldingen.",
 
 
 		   //SUBSCRIBER

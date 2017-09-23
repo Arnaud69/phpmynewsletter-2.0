@@ -92,14 +92,14 @@ switch ($step) {
         $message    = stripslashes($msg['message']);
         $to_replace = array( "  ", "\t", "\n", "\r", "\0", "\x0B", "\xA0" );
         $message    = str_replace( $to_replace , " " , $message );
-        $message    = str_replace( "  "," ",$message );
+        $messageSource= str_replace( "  "," ",$message );
         $subject    = stripslashes( $msg['subject'] );
         if ( $format == "html" ){
             $mail->IsHTML(true);
         }
         $mail->WordWrap = 76;    
-        if ( file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail') ) {
-            include("DKIM/DKIM_config.php");
+        if ( file_exists("include/DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail') ) {
+            include("include/DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
             $mail->DKIM_private    = $DKIM_private;
             $mail->DKIM_selector   = $DKIM_selector;
@@ -107,7 +107,6 @@ switch ($step) {
             $mail->DKIM_identity   = $DKIM_identity;
         }
         $to_send = count($addr);
-        require_once("include/lib/class.valideMail.php");
         for ($i = 0; $i < $to_send; $i++) {
             $last_id_send = $addr[$i]['id'];
             $cnx->query("UPDATE " . $row_config_globale['table_send_suivi']. " 
@@ -120,6 +119,7 @@ switch ($step) {
             $unsubLink = "";
             $headtrc   = "";
             $body      = "";
+            $message   = $messageSource;
             $mail->ClearAllRecipients();
             $mail->ClearCustomHeaders();
             $mail->AddAddress($addr[$i]['email']);
@@ -162,10 +162,6 @@ switch ($step) {
                 $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id
                            . "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr[$i]['email']). "&h=" . $addr[$i]['hash'];
             }
-            // <!-- strtr
-            
-            
-            // strtr -->
             $AltBody = new \Html2Text\Html2Text($body.$message.$unsubLink);
             $mail->AltBody = quoted_printable_encode($AltBody->getText());
             $subject = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $subject : iconv("UTF-8", $row_config_globale['charset'], $subject));

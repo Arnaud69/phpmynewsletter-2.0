@@ -44,6 +44,7 @@ if($type_serveur=='dedicated'&&$exec_available){
                            stripos($tab_failed,'431 Syntax error (in reply to end of DATA command)') ||
                            stripos($tab_failed,'Recipient address rejected') || /* 450 4.1.1, 450 4.2.0, 450 4.3.2 */
                            stripos($tab_failed,'Recipient address rejected: MailBox quota excedeed') || /* 450 4.7.1 */
+                           stripos($tab_failed,'Host or domain name not found') ||
                            stripos($tab_failed,'451 domain not found') ||
                            stripos($tab_failed,'451 Could not load DRD') ||
                            stripos($tab_failed,'451 Open relay not allowed') ||
@@ -64,7 +65,7 @@ if($type_serveur=='dedicated'&&$exec_available){
                 {
                     if(trim($path_postsuper)!=''&&substr($path_postsuper,0,1)=='/'){
                         exec('sudo '.$path_postsuper.' -d '.$matches[1]);
-                        if($cnx->query("INSERT INTO ".$row_config_globale['table_email_deleted']." (id,email,list_id,hash,error,status,type)
+                        if($cnx->query("INSERT IGNORE INTO ".$row_config_globale['table_email_deleted']." (id,email,list_id,hash,error,status,type)
                                         SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($tab_failed))."','hard'
                                             FROM ".$row_config_globale['table_email']."
                                                 WHERE email = '".($cnx->CleanInput($tab_recipient))."'")) {

@@ -435,7 +435,7 @@ if (empty($langfile)) {
                 if ($createtables == 1) {
                     $sql = 'CREATE TABLE IF NOT EXISTS `' . $table_prefix . 'archives` (
                                 `id` int(7) UNSIGNED NOT NULL DEFAULT  "0",
-                                `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                                `date` datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
                                 `type` TEXT NOT NULL,
                                 `subject` TEXT NOT NULL,
                                 `message` TEXT NOT NULL,
@@ -544,6 +544,7 @@ if (empty($langfile)) {
                                 `table_upload`      VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_crontab`     VARCHAR(255) NOT NULL DEFAULT "",
                                 `table_email_deleted` VARCHAR(255) NOT NULL DEFAULT "",
+                                `table_smtp` VARCHAR(255) NOT NULL DEFAULT "",
                                 `alert_sub`         ENUM("0","1") NOT NULL DEFAULT "1",
                                 `active_tracking`   ENUM("0","1") NOT NULL DEFAULT "1"
                                 ) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8;';
@@ -685,7 +686,7 @@ if (empty($langfile)) {
                               `list_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `msg_id` int(7) unsigned NOT NULL DEFAULT 0,
                               `name` varchar(20000) DEFAULT NULL,
-                              `date` datetime NOT NULL DEFAULT "000-00-00 00:00:00",
+                              `date` datetime NOT NULL DEFAULT "0000-00-00 00:00:00",
                               PRIMARY KEY (`id`),
                               KEY `list_id` (`list_id`),
                               KEY `msg_id` (`msg_id`),
@@ -761,7 +762,8 @@ if (empty($langfile)) {
                         'utf-8', '" . $table_prefix . "track', '" . $table_prefix . "send',
                         '" . $table_prefix . "autosave', '" . $table_prefix . "send_suivi', 
                         '" . $table_prefix . "track_links', '" . $table_prefix . "upload',
-                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted','$alert_sub')";
+                        '" . $table_prefix . "crontab','" . $table_prefix . "email_deleted',
+                        '" . $table_prefix . "smtp','$alert_sub','1')";
             if($cnx->Sql($sql)){
                 echo '<h4 class="alert_success">' . tr("INSTALL_SAVE_CONFIG") . ' ' .tr("DONE").'</h4>';
             }else{

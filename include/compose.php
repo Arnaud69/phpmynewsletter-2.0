@@ -40,15 +40,6 @@ switch($op){
                 <input type='text' name='subject' value=\"".  stripslashes($subject)  
                 . "\" size='50' maxlength='255' id='subject' />&nbsp;<span id='chars'>78</span>
                 <br><br>".tr("COMPOSE_MSG_BODY")." :";
-            /*
-            if($ft=="") {
-                echo " (<a href='".$_SERVER['PHP_SELF']
-                    . "?page=compose&token=$token&list_id=$list_id&ft=else'>".tr("CLICK_TO_COMPOSE_HTML")."</a>)<br><br>";
-            } elseif($ft=='else') {
-                echo " (<a href='".$_SERVER['PHP_SELF']
-                    . "?page=compose&token=$token&list_id=$list_id'>".tr("CLICK_TO_COMPOSE_WITH_EDITOR")."</a>)<br><br>";
-            }
-            */
             echo "<textarea name='message' id='redac' rows='20' cols='70'>".   stripslashes($textarea)  ."</textarea>";
             echo "<div id='as'><h4 class='alert_info'>".tr("START_INITIALISATION")."...</h4></div><br>&nbsp;</article>";
             echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
@@ -103,11 +94,6 @@ switch($op){
                             {title: 'Times New Roman', inline: 'span', styles: { 'font-family':'times new roman,times'}},
                             {title: 'Verdana', inline: 'span', styles: { 'font-family':'Verdana'}}
                         ],
-                        templates : [
-                            {title: 'Basic',url: '/".$row_config_globale['path']."js/tinymce/templates/basic.html',description: 'MODULE EN TEST !'},
-                            {title: 'Hero',url: '/".$row_config_globale['path']."js/tinymce/templates/hero.html',description: 'MODULE EN TEST !'},
-                            {title: 'Newsletter',url: '/".$row_config_globale['path']."js/tinymce/templates/newsletter.html',description: 'MODULE EN TEST !'}
-                        ],
                         cleanup : true,
                         cleanup_on_startup : true,
                         convert_urls : true,
@@ -140,21 +126,6 @@ switch($op){
                             table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'},
                             tools: {title: 'Tools', items: 'code'}
                         }
-                        /* http://stackoverflow.com/questions/10290121/how-to-prevent-tinymce-from-stripping-the-style-attribute-from-input-element */
-                        /* valid_elements : '@[id|class|style|title|dir<ltr?rtl|lang|xml::lang],'
-                                + '+body[style],'
-                                + 'a[rel|rev|charset|hreflang|tabindex|accesskey|type|name|href|target|title|class],strong/b,em/i,strike,u,'
-                                + '#p[style],-ol[type|compact],-ul[type|compact],-li,br,img[longdesc|usemap|src|border|alt=|title|hspace|vspace|width|height|align],-sub,-sup,'
-                                + '-blockquote,-table[border=0|cellspacing|cellpadding|width|frame|rules|'
-                                + 'height|align|summary|bgcolor|background|bordercolor],-tr[rowspan|width|height|align|valign|bgcolor|background|bordercolor],tbody,thead,tfoot,'
-                                + '#td[colspan|rowspan|width|height|align|valign|bgcolor|background|bordercolor|scope],#th[colspan|rowspan|width|height|align|valign|scope],caption,-div,'
-                                + '-span,-code,-pre,address,-h1,-h2,-h3,-h4,-h5,-h6,hr[size|noshade],-font[face|size|color],dd,dl,dt,cite,abbr,acronym,del[datetime|cite],ins[datetime|cite],'
-                                + 'object[classid|width|height|codebase|*],param[name|value|_value],embed[type|width|height|src|*],map[name],area[shape|coords|href|alt|target],bdo,'
-                                + 'button,col[align|char|charoff|span|valign|width],colgroup[align|char|charoff|span|valign|width],dfn,fieldset,form[action|accept|accept-charset|enctype|method],'
-                                + 'input[accept|alt|checked|disabled|maxlength|name|readonly|size|src|type|value],'
-                                + 'kbd,label[for],legend,noscript,optgroup[label|disabled],option[disabled|label|selected|value],'
-                                + 'q[cite],samp,select[disabled|multiple|name|size],small,'
-                                + 'textarea[cols|rows|disabled|name|readonly],tt,var,big',*/
                     });
                     var elem=$('#chars');
                     $('#subject').limiter(78,elem);

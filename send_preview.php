@@ -93,8 +93,8 @@ switch ($step) {
         }
         $AltMessage = $message;
         $mail->WordWrap = 76;
-        if (file_exists("DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
-            include("DKIM/DKIM_config.php");
+        if (file_exists("include/DKIM/DKIM_config.php")&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
+            include("include/DKIM/DKIM_config.php");
             $mail->DKIM_domain     = $DKIM_domain;
             $mail->DKIM_private    = $DKIM_private;
             $mail->DKIM_selector   = $DKIM_selector;
@@ -119,15 +119,6 @@ switch ($step) {
             $trac = "";
         }
         if ( $format == "html" ){
-            $url_survey = 'appliance/contact-form-arcserve.php?h=fake_hash&list_id='.$list_id.'&email_addr='. $addr[$i]['email'];
-            $message = str_replace( '{{URL_SURVEY}}' , $url_survey , $message );
-            /*
-            $body .= "<html><head></head><body>";
-            $body .= "<div align='center' style='font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:5px;color:#878e83;'>";
-            $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr."&h=fake_hash'>")."<br />";
-            $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
-            $body .= "<hr noshade='' color='#D4D4D4' width='90%' size='1'></div>";
-            */
             $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h=fake_hash&l='.$list_id.'&r=';
             $message = preg_replace_callback(       
                 '/href="(http[s]?:\/\/)([^"]+)"/',

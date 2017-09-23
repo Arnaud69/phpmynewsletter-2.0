@@ -860,7 +860,6 @@ class CwsMailBounceHandler
         }
         
         set_time_limit(6000);
-        
         $this->_handler = imap_open("{" . $this->host . ":" . $this->port . $opts . "}" . $this->boxname, $this->username, $this->password, !$this->test_mode ? CL_EXPUNGE : null);
 
         if (!$this->_handler) {
@@ -913,7 +912,6 @@ class CwsMailBounceHandler
             $this->result['counter']['fetched'] = $this->max_messages;
             $this->output('Processing first <strong>' . $this->result['counter']['fetched'] . ' messages</strong>...');
         }
-        
         if ($this->test_mode) {
             $this->output('Running in <strong>test mode</strong>, not deleting messages from mailbox.');
         } else {
@@ -979,6 +977,7 @@ class CwsMailBounceHandler
         $this->output('<h2>End of process</h2>', CWSMBH_VERBOSE_SIMPLE, false);
         if ($this->isImapOpenMode()) {
             $this->output('Closing mailbox, and purging messages');
+            @imap_expunge($this->_handler);
             @imap_clearflag_full($this->_handler,$this->result['counter']['fetched'],'\\Seen');
             @imap_close($this->_handler);
         }
@@ -1085,7 +1084,6 @@ class CwsMailBounceHandler
                     $body_sections['ar_machine']['Original-rcpt-to'] = $this->extractEmail($body_sections['ar_machine']['Original-rcpt-to']);
                 }
             }
-            
             $recipient = $this->_recipient_result;
             $recipient['email'] = $body_sections['ar_machine']['Original-rcpt-to'];
             $recipient['status'] = '5.7.1';
@@ -1135,7 +1133,6 @@ class CwsMailBounceHandler
         } else {
             $result['processed'] = false;
         }
-        
         if (empty($result['subject']) && isset($header['Subject'])) {
             $result['subject'] = $header['Subject'];
         }
@@ -1160,13 +1157,22 @@ class CwsMailBounceHandler
                         $recipient['remove'] = $this->_rules_cats[$recipient['bounce_cat']]['remove'];
                     }
                 }
+                if (@preg_match("/(.*)i=([0-9]{1,9})&list_id=([0-9]{1,9})&op=leave&email_addr=(.*)&h=(?P<name>\w+)>/i", $body_sections['returned'])) {
+                    @preg_match("/(.*)i=([0-9]{1,9})&list_id=([0-9]{1,9})&op=leave&email_addr=(.*)&h=(?P<name>\w+)>/i", $body_sections['returned'], $arg);
+                    if ($arg[3]!=NULL) {
+                        $recipient['id_mail']=$arg[2];;
+                        $recipient['list_id']=$arg[3];
+                        $recipient['hash']=$arg[5];
+                    }
+                    
+                }
                 $result['recipients'][] = $recipient;
             }
         }
         
+        
         $this->output('<strong>Result:</strong>', CWSMBH_VERBOSE_REPORT);
         $this->output($result, CWSMBH_VERBOSE_REPORT, false, true);
-        
         return $result;
     }
     

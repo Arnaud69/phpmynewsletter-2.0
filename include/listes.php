@@ -75,7 +75,7 @@ switch($l){
                 HAVING COUNT(*)>'.($total/100).'
                     ORDER BY data DESC;'
             );
-            if (count($results_stat_browser) >0) {
+            if (count($results_stat_browser) >0&&$total>0) {
                 $databrowser = '';
                 $cptbrowser = 0;
                 $totalAffiche = 0;
@@ -96,7 +96,7 @@ switch($l){
                 HAVING COUNT(*)>'.($total/100).'
                     ORDER BY data DESC;'
             );
-            if (count($results_stat_platform) >0) {
+            if (count($results_stat_platform)>0&&$total>0) {
                 $dataplatform = '';
                 $cptplatform = 0;
                 $totalAffiche = 0;
@@ -117,7 +117,7 @@ switch($l){
                 HAVING COUNT(*)>'.($total/100).'
                     ORDER BY data DESC;'
             );
-            if (count($results_stat_devicetype) >0) {
+            if (count($results_stat_devicetype) >0&&$total>0) {
                 $datadevicetype = '';
                 $cptdevicetype = 0;
                 $totalAffiche = 0;
@@ -140,7 +140,8 @@ switch($l){
                        OR useragent like "%Barca%"
                        OR useragent like "%Postbox%"
                        OR useragent like "%MailBar%"
-                       OR useragent like "%The Bat!%")')->fetch();
+                       OR useragent like "%The Bat!%"
+                       OR useragent like "%GoogleImageProxy%")')->fetch();
             $totalua = $TOTALUSERAGENT['total'];
             $totalAffiche = 0;
             $results_stat_ua= $cnx->query(
@@ -156,7 +157,8 @@ switch($l){
                        OR useragent like "%Barca%"
                        OR useragent like "%Postbox%"
                        OR useragent like "%MailBar%"
-                       OR useragent like "%The Bat!%")
+                       OR useragent like "%The Bat!%"
+                       OR useragent like "%GoogleImageProxy%")
                     GROUP BY useragent
                         ORDER BY data DESC;'
             );
@@ -187,10 +189,13 @@ switch($l){
                         $tmpDataUa['Barca']=$tmpDataUa['Barca']+$tab['data'];
                     }elseif(preg_match('/Airmail(?: (\d+[\.\d]+))?/iD', $str)) {
                         $tmpDataUa['Airmail']=$tmpDataUa['Airmail']+$tab['data'];
+                    }elseif(preg_match('/GoogleImageProxy?/iD', $str)) {
+                        $tmpDataUa['Gmail']=$tmpDataUa['Gmail']+$tab['data'];
                     }
                 }
                 $cptua=0;
                 $dataua='';
+                arsort($tmpDataUa);
                 foreach ($tmpDataUa as $uaName => $value) {
                     $cptua .= $value . ',';
                     $dataua .= '"' . $uaName . ' ('.round(((int)$value/$totalua*100),1).'%) ",';
@@ -243,7 +248,6 @@ switch($l){
         <article class="module width_full">
             <header><h3><?php echo tr("KEY_NUMBERS_ALL_LISTS"); ?></h3></header>  
                 <?php 
-                reset($array_stats_tmp);
                 echo '<table class="tablesorter" cellspacing="0"> 
                 <thead> 
                     <tr>

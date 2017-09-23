@@ -1,26 +1,10 @@
-<?
+<?php
 // ===============================
 //  Translated by AleX <DarkSide>
 //        WWW.DANOSSE.COM
 //   alexandrearaujo1@gmail.com
 // ===============================
-
-function translate($s, $i="") {
-    global $lang_array;
-
-    if(!isset($lang_array['portuguesbr'][$s]))
-      return ("[Translation required] : $s");
-
-    if($lang_array['portuguesbr'][$s]!="") {
-	if($i == "") return $lang_array['portuguesbr'][$s];
-        $sprint = $lang_array['portuguesbr'][$s];
-	return sprintf("$sprint" , $i);
-    }
-    else return ("[Translation required] : $s");
-}
-
-
-$lang_array['portuguesbr'] = array(
+$lang_array = array(
 		   //BTN
 		   "OK_BTN" => "OK",
 		   "YES" => "Sim",

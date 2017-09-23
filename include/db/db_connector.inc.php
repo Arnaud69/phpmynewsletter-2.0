@@ -11,6 +11,7 @@ if(isset($db_type)&&(in_array($db_type,$db_ok))){
             define("PDO_USERNAME",$login);
             define("PDO_PASSWORD",$pass);
             $cnx = new PDOExtended(PDO_DSN,PDO_USERNAME,PDO_PASSWORD);
+            $cnx->query("SET NAMES UTF8");
         break;
         case 'mssql':
             if(!defined( "_DB_MSSQL_LAYER" )){

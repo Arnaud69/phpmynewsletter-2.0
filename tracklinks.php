@@ -196,14 +196,16 @@ if(empty($id_mail)&&empty($list_id)){
                        OR useragent like "%Barca%"
                        OR useragent like "%Postbox%"
                        OR useragent like "%MailBar%"
-                       OR useragent like "%The Bat!%")')->fetch();
+                       OR useragent like "%The Bat!%"
+                       OR useragent like "%GoogleImageProxy%")')->fetch();
             $totalua = $TOTALUSERAGENT['total'];
             $totalAffiche = 0;
             $results_stat_ua= $cnx->query(
             'SELECT DISTINCT(useragent) AS useragent,
                     COALESCE(COUNT(*),0) AS data
                 FROM ' . $row_config_globale['table_tracking'] . ' 
-                    WHERE (useragent like "%outlook%"
+                    WHERE subject='.$id_mail.' 
+                       AND (useragent like "%outlook%"
                        OR useragent like "%Thunderbird%"
                        OR useragent like "%Icedove%"
                        OR useragent like "%Shredder%"
@@ -212,7 +214,8 @@ if(empty($id_mail)&&empty($list_id)){
                        OR useragent like "%Barca%"
                        OR useragent like "%Postbox%"
                        OR useragent like "%MailBar%"
-                       OR useragent like "%The Bat!%")
+                       OR useragent like "%The Bat!%"
+                       OR useragent like "%GoogleImageProxy%")
                     GROUP BY useragent
                         ORDER BY data DESC;'
             );
@@ -243,14 +246,20 @@ if(empty($id_mail)&&empty($list_id)){
                         $tmpDataUa['Barca']=$tmpDataUa['Barca']+$tab['data'];
                     }elseif(preg_match('/Airmail(?: (\d+[\.\d]+))?/iD', $str)) {
                         $tmpDataUa['Airmail']=$tmpDataUa['Airmail']+$tab['data'];
+                    }elseif(preg_match('/GoogleImageProxy?/iD', $str)) {
+                        $tmpDataUa['Gmail']=$tmpDataUa['Gmail']+$tab['data'];
                     }
                 }
                 $cptua=0;
                 $dataua='';
+                arsort($tmpDataUa);
                 foreach ($tmpDataUa as $uaName => $value) {
                     $cptua .= $value . ',';
                     $dataua .= '"' . $uaName . ' ('.round(((int)$value/$totalua*100),1).'%) ",';
+                    $totalAfficheUa = $totalAfficheUa+(int)$value;
                 }
+                $cptua .= $totalua-$totalAfficheUa;
+                $dataua .= '"Others <1% ('.round((($totalua-$totalAfficheUa)/$totalua*100),2).'%) ",';
             }
         ?>
         <section>                                                                            

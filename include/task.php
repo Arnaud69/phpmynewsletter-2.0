@@ -147,8 +147,8 @@ if(count($detail_task)==0){
     }
     $AltMessage = $message;
     $mail->WordWrap = 70;    
-    if (file_exists(DOCROOT.'/DKIM/DKIM_config.php')&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
-        include(DOCROOT.'/DKIM/DKIM_config.php');
+    if (file_exists(DOCROOT.'/include/DKIM/DKIM_config.php')&&($row_config_globale['sending_method']=='smtp'||$row_config_globale['sending_method']=='php_mail')) {
+        include(DOCROOT.'/include/DKIM/DKIM_config.php');
         $mail->DKIM_domain     = $DKIM_domain;
         $mail->DKIM_private    = $DKIM_private;
         $mail->DKIM_selector   = $DKIM_selector;

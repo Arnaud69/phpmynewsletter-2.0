@@ -1,79 +1,167 @@
 v2.0.4
-... ;-)
+                            GENERAL :
+                            * Correction des bugs de la version 2.0.3
+                            * Traduction complète du script, mise en fichier de tous les textes.
+                            * Validation de PhpMyNewsLetter pour PHP 5.4 et supérieur 
+                            (tests généraux avec HHVM beaucoup plus pointu) et prêt pour PHP 7.0 (sauf erreur ou omission de ma part...)
+                            * Suppressio des "HIDE" dans le menu gauche pour amélioration de la présentation /ergonomie
+                            TRADUCTIONS :
+                            * anglais / english
+                            OUTILS INTEGRES :
+                            * Phpmailer 5.2.21 
+                            * Amcharts 3.13.2 (librairie internalisée)
+                            * TinyMCE 4.1.9 (librairie internalisée)
+                            * DropZone 4.0.1 (librairie internalisée)
+                            * jQuery 1.11.2 (librairie internalisée)
+                            AMELIORATIONS :
+                            * Internalisation de l'heure serveur via php, puis incrément javascript (évite les appels ajax à chaque seconde)
+                            * Compte rendu des imports corrects et en erreur (par compteur)
+                            * Création de tous les répertoires nécessaires centralisés dans install.php (upload, DKIM, backup_crontab)
+                            * Test de la disponibilité de la fonction exec php
+                            * Prise en compte du numéro de campagne pour la gestion des mails en erreur, supprimés, désinscrits
+                            * Mot de passe administrateur obligatoire à l'installation
+                            * Visualisation des logs en modal (plus de téléchargement)
+                            * Suppression des espaces dans les noms documents envoyés sur le serveur par upload
+                            * Compression du code html pour envoi des mails (suppression des espaces et retour à la ligne inutiles)
+                            * Signalement des désinsriptions
+                            * Mails en erreur, désinscrits, supprimés par administrateur conservés en archive pour garder les listes saines
+                            GESTION ET VISUALISATION DES STATISTIQUES :
+                            * Suppression de JpGraph (incompatible HHVM)
+                            * Intégration de AmCharts pour comptes rendus d'envois, librairies externalisées
+                            * Statistiques des environnements à la lecture des mails :
+                                - Navigateurs et versions,
+                                - Système d'exploitation,
+                                - Support de lecture : ordinateur, tablette, téléphone mobile
+                                - Types de clients mails (thunderbird, Outlook, Icedove, etc...)
+                                - Identification des lectures Gmail
+                            * Bascule simplifiée d'une liste à une autre
+                            * Statistiques globales de toutes les listes sur la page des listes
+                            * Intégration de la librairie Charts.js pour statistiques globales par liste et globales toutes listes confondues
+                            * Ajout du nombre de clics dans chaque campagne
+                            GESTION DU TRACKING :
+                            * Ajout de la détection des OS, version, navigateur, support
+                            * Calcul du taux d'ouverture (Open Rate)
+                            * Calcul du ratio CTR (taux de clics sur envois) (CTR  : Click Through Rates)
+                            * Calcul du ratio ACTR (CTR ajusté : taux de clics sur ouvertures) (ACTR : Adjusted Click Through Rate)
+                            * Détection des clients sur ouverture d'un mail (Outlook, Icedove, Thunderbird, Lotus,...)
+                            * Correction d'un bug dans les calculs / stats
+                            GESTION DES MESSAGES ENVOYES :
+                            * Mise en place du "multi-part message in MIME format", balise AltBody
+                            * Messages quoted printable, et AltBody pour les clients mails non graphiques    
+                            * Encodage des mails envoyés possible en base64 au lieu de 8bit
+                            * Classe de test de l'email via SMTP avant envoi du mail
+                            (Attention : yahoo, ymail et rocketmail renvoient toujours OK)         
+                            GESTION DES TACHES PLANIFIEES :
+                            * Compte rendu automatique de fin de tâche planifiée par mail
+                            * possibilité de suppression d'une tâche planifiée non encore réalisée
+                            GESTION DES LOGS :
+                            * Ajout de l'environnement technique dans l'entête du log d'envoi final
+                            * Log des actions d'une journée
+                            * Log pour chaque envoi
+                            * Visualisation des logs en modal (plus de téléchargement)
+                            GESTIONS DES LISTES :
+                            * Duplication d'une liste en 2 clics
+                            * Fusion de 2 à n listes dans une liste nouvelle, avec contrôle des doublons
+                            * Correction du problème des imports
+                            * Gestion d'une table des emails supprimés manuellement, désinscrits en erreur. 
+                            (Evite les doublons en erreur d'envoi, permet une vérification aux inscriptions et ajouts manuels)
+                            * Notification de nouvel inscrit dans une liste (choix optionnel, désactivable dans configuration générale, onglet inscriptions)
+                            * Notifications des désinscriptions
+                            * Purge d'une liste (=suppression des mails d'une liste, uniquement)
+                            GESTIONS DES ABONNES :
+                            * Gestion des abonnés sur une seule page au lieu de 5
+                            * Ajout de la vérification de la structure d'une adresse mail
+                            * Ajout de la vérification du DNS correspondant au domaine du mail
+                            * Ajout de la possibilité de supprimer des mails en masse depuis un fichier externe
+                            * Ajout de couleurs pour distinguer les opérations : vert=ajout, rouge=suppression, jaune=autres opérations
+                            GESTIONS DES SMTPs : (Nouveau)
+                            * Pseudo LOAD BALANCING des envois sur plusieurs SMTP paramètrables
+                            * Ajout de la zone de choix d'un port pour configurer un nouveau SMTP
+                            * Gestion automatiques du SMTP Gmail, des SMTP mutualisés OVH, 1and1, Gandi, Online, Infomaniak par simple choix en liste déroulante
+                            * Distinction smtp GMAIL SSL (port 465) et TLS (port 587)
+                            GESTION DE LA REDACTION :
+                            * blocage de l'accès à la preview tant que la sauvegarde initiale n'est pas faite
+                            (risque de blocage sur planification d'envoi)
+                            * simulation de divers navigateurs (sur mobiles / tablettes) pour validation des messages dits "responsives"
+                            GESTION DES ENVOIS (dans la configuration globale) :
+                            * Activation / désactivation possible du tracking
+                            GESTION DES BOUNCES :
+                            * Suppression d'un email dans toutes les listes quand il est erreur bounce
 v2.0.3
-                          * Corrections de bugs signalés sur le forum
-                          * Génération d'un code HTML de souscription en ligne et en pop up
-                          * Mise en place des envois planifiés (valable sur serveurs dédiés et VPS !)
-                          * Gestion de la mailq, visualisation des mails en cours d'envoi et suppression individuelle / globale
-                          * Distingo des hébergements dédiés et mutualisés
-                          * Modératon de la vitesse du traitement des bounce
+                            * Corrections de bugs signalés sur le forum
+                            * Génération d'un code HTML de souscription en ligne et en pop up
+                            * Mise en place des envois planifiés (valable sur serveurs dédiés et VPS !)
+                            * Gestion de la mailq, visualisation des mails en cours d'envoi et suppression individuelle / globale
+                            * Distingo des hébergements dédiés et mutualisés
+                            * Modératon de la vitesse du traitement des bounce
 
 v2.0.2
-                          * Correction des bugs de la version 2.0.1
-                          * Gestion du Timezone, liste des fuseaux horaires à l'installation, modification possible en administration.
-                          * Test de la force du mot de passe à l'installation
-                          * Pas de gestion des bounce si la configuration n'a pas été générée
-                          * Souscription avec validation par captcha
-                          * Envoi des souscriptions (ou désinscriptions) en format html
-                          * Rechargement automatique du traitement des mails en erreurs (page tracking)
-                          * Test des paramètres pour traitement des mails bounce dans la configuration globale
-                          * Génération du code HTML de souscription aux lettres d'information (page configuration de la lettre d'information)
-                          * TinyMCE 4.0.26
-                          * PHPMailer 5.2.8
-                          * Ajout du List-Unsubscribe dans le header d'un mail
-                          * Vue du mail on-line
-                          * Ajout de pièces jointes (possibilités d'ajout et de suppression à tous les niveaux de création et d'envoi d'une campagne de mailing)
-                          * Contrôle de la version courante et information si nouvelle version disponible
-                          * Réécriture plus claire du portail de gestion
+                            * Correction des bugs de la version 2.0.1
+                            * Gestion du Timezone, liste des fuseaux horaires à l'installation, modification possible en administration.
+                            * Test de la force du mot de passe à l'installation
+                            * Pas de gestion des bounce si la configuration n'a pas été générée
+                            * Souscription avec validation par captcha
+                            * Envoi des souscriptions (ou désinscriptions) en format html
+                            * Rechargement automatique du traitement des mails en erreurs (page tracking)
+                            * Test des paramètres pour traitement des mails bounce dans la configuration globale
+                            * Génération du code HTML de souscription aux lettres d'information (page configuration de la lettre d'information)
+                            * TinyMCE 4.0.26
+                            * PHPMailer 5.2.8
+                            * Ajout du List-Unsubscribe dans le header d'un mail
+                            * Vue du mail on-line
+                            * Ajout de pièces jointes (possibilités d'ajout et de suppression à tous les niveaux de création et d'envoi d'une campagne de mailing)
+                            * Contrôle de la version courante et information si nouvelle version disponible
+                            * Réécriture plus claire du portail de gestion
 
 01/05/2014  v2.0.1
-                          * Correction des bugs de la version beta
-                          * auto-suggestion dans la recherche d'un mail pour les listes > 500 mails
+                            * Correction des bugs de la version beta
+                            * auto-suggestion dans la recherche d'un mail pour les listes > 500 mails
                           
-12/02/2014  v2.0beta1     PHP :
-                          * Reprise complète du code php
-                          * réécriture complète en UTF-8
-                          * Réduction du nombre de fichiers de fonction et de classes
-                          * Mise en place de tokens
-                          HTML :
-                          * Reprise complète du style (http://html5up.net), ergonomie, disposition des fonctionnalités
-                          SQL :
-                          * Ajout des "IF NOT EXIST" sur la création des tables : install.php
-                          * reprise de la classe de connexion
-                          * Optimisation automatique des tables (mysql)
-                          * Passage des tables en UTF8
-                          * Possibilité de choisir le moteur de base de données MySql à l'installation : InnoDB ou MyIsam
-                          PHPMAILER :
-                          * Mise à jour de PhpMailer V.5.2.7 (https://github.com/Synchro/PHPMailer/releases)
-                          * Suppression de la version de phpmailer dans les headers
-                          REDACTION DES MAILS :
-                          * Ajout de tinymce (V.4.0.16 : http://www.tinymce.com/) pour :
-                                - la composition des messages
-                                - en-têtes et pieds de message 
-                                * Avec plugins :
-                                    - responsive filemanger 9 pour gestion des images ajoutées dans les messages
-                                    - colorpicker
-                          * Suppression des espaces dans les noms de fichiers uploadés sur le serveur via responsive filemanager 9
-                          * Sauvegarde automatique des messages en cours de composition
-                          * Limitation à 78 caractères dans le sujet (norme RFC 2822 section 2.1.1) avec décompte du nombre de caractères restants possible
-                          * Choix de composition d'un mail : TinyMCE ou code HTML (généré par une autre appli par exemple)
-                          * Bouton d'enregistrement d'un mail en cours de composition
-                          ENVOI DES MAILS :
-                          * ajout de la possibilité d'usage du SMTP gmail (NB : avoir un compte gmail !)
-                          * Suppression de la fonction email() de on-line
-                          * Ajout de l'envoi d'un mail de prévisualisation avant envoi de masse
-                          * Envoi des mails en ajax avec barre de progression et indication du pourcentage de la progression
-                          * Traitement des mails non distribués (le "bounce handler") : mise à jour de la base pour traitement dans la page de gestion des e-mails
-                          * Mise en place de la reprise d'un envoi si un envoi n'a pas été terminé. Cette fonctionnalité permet également d'adresser une lettre d'information aux inscrits postérieurs à l'envoi 
+12/02/2014  v2.0beta1     
+                            PHP :
+                            * Reprise complète du code php
+                            * réécriture complète en UTF-8
+                            * Réduction du nombre de fichiers de fonction et de classes
+                            * Mise en place de tokens
+                            HTML :
+                            * Reprise complète du style (http://html5up.net), ergonomie, disposition des fonctionnalités
+                            SQL :
+                            * Ajout des "IF NOT EXIST" sur la création des tables : install.php
+                            * reprise de la classe de connexion
+                            * Optimisation automatique des tables (mysql)
+                            * Passage des tables en UTF8
+                            * Possibilité de choisir le moteur de base de données MySql à l'installation : InnoDB ou MyIsam
+                            PHPMAILER :
+                            * Mise à jour de PhpMailer V.5.2.7 (https://github.com/Synchro/PHPMailer/releases)
+                            * Suppression de la version de phpmailer dans les headers
+                            REDACTION DES MAILS :
+                            * Ajout de tinymce (V.4.0.16 : http://www.tinymce.com/) pour :
+                            - la composition des messages
+                            - en-têtes et pieds de message 
+                            * Avec plugins :
+                            - responsive filemanger 9 pour gestion des images ajoutées dans les messages
+                            - colorpicker
+                            * Suppression des espaces dans les noms de fichiers uploadés sur le serveur via responsive filemanager 9
+                            * Sauvegarde automatique des messages en cours de composition
+                            * Limitation à 78 caractères dans le sujet (norme RFC 2822 section 2.1.1) avec décompte du nombre de caractères restants possible
+                            * Choix de composition d'un mail : TinyMCE ou code HTML (généré par une autre appli par exemple)
+                            * Bouton d'enregistrement d'un mail en cours de composition
+                            ENVOI DES MAILS :
+                            * ajout de la possibilité d'usage du SMTP gmail (NB : avoir un compte gmail !)
+                            * Suppression de la fonction email() de on-line
+                            * Ajout de l'envoi d'un mail de prévisualisation avant envoi de masse
+                            * Envoi des mails en ajax avec barre de progression et indication du pourcentage de la progression
+                            * Traitement des mails non distribués (le "bounce handler") : mise à jour de la base pour traitement dans la page de gestion des e-mails
+                            * Mise en place de la reprise d'un envoi si un envoi n'a pas été terminé. Cette fonctionnalité permet également d'adresser une lettre d'information aux inscrits postérieurs à l'envoi 
                             d'une lettre d'information.
-                          GESTION DES EMAILS :
-                          * Gestion des e-mails en erreur : modification ou suppression manuelle
-                          * Horodatage des listes d'abonnés exportées via la console administration
-                          STATISTIQUES :
-                          * Mise en place de statistiques issues du tracking 
+                            GESTION DES EMAILS :
+                            * Gestion des e-mails en erreur : modification ou suppression manuelle
+                            * Horodatage des listes d'abonnés exportées via la console administration
+                            STATISTIQUES :
+                            * Mise en place de statistiques issues du tracking 
                             (mails envoyés, mails ouverts, lectures de mails, désinscription, échec de distribution)
-                          * Graphiques de stats JpGraph v3.5.0b1 (http://jpgraph.net/)
-                          * Tracking des liens cliqués inclus dans les mails, avec rendu graphique
+                            * Graphiques de stats JpGraph v3.5.0b1 (http://jpgraph.net/)
+                            * Tracking des liens cliqués inclus dans les mails, avec rendu graphique
 
 29/05/2005  v0.8beta4     * Mail charset is now configurable
                           * News subscription form

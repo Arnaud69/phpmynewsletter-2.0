@@ -1,30 +1,4 @@
 <?php
-session_start();
-date_default_timezone_set('Europe/Berlin');
-if(!file_exists("include/config.php")){
-    header("Location:install.php");
-    exit;
-} else{
-    include("_loader.php");
-}
-$cnx->query("SET NAMES UTF8");
-$row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
-(count($row_config_globale)>0)?$r='SUCCESS':$r='';
-if($r != 'SUCCESS'){
-    include("include/lang/english.php");
-    echo "<div class='error'>".tr($r)."<br>";
-    echo "</div>";
-    exit;
-}
-if(empty($row_config_globale['language']))$row_config_globale['language']="english";
-include("include/lang/".$row_config_globale['language'].".php");
-$form_pass=(empty($_POST['form_pass'])?"":$_POST['form_pass']);
-if(!isset($form_pass) || $form_pass=="")$form_pass=(empty($_GET['form_pass'])?"":$_GET['form_pass']);
-$token=(empty($_POST['token'])?"":$_POST['token']);
-if(!isset($token) || $token=="")$token=(empty($_GET['token'])?"":$_GET['token']);
-if(!tok_val($token)){
-    quick_Exit();
-}
 $op_true = array(
     'createConfig',
     'init',
@@ -123,7 +97,7 @@ if(in_array($op,$op_true)){
         break;
         case 'subscriber_del_temp':
             $del_tmpaddr  = (empty($_POST['TmpUserAdress']) ? "" : $_POST['TmpUserAdress']);
-            $deleted_temp = delete_subscriber($cnx,$row_config_globale['table_temp'],$list_id,$del_tmpaddr,$row_config_globale['table_email_deleted'],'by_admin');
+            $deleted_temp = delete_subscriber_tmp($cnx,$row_config_globale['table_temp'],$list_id,$del_tmpaddr,$row_config_globale['table_email_deleted'],'by_admin');
             if( $deleted_temp ){
                 $subscriber_op_msg_dt =  "<h4 class='alert_success'>".tr("SUBSCRIBER_TEMP_DELETED")."</h4>";
             }else{

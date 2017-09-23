@@ -32,8 +32,8 @@ $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 $upload_dir = '/'.$row_config_globale['path'].'images/'; // path from base_url to base of upload folder
 $current_path = '../../../../images/'; // relative path from filemanager folder to upload folder
 //thumbs folder can't put inside upload folder
-$thumbs_base_path = '../thumbs/'; // relative path from filemanager folder to thumbs folder (with final /)
-
+//$thumbs_base_path = '../thumbs/'; // relative path from filemanager folder to thumbs folder (with final /)
+$thumbs_base_path = '../../../../upload/';
 //--------------------------------------------------------------------------------------------------------
 // YOU CAN COPY AND CHANGE THESE VARIABLES INTO FOLDERS config.php FILES TO CUSTOMIZE EACH FOLDER OPTIONS
 //--------------------------------------------------------------------------------------------------------

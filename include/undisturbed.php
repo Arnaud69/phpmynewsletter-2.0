@@ -17,11 +17,11 @@ if($type_serveur=='dedicated'){
             foreach($bounced as $item){
                 echo '
                 <tr>
-                    <td>'.$item['status'].'</td>
-                    <td>'.$item['email'].'</td>
-                    <td>'.$item['type'].'</td>
-                    <td>'.$item['categorie'].'</td> 
-                    <td>'.$item['short_desc'].'</td>
+                    <td style="width:20%;">'.$item['status'].'</td>
+                    <td style="width:20%;">'.$item['email'].'</td>
+                    <td style="width:20%;">'.$item['type'].'</td>
+                    <td style="width:20%;">'.$item['categorie'].'</td> 
+                    <td style="width:20%;">'.$item['short_desc'].'</td>
                 </tr>
                 <tr>
                     <td colspan=5>'.$item['long_desc'].'</td>

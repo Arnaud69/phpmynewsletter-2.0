@@ -131,6 +131,14 @@
         echo "<input type='hidden' name='token' value='$token' />";
         echo "&nbsp;<input type='submit' value=' O K ' class='button' /></div>";
         echo "</form>";
+        $TOTALBROWSER = $cnx->query('SELECT COUNT(*) AS total 
+            FROM ' . $row_config_globale['table_tracking'] . ' 
+                WHERE subject IN (
+                        SELECT id_mail 
+                            FROM ' . $row_config_globale['table_send'] . ' 
+                                WHERE id_list=' . $list_id .' )'
+                    )->fetch();
+        $totalbrowser = $TOTALBROWSER['total'];
         $results_stat_browser = $cnx->query(
         'SELECT DISTINCT(CONCAT(browser,\' \',SUBSTRING_INDEX(version,\'.\',1))) AS browser,
                 COALESCE(COUNT(*),0) AS data
@@ -145,18 +153,34 @@
                     AND version!=\'unknown\'
                     AND browser NOT IN (\'iPhone\',\'iPad\',\'Android\')
             GROUP BY CONCAT(browser,\' \',SUBSTRING_INDEX(version,\'.\',1))
-            ORDER BY data DESC;'
+            HAVING COUNT(*)>'.($totalbrowser/100).'
+                ORDER BY data DESC;'
         );
         if (count($results_stat_browser) >0) {
             $databrowser = '';
-            $cptbrowser = 0;
+            (int)$cptbrowser;
+            (int)$totalAffiche;
             foreach ($results_stat_browser as $tab) {
                 $cptbrowser .= $tab['data'] . ',';
-                $databrowser .= '"' . $tab['browser'] . '",';
+                $databrowser .= '"' . $tab['browser'] . ' ('.round(((int)$tab['data']/$totalbrowser*100),2).'%) ",';
+                $totalAffiche = $totalAffiche+(int)$tab['data'];
+            }
+            if(($totalbrowser-$totalAffiche)>0){
+                $cptbrowser .= $totalbrowser-$totalAffiche ;
+                $databrowser .= '"Others <1% ('.round((($totalbrowser-$totalAffiche )/$totalbrowser*100),2).'%) ",';
             }
         }
-        $results_stat_platform = $cnx->query(
-        'SELECT DISTINCT(platform) AS platform,COALESCE(COUNT(*),0) AS data
+        $TOTALPLATFORM = $cnx->query('SELECT COUNT(*) AS total 
+            FROM ' . $row_config_globale['table_tracking'] . ' 
+                WHERE platform!=\'\' 
+                    AND platform!=\'unknown\'
+                    AND subject IN (
+                        SELECT id_mail 
+                            FROM ' . $row_config_globale['table_send'] . ' 
+                                WHERE id_list=' . $list_id .' )'
+                    )->fetch();
+        $totalplatform = $TOTALPLATFORM['total'];
+        $results_stat_platform = $cnx->query('SELECT platform,COUNT(*) AS data
             FROM ' . $row_config_globale['table_tracking'] . ' 
                 WHERE platform!=\'\' 
                     AND platform!=\'unknown\'
@@ -170,14 +194,29 @@
         );
         if (count($results_stat_platform) >0) {
             $dataplatform = '';
-            $cptplatform = 0;
+            (int)$cptplatform;
+            (int)$totalAffiche;
             foreach ($results_stat_platform as $tab) {
-                $cptplatform .=  $tab['data'] . ',';
-                $dataplatform .= '"' . $tab['platform'] . '",';
+                $cptplatform .=  (int)$tab['data'] . ',';
+                $dataplatform .= '"' . $tab['platform'] . ' ('.round(((int)$tab['data']/$totalplatform*100),2).'%) ",';
+                $totalAffiche = $totalAffiche+(int)$tab['data'];
+            }
+            if(($total-$totalAffiche)>0){
+                $cptplatform .= $total-$totalAffiche ;
+                $dataplatform .= '"Others <1% ('.round((($totalplatform-$totalAffiche )/$totalplatform*100),2).'%) ",';
             }
         }
-        $results_stat_devicetype= $cnx->query(
-        'SELECT DISTINCT(devicetype) AS devicetype,COALESCE(COUNT(*),0) AS data
+        $TOTALDEVICE = $cnx->query('SELECT COUNT(*) AS totalDevice
+            FROM ' . $row_config_globale['table_tracking'] . ' 
+                WHERE devicetype!=\'\'
+                    AND subject IN (
+                        SELECT id_mail 
+                            FROM ' . $row_config_globale['table_send'] . ' 
+                                WHERE id_list=' . $list_id . '
+                    )'
+        )->fetch();
+        $totaldv = $TOTALDEVICE['totalDevice'];
+        $results_stat_devicetype= $cnx->query('SELECT devicetype,COALESCE(COUNT(*),0) AS data
             FROM ' . $row_config_globale['table_tracking'] . ' 
                 WHERE devicetype!=\'\'
                     AND subject IN (
@@ -188,16 +227,45 @@
             GROUP BY devicetype
                 ORDER BY data DESC;'
         );
-        if (count($results_stat_devicetype) >0) {
+        if (count($results_stat_devicetype) >0&&$totaldv>0) {
             $datadevicetype = '';
-            $cptdevicetype = 0;
+            (int)$cptdevicetype;
+            (int)$totalAffiche;
             foreach ($results_stat_devicetype as $tab) {
-                $cptdevicetype .= $tab['data'] . ',';
-                $datadevicetype .= '"' . $tab['devicetype'] . '",';
+                $cptdevicetype .= (int)$tab['data'] . ',';
+                $datadevicetype .= '"' . $tab['devicetype'] . ' ('.round(((int)$tab['data']/$totaldv*100),2).'%) ",';
+                $totalAffiche = (int)$totalAffiche+(int)$tab['data'];
+            }
+            if(($totaldv-$totalAffiche)>0){
+                $cptdevicetype .= $totaldv-$totalAffiche ;
+                $datadevicetype .= '"Others <1% ('.round((($totaldv-$totalAffiche )/$totaldv*100),2).'%) ",';
             }
         }
-        $results_stat_ua= $cnx->query(
-        'SELECT DISTINCT(useragent) AS useragent,COALESCE(COUNT(*),0) AS data
+        $TOTALUSERAGENT = $cnx->query(
+        'SELECT COUNT(*) AS total 
+            FROM ' . $row_config_globale['table_tracking'] . ' 
+                WHERE (
+                       useragent like "%outlook%"
+                    OR useragent like "%Thunderbird%"
+                    OR useragent like "%Icedove%"
+                    OR useragent like "%Shredder%"
+                    OR useragent like "%Airmail%"
+                    OR useragent like "%Lotus-Notes%"
+                    OR useragent like "%Barca%"
+                    OR useragent like "%Postbox%"
+                    OR useragent like "%MailBar%"
+                    OR useragent like "%The Bat!%"
+                    OR useragent like "%GoogleImageProxy%"
+                    )
+                    AND subject IN (
+                        SELECT id_mail 
+                            FROM ' . $row_config_globale['table_send'] . ' 
+                                WHERE id_list=' . $list_id . '
+                    )'
+        )->fetch();
+        $totalua = $TOTALUSERAGENT['total'];
+        (int)$totalAffiche;
+        $results_stat_ua= $cnx->query('SELECT useragent,COALESCE(COUNT(*),0) AS data
             FROM ' . $row_config_globale['table_tracking'] . ' 
                 WHERE (
                       useragent like "%outlook%"
@@ -216,11 +284,12 @@
                         SELECT id_mail 
                             FROM ' . $row_config_globale['table_send'] . ' 
                                 WHERE id_list=' . $list_id . '
-                    )
+                   )
                 GROUP BY useragent
+                HAVING COUNT(*)>'.($totalua/100).'
                     ORDER BY data DESC;'
         );
-        if (count($results_stat_ua) >0) {
+        if (count($results_stat_ua) >0&&$totalua>0) {
             $tmpDataUa=array(
                 "Thunderbird"=>0,
                 "Shredder"=>0,
@@ -264,11 +333,20 @@
                     $tmpDataUa['Gmail']=$tmpDataUa['Gmail']+$tab['data'];
                 }
             }
-            $cptua=0;
+            (int)$cptua;
             $dataua='';
+            (int)$totalAfficheUa;
+            arsort($tmpDataUa);
             foreach ($tmpDataUa as $uaName => $value) {
-                $cptua .= (int)$value . ',';
-                $dataua .= '"' . $uaName . '",';
+                if((int)$value>0){
+                    $cptua .= (int)$value . ',';
+                    $dataua .= '"' . $uaName . ' ('.round(((int)$value/$totalua*100),2).'%) ",';
+                    $totalAfficheUa = $totalAfficheUa+(int)$value;
+                }
+            }
+            if(($totalua-$totalAfficheUa)>0){
+                $cptua .= $totalua-$totalAfficheUa;
+                $dataua .= '"Others <1% ('.round((($totalua-$totalAfficheUa)/$totalua*100),2).'%) ",';
             }
         }
         ?>
