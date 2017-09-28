@@ -1,8 +1,8 @@
 phpmynewsletter 2.0
 ===================
 
-# CURRENT : 2.0.4
- release 12/12/2016
+# CURRENT : 2.0.5
+ release 28/09/2017
  
 # INSTALLATION
 Download zip, unzip in a folder, go to install.php in your browser, complete fields and questions, enjoy !
