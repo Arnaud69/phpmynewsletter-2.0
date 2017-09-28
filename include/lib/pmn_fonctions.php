@@ -1,5 +1,5 @@
 <?php
-$PMNL_VERSION = "2.0.4";
+$PMNL_VERSION = "2.0.5";
 if (!function_exists('iconv') && function_exists('libiconv')) {
     function iconv($input_encoding, $output_encoding, $string) {
         return libiconv($input_encoding, $output_encoding, $string);
@@ -24,7 +24,7 @@ function add_subscriber($cnx, $table_email, $list_id, $add_addr, $table_email_de
                                                     WHERE list_id='".($cnx->CleanInput($list_id))."' 
                                                         AND email='".($cnx->CleanInput($add_addr))."'")->fetch());
         if($black_listed==''){
-            $hash = unique_id();
+            $hash = unique_id($add_addr);
             if($cnx->query("INSERT INTO ".$table_email." (`email`, `list_id`, `hash`) 
                                 VALUES ('".($cnx->CleanInput($add_addr))."', '".($cnx->CleanInput($list_id))."', '".($cnx->CleanInput($hash))."')")){
                 return 2;
@@ -65,13 +65,13 @@ function addSubscriberMod($cnx, $table_email, $ref_sub_table, $list_id, $addr) {
     }
     return true;
 }
-function addSubscriberDirect($cnx, $table_email, $list_id, $addr, $table_email_deleted) {
+function addSubscriberDirect($cnx, $table_email, $list_id, $addr) {
     $addr = trim(strtolower($addr));
     $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
     if (count($x)>0) {
         return false;
     } else {
-        $hash = unique_id();
+        $hash = unique_id($addr);
         if ($cnx->query("INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')")) {
             $cnx->query("DELETE FROM $table_email_deleted WHERE email='$addr' AND list_id='$list_id'");
             return $hash;
@@ -89,7 +89,7 @@ function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
     if (count($x)>0) {
         return false;
     }
-    $hash = unique_id();
+    $hash = unique_id($addr);
     if($_SESSION['timezone']!=''){
         date_default_timezone_set($_SESSION['timezone']);
     }elseif(file_exists('include/config.php')) {
@@ -134,33 +134,35 @@ function checkVersion(){
         echo '<span class="error">fichier version non détecté</span>';
     } else {
         $header=checkVersionCurl();
-        $Vcurrent=intval(str_replace('.','',$VL));
-        $Vdisponible=intval(trim(str_replace('.','',$header['content'])));
-        echo ($Vdisponible>$Vcurrent?'<li class="icn_alert"><a href="http://www.phpmynewsletter.com/telechargement.html" target="_blank">Version '
-              .$header['content'].' disponible !</a></li>':'');
+        if(version_compare($header['content'],$VL,'>')) {
+            echo  '<li class="icn_alert"><a href="http://www.phpmynewsletter.com/telechargement.html" 
+                  target="_blank">Version '.$header['content'].' disponible !</a></li>';
+        }
     }
 }
-function checkVersionCurl(){
-    $options = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_ENCODING       => "",
-        CURLOPT_USERAGENT      => "Check Version PhpMyNewsLetter",
-        CURLOPT_AUTOREFERER    => true,
-        CURLOPT_CONNECTTIMEOUT => 120,
-        CURLOPT_TIMEOUT        => 120,
-        CURLOPT_MAXREDIRS      => 10,
-    );
-    $ch      = curl_init('http://www.phpmynewsletter.com/versions/current_version');
-    curl_setopt_array( $ch, $options );
-    $content = curl_exec( $ch );
-    $err     = curl_errno( $ch );
-    $errmsg  = curl_error( $ch );
-    $header  = curl_getinfo( $ch );
-    curl_close( $ch );
-    $header['errno']   = $err;
-    $header['errmsg']  = $errmsg;
-    $header['content'] = $content;
+function checkVersionCurl() {
+    (function_exists('curl_init')) ? '' : die('cURL Must be installed for geturl function to work. Ask your host to enable it or uncomment extension=php_curl.dll in php.ini');
+    $h[0] = "Accept: text/xml,application/xml,application/xhtml+xml,";
+    $h[0] .= "text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
+    $h[] = "Cache-Control: max-age=0";
+    $h[] = "Connection: keep-alive";
+    $h[] = "Keep-Alive: 300";
+    $h[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    $h[] = "Accept-Language: en-us,en;q=0.5";
+    $h[] = "Pragma: ";
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, 'https://www.phpmynewsletter.com/versions/current_version');
+    curl_setopt($curl, CURLOPT_USERAGENT, 'Check Version PhpMyNewsLetter');
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $h);
+    curl_setopt($curl, CURLOPT_REFERER, 'https://www.phpmynewsletter.com/versions/current_version');
+    curl_setopt($curl, CURLOPT_ENCODING, 'gzip,deflate');
+    curl_setopt($curl, CURLOPT_AUTOREFERER, true);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+    $header['errno']   = curl_errno($curl);
+    $header['errmsg']  = curl_error($curl);
+    $header['content'] = curl_exec($curl);
+    curl_close($curl);
     return $header;
 }
 function clean_old_tmp_files(){
@@ -390,6 +392,18 @@ function flushTempTable($cnx, $temp_table, $limit) {
         return false;
     }
 }
+function get_cpt_send($cnx, $row_config_globale, $list_id) {
+    $rowCpt = $cnx->SqlRow("SELECT cpt 
+            FROM ".$row_config_globale['table_send'] ."
+                WHERE id_list = '$list_id' ORDER BY id_mail DESC LIMIT 1");
+    $cpt_send = $rowCpt['cpt'];
+    $rowCpt = $cnx->SqlRow("SELECT count(*) AS CPTMAIL
+            FROM ".$row_config_globale['table_email']."
+                WHERE list_id = '$list_id' AND campaign_id>0");
+    $cpt_mail = $rowCpt['CPTMAIL'];
+    return (int)$cpt_mail-(int)$cpt_send;
+    
+}
 function get_first_newsletter_id($cnx,$lists_table) {
     $x = $cnx->query("SELECT list_id FROM $lists_table LIMIT 1")->fetch();
     if (count($x) == 0){
@@ -400,10 +414,9 @@ function get_first_newsletter_id($cnx,$lists_table) {
 }
 function get_id_send($cnx,$list_id,$table_send){
     return $cnx->query("SELECT count(id) AS CPTID FROM $table_send WHERE id_list = '".$list_id."'")->fetch();
-
 }
 function get_message($cnx, $table_archive, $msg_id) {
-    $x = $cnx->query("SELECT type, subject, message FROM $table_archive WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
+    $x = $cnx->query("SELECT type, subject, message, sender_email FROM $table_archive WHERE id='$msg_id'")->fetch(PDO::FETCH_ASSOC);
     if(!$x){
         return -1;
     } else {
@@ -432,7 +445,6 @@ function get_newsletter_name($cnx, $lists_table, $list_id) {
     }
 }
 function get_newsletter_total_subscribers($cnx, $email_table, $list_id, $msg_id) {
-
     $row = $cnx->query("SELECT COUNT( email ) AS CPT 
                             FROM $email_table 
                         WHERE list_id ='$list_id' 
@@ -496,6 +508,33 @@ function get_stats_send_global($cnx,$param_global){
                             ) AS CPT_CLICKED
                         FROM ".$param_global['table_send']." LIMIT 1")->fetchAll(PDO::FETCH_ASSOC);
 }
+function get_stats_send_global_by_list($cnx,$param_global,$list_id){
+    return $cnx->query("SELECT
+                            (
+                                SELECT COUNT(id) FROM ".$param_global['table_send']." WHERE id_list=$list_id
+                            ) AS TSEND,
+                            (
+                                SELECT SUM(cpt) FROM ".$param_global['table_send']." WHERE id_list=$list_id
+                            ) AS TMAILS,
+                            (
+                                SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject IN
+                                    (SELECT id FROM ".$param_global['table_archives']."  WHERE list_id=$list_id)
+                            ) AS TID,
+                            (
+                                SELECT SUM(error) FROM ".$param_global['table_send']." WHERE id_list=$list_id
+                            ) AS TERROR,
+                            (
+                                SELECT SUM(`leave`) FROM ".$param_global['table_send']." WHERE id_list=$list_id
+                            ) AS TLEAVE,
+                            (
+                                SELECT SUM(open_count) FROM ".$param_global['table_tracking']." WHERE subject IN
+                                    (SELECT id FROM ".$param_global['table_archives']."  WHERE list_id=$list_id)
+                            ) AS TOPEN,
+                            (
+                                SELECT SUM(cpt) FROM ".$param_global['table_track_links']." WHERE list_id=$list_id
+                            ) AS CPT_CLICKED
+                        FROM ".$param_global['table_send']." LIMIT 1")->fetchAll(PDO::FETCH_ASSOC);
+}
 function get_subscribers($cnx, $table_email, $list_id) {
     return $subscribers = $cnx->query("SELECT email 
                                            FROM $table_email 
@@ -515,7 +554,7 @@ function getAddress($cnx,$table_email,$list_id,$begin='',$limit='',$msg_id) {
                                 ORDER BY id ASC
                                 $limite")->fetchAll(PDO::FETCH_ASSOC);
 }
-function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list) {
+function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list,$type_user=false,$droit_liste=0) {
     if (empty($offset)) $offset = 0;
     $row = $cnx->query("SELECT id, date, type, subject, message, list_id 
                             FROM $table_archives 
@@ -525,26 +564,34 @@ function getArchiveMsg($cnx, $table_archives, $msg_id,$token,$list) {
     } else {
         $subject = htmlspecialchars($row['subject']);
         $subject = stripslashes($subject);
-        echo "<h4>Sujet : " . $subject . "</h4><h4>Envoyé le : " . $row['date'] . "</h4><h4>format : ". $row['type'] ."</h4><br>";
-        echo "<div class='archmsg'><iframe src='preview.php?list_id=". $row['list_id'] 
-              ."&token=$token&id=". $row['id'] ."' width='100%' height='400px' 
-              style='border:2px solid #e0e0e3;'><p>Oups ! Your browser does not support iframes.</p></iframe></div>";
+        echo "<h4>Sujet : " . $subject . "<br>Envoyé le : " . $row['date'] . "<br>format : ". $row['type'] ."</h4><br>";
+        echo "<div class='iframePreview' style='width:100%'><iframe src='preview.php?list_id=". $row['list_id'] 
+              ."&token=$token&id=". $row['id'] ."' width='100%' height='300px' frameborder='0' style='border:0;' scrolling='no' id='_preview' scrolling='no' onload='rszifr(this)'><p>Oups ! Your browser does not support iframes.</p></iframe></div>";
         echo "<br>";
         echo "<div class='archmsg' style='padding-bottom:15px;text-align:center;'><form action='".$_SERVER['PHP_SELF']."' method='post' name='selected_newsletter'>";
-        echo "<br>Utiliser ce message comme modèle pour nouvelle rédaction avec la liste : <select name='list_id' class='input'>";
+        echo "<br>Utiliser ce message comme modèle pour nouvelle rédaction avec la liste : <select name='list_id' class='selectpicker' data-width='auto'>";
         foreach  ($list as $item) {
-            echo "<option value='" . $item['list_id'] . "' ";
-            if($row['list_id']== $item['list_id']){
-                echo "selected='selected' ";
+            if($droit_liste==0||$type_user) {
+                echo "<option value='" . $item['list_id'] . "' ";
+                if($row['list_id']== $item['list_id']){
+                    echo "selected='selected' ";
+                }
+                echo ">" . $item['newsletter_name'] . "</option>";
+            } elseif(($droit_liste>0&&!$type_user)&&$droit_liste==$item['list_id']) {
+                echo "<option value='" . $item['list_id'] . "' ";
+                if($row['list_id']== $item['list_id']){
+                    echo "selected='selected' ";
+                }
+                echo ">" . $item['newsletter_name'] . "</option>";
+        
             }
-            echo ">" . $item['newsletter_name'] . "</option>";
         }
         echo "</select>";
         echo "<input type='hidden' name='import_id' value='".$row['id']."' />";
         echo "<input type='hidden' name='page' value='compose' />";
         echo "<input type='hidden' name='op' value='init' />";
         echo "<input type='hidden' name='token' value='$token' />";
-        echo "<div align='center'><input type='submit' value=' O K ' class='button' /></div>";
+        echo "&nbsp;<input type='submit' value=' O K ' class='btn btn-primary' />";
         echo "</form></div>";
     }
 }
@@ -553,7 +600,7 @@ function getArchivesSelectList($cnx, $table_archives, $msg_id = '', $form_name =
     if (count($row) == 0){
         return -1;
     } else {
-        $archive = "<select name='msg_id' onchange='document.$form_name.submit()' class='input'>";
+        $archive = "<select name='msg_id' onchange='document.$form_name.submit()' class='selectpicker' data-width='auto'>";
         foreach($row as $x) {
             $archive .= "<option value='".$x['id']."'";
             if ($msg_id == $x['id']){
@@ -567,6 +614,14 @@ function getArchivesSelectList($cnx, $table_archives, $msg_id = '', $form_name =
 }
 function getConfig($cnx, $list_id, $list_table) {
     $x = $cnx->query("SELECT * FROM $list_table WHERE list_id='$list_id'")->fetch(PDO::FETCH_ASSOC);
+    if(!$x){
+        return -1;
+    } else {
+        return $x;
+    }
+}
+function getConfigSender($cnx, $list_table, $email) {
+    $x = $cnx->query("SELECT * FROM $list_table WHERE email='".($cnx->CleanInput($email))."'")->fetch(PDO::FETCH_ASSOC);
     if(!$x){
         return -1;
     } else {
@@ -616,6 +671,58 @@ function getMsgDraft($cnx, $list_id, $table_draft) {
         return $NB;
     }
 }
+function getSenders($cnx, $table_senders, $sender='') {
+    $row = $cnx->query("SELECT name_organisation,email FROM $table_senders ORDER BY 1 ASC")->fetchAll(PDO::FETCH_ASSOC);
+    if (count($row) == 0){
+        return -1;
+    } else {
+        $liste_senders = "<select name='sender_id' id='sender_id' class='selectpicker' data-width='auto'><option value=''></option>";
+        foreach($row as $x) {
+            $liste_senders .= "<option value='".$x['email']."'";
+            if ($x['email']==$sender && $sender!='') $liste_senders .= ' selected';
+            $liste_senders .= ">" . stripslashes($x['email']) . ($x['name_organisation']!=''?" (".stripslashes($x['name_organisation']).")":"" ) . " </option>";
+        }
+        $liste_senders .= "</select>";
+        return $liste_senders;
+    }
+}
+function getSendersFull($cnx, $table_senders, $table_archives) {
+    $row = $cnx->query("SELECT A.subject,A.id,S.id_sender,S.name_organisation,S.email,S.smtp FROM $table_senders S
+                        LEFT JOIN $table_archives A
+                        ON S.last_send=A.id ORDER BY 1 ASC")->fetchAll(PDO::FETCH_ASSOC);
+    if (count($row) == 0){
+        return false;
+    } else {
+        return $row;
+    }
+}
+function getUsersFull($cnx, $table_users, $table_listes) {
+    $row = $cnx->query("SELECT U.*, L.newsletter_name FROM $table_users U 
+                        LEFT JOIN $table_listes L
+                        ON U.liste=L.list_id ORDER BY id_user ASC")->fetchAll(PDO::FETCH_ASSOC);
+    if (count($row) == 0){
+        return false;
+    } else {
+        return $row;
+    }
+}
+function getOneSenderFull($cnx, $table_senders, $account) {
+    $row = $cnx->query("SELECT * FROM $table_senders WHERE email = '$account'")->fetchAll(PDO::FETCH_ASSOC);
+    if (count($row) == 0){
+        return false;
+    } else {
+        return $row;
+    }
+}
+function getOneUserFull($cnx, $table_users, $account) {
+    $row = $cnx->query("SELECT * FROM $table_users WHERE email = '$account'")->fetchAll(PDO::FETCH_ASSOC);
+    if (count($row) == 0){
+        return false;
+    } else {
+        return $row;
+    }
+}
+
 function getSubscribersEmail($cnx, $table_config, $email, $from, $from_name, $list_id = '') {
     $conf = new config();
     $conf->getConfig($db_host, $db_login, $db_pass, $db_name, $table_config);
@@ -641,8 +748,11 @@ function getSubscribersNumbers($cnx,$table_email,$list_id) {
     $row = $cnx->SqlRow("SELECT COUNT( email ) AS CPT FROM $table_email WHERE list_id ='$list_id'");
     return $row['CPT'];
 }
+function getSubscribersTotal($cnx,$table_email) {
+    $row = $cnx->SqlRow("SELECT COUNT( distinct(email) ) AS CPT FROM $table_email");
+    return $row['CPT'];
+}
 function getWaitingMsg($hostname, $login, $pass, $database, $table_mod, $msg_id) {
-
     $sql = "SELECT date, type, email_from, subject,  message, list_id FROM $table_mod WHERE id='$msg_id'";
     $cnx->SqlRow($sql);
     if ($cnx->DbNumRows())
@@ -651,7 +761,6 @@ function getWaitingMsg($hostname, $login, $pass, $database, $table_mod, $msg_id)
         return false;
 }
 function getWaitingMsgList($hostname, $login, $pass, $database, $table_mod, $list_id, $msg_id = '') {
-
     $sql = "SELECT id, date, email_from, subject FROM $table_mod WHERE list_id='$list_id'";
     $cnx->SqlRow($sql);
     if ($cnx->DbNumRows()) {
@@ -684,6 +793,15 @@ function is_exec_available() {
         }
     }
     return $available;
+}
+function isSSL() {
+    if (!empty($_SERVER['https']) && $_SERVER['HTTPS'] != 'off') {
+        return true;
+    }
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        return true;
+    }
+    return false;
 }
 function isValidNewsletter($cnx, $table_list, $list_id) {
     $x = $cnx->query("SELECT list_id FROM $table_list WHERE list_id='$list_id'");
@@ -742,11 +860,20 @@ function list_newsletter($cnx, $lists_table) {
     }
 }
 function list_newsletter_last_id_send($cnx, $table_send, $list_id, $table_archives) {
-    $x = $cnx->query("SELECT MAX(s.id_mail) AS LAST_CAMPAIGN_ID, a.subject 
+    $x = $cnx->query("SELECT s.id_mail, a.subject 
                            FROM $table_send s
                                LEFT JOIN $table_archives a ON s.id_mail=a.id
-                           WHERE s.id_list='$list_id'")->fetchAll(PDO::FETCH_ASSOC);
+                           WHERE s.id_list='$list_id'
+                           ORDER BY id_mail DESC
+                           LIMIT 0,1")->fetchAll(PDO::FETCH_ASSOC);
     return $x;
+}
+function loggit($file,$msg) {
+	$file_to_write = dirname(dirname(__DIR__)).'/logs/'.str_replace(' ','_',$file);
+	$rs_log = @fopen($file_to_write, 'a+');
+	$tolog = date("d/m/Y H:i:s"). " : " . $msg . "\n";
+	fwrite($rs_log, $tolog, strlen($tolog));
+	fclose($rs_log);
 }
 function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr) {
     $cnx->SqlRow("DELETE FROM $table_moderation WHERE list_id = '$list_id' AND email='$mod_addr'");
@@ -754,7 +881,7 @@ function moderate_subscriber($cnx, $table_email, $table_sub, $list_id, $mod_addr
         echo $cnx->DbError();
         return false;
     }
-    $hash = unique_id();
+    $hash = unique_id($mod_addr);
     $cnx->SqlRow("INSERT INTO $table_email (`email`, `list_id`, `hash`) VALUES ('$mod_addr', '$list_id','$hash')");
     if ($cnx->DbError()) {
         echo $cnx->DbError();
@@ -802,21 +929,13 @@ function readfile_chunked($filename) {
     return fclose($handle); 
 }
 function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $hash, $id_mail, $table_email_deleted) {
-    $x = $cnx->query("SELECT email 
-                          FROM $table_email 
-                              WHERE list_id='$list_id' 
-                                  AND email='$addr' 
-                                  AND hash='$hash'")->fetch();
+    $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr' AND hash='$hash'")->fetch();
     if(!$x) {
         return -1;
     }elseif(count($x)==0){
         return -1;
     }else{
-        $y = $cnx->query("DELETE 
-                              FROM $table_email 
-                                  WHERE email='$addr' 
-                                      AND list_id='$list_id' 
-                                      AND hash='$hash'");
+        $y = $cnx->query("DELETE FROM $table_email WHERE email='$addr' AND list_id='$list_id' AND hash='$hash'");
         if(!$y){
             return -2;
         } else {
@@ -827,15 +946,16 @@ function removeSubscriber($cnx, $table_email, $table_send, $list_id, $addr, $has
         }
     }
 }
-function removeSubscriberDirect($cnx, $table_email, $list_id, $addr, $table_email_deleted) {
+function removeSubscriberDirect($cnx, $table_email, $list_id, $addr, $hash, $id_mail, $table_email_deleted) {
     $addr = strtolower($addr);
     $rm=$cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetch(PDO::FETCH_ASSOC);
-    if ($rm == 0)
-        return -1;
+    if ($rm == 0) return -1;
     if($cnx->query("DELETE FROM $table_email WHERE email='$addr' AND list_id='$list_id'")){
-        $cnx->query("INSERT INTO $table_email_deleted (list_id,email,type) VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$addr).",'unsub')");
+        $cnx->query("INSERT INTO $table_email_deleted (list_id,email,hash,type,campaign_id) 
+                     VALUES (".escape_string($cnx,$list_id).",".escape_string($cnx,$addr).",".escape_string($cnx,$hash).",'unsub',".escape_string($cnx,$id_mail).")");
         return true;
     } else return -2;
+    
 }
 function sanitize_output($buffer) {
     $search = array('/\>[^\S ]+/s','/[^\S ]+\</s','/(\s)+/s');
@@ -843,10 +963,11 @@ function sanitize_output($buffer) {
     $buffer = preg_replace($search, $replace, $buffer);
     return $buffer;
 }
-function save_message($cnx, $table_archive, $subject, $format, $body, $date, $list_id) {
+function save_message($cnx, $table_archive, $subject, $format, $body, $date, $list_id, $sender_email) {
     $id = $cnx->query("SELECT MAX(id) AS MAXID FROM $table_archive ORDER BY id DESC")->fetch(PDO::FETCH_ASSOC);
     $newid = $id['MAXID'] + 1;
-    $sql = "INSERT into $table_archive (`id`, `date`,`type`, `subject` , `message`, `list_id`) VALUES ('$newid', '$date','$format','$subject','$body', '$list_id')";
+    $sql = "INSERT into $table_archive (`id`, `date`,`type`, `subject` , `message`, `list_id`, `sender_email`) 
+                VALUES ('$newid', '$date','$format','$subject','$body', '$list_id', '$sender_email')";
     if ($cnx->query($sql)) {
         return $newid;
     } else {
@@ -864,8 +985,11 @@ function save_mod_message($hostname, $login, $pass, $database, $table_mod, $subj
     }
     return $newid;
 }
-function saveBounceFile($bounce_host,$bounce_user,$bounce_pass,$bounce_port,$bounce_service,$bounce_option) {
+function saveBounceFile($bounce_host,$bounce_user,$bounce_pass,$bounce_port,$bounce_service,$bounce_option,$bounce_mail='') {
     $configfile = "<?php\n";
+    if($bounce_mail!=''){
+        $configfile .= "\n\t$" . "bounce_mail = \"$bounce_mail\";";
+    }
     $configfile .= "\n\t$" . "bounce_host = \"$bounce_host\";";
     $configfile .= "\n\t$" . "bounce_user = \"$bounce_user\";";
     $configfile .= "\n\t$" . "bounce_pass = \"$bounce_pass\";";
@@ -890,7 +1014,8 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
                     $smtp_host,$smtp_port,$smtp_auth,$smtp_login,$smtp_pass,$sending_limit,
                     $validation_period,$sub_validation,$unsub_validation,$admin_email,
                     $admin_name,$mod_sub,$table_sub,$charset,$table_track,$table_send,
-                    $table_sauvegarde,$table_upload,$table_email_deleted,$alert_sub,$active_tracking) {
+                    $table_sauvegarde,$table_upload,$table_email_deleted,$table_senders,
+                    $alert_sub,$active_tracking) {
     $base_url          = escape_string($cnx,$base_url);
     $path              = escape_string($cnx,$path);
     $smtp_host         = escape_string($cnx,$smtp_host);
@@ -914,6 +1039,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
     $table_sauvegarde  = escape_string($cnx,$table_sauvegarde);
     $table_upload      = escape_string($cnx,$table_upload);
     $table_email_deleted=escape_string($cnx,$table_email_deleted);
+    $table_senders=escape_string($cnx,$table_senders);
     $alert_sub         = escape_string($cnx,$alert_sub);
     $active_tracking   = escape_string($cnx,$active_tracking);
     $sql = "UPDATE $config_table SET ";
@@ -930,7 +1056,7 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
                 charset=$charset, mod_sub_table='$table_sub', validation_period=$validation_period, 
                 table_tracking=$table_track, table_send=$table_send, table_sauvegarde=$table_sauvegarde, 
                 table_upload=$table_upload, alert_sub='$alert_sub', active_tracking='$active_tracking', 
-                table_email_deleted=$table_email_deleted";
+                table_email_deleted=$table_email_deleted, table_senders=$table_senders";
     if($sending_method == 'mail') {
         $sql .= ", smtp_host='', ";
         $sql .= "smtp_auth='0' ";
@@ -954,19 +1080,39 @@ function saveConfig($cnx,$config_table,$admin_pass,$archive_limit,$base_url,$pat
         return false;
     }
 }
-function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_config_table, $db_type = 'mysql', 
-                        $serveur='shared', $environnement='dev', $timezone, $code_mailtester) {
+function saveConfigFile($version,$db_host, $db_login, $db_pass, $db_name, $db_config_table, 
+                        $db_type = 'mysql', $serveur='shared', $environnement='dev', $timezone, 
+                        $code_mailtester, $timer_ajax, $timer_cron, $free_id, $free_pass,
+                        $end_task,$end_task_sms,$sub_validation_sms,$unsub_validation_sms,
+                        $alert_unsub,$nb_backup,$key_dkim,$loader,$menu) {
+    $prefix = str_replace ( 'config','',$db_config_table);
     $configfile = "<?php\nif ( !defined( '_CONFIG' ) ) {\n\tdefine('_CONFIG', 1);";
     $configfile .= "\n\t$" . "db_type            = '$db_type';";
     $configfile .= "\n\t$" . "hostname           = '$db_host';";
     $configfile .= "\n\t$" . "login              = '$db_login';";
     $configfile .= "\n\t$" . "pass               = '$db_pass';";
     $configfile .= "\n\t$" . "database           = '$db_name';";
+    $configfile .= "\n\t$" . "nb_backup          = $nb_backup;";
+    $configfile .= "\n\t$" . "prefix             = '$prefix';";
     $configfile .= "\n\t$" . "type_serveur       = '$serveur';";
     $configfile .= "\n\t$" . "code_mailtester    = '$code_mailtester';";
+    $configfile .= "\n\t$" . "key_dkim           = '$key_dkim';";
     $configfile .= "\n\t$" . "type_env           = '$environnement';";
     $configfile .= "\n\t$" . "timezone           = '$timezone';";
     $configfile .= "\n\t$" . "table_global_config= '$db_config_table';";
+    $configfile .= "\n\t$" . "timer_ajax         = $timer_ajax;";
+    $configfile .= "\n\t$" . "timer_cron         = $timer_cron;";
+    $configfile .= "\n\t$" . "end_task           = $end_task;";
+    $configfile .= "\n\t$" . "loader             = $loader;";
+    $configfile .= "\n\t$" . "menu               = '$menu';";
+    if($free_id!='' && $free_pass!='') {
+        $configfile .= "\n\t$" . "free_id            = '$free_id';";
+        $configfile .= "\n\t$" . "free_pass          = '$free_pass';";
+        $configfile .= "\n\t$" . "end_task_sms       = $end_task_sms;";
+        $configfile .= "\n\t$" . "sub_validation_sms = $sub_validation_sms;";
+        $configfile .= "\n\t$" . "unsub_validation_sms = $unsub_validation_sms;";
+    }
+    $configfile .= "\n\t$" . "alert_unsub        = $alert_unsub;";
     if(is_exec_available()){
         $configfile .= "\n\t$" . "exec_available     = true;";
     }else{
@@ -1198,6 +1344,17 @@ function sendEmail($send_method, $to, $from, $from_name, $subject, $body, $auth 
     }
     return true;
 }
+function send_sms($free_id,$free_pass,$msg) {
+    $opts = array('http' =>
+        array(
+            'method'  => 'POST'
+        )
+    );
+    $context  = stream_context_create($opts);
+    $url = "https://smsapi.free-mobile.fr/sendmsg?user=$free_id&pass=$free_pass&msg=$msg";
+    $result = file_get_contents($url, false, $context);
+    return $result;
+}
 function tok_gen($name = ''){
     @session_start();
     if (function_exists("hash_algos") and in_array("sha512",hash_algos())){
@@ -1252,9 +1409,14 @@ function tr($s, $i="") {
         return ("[Translation required] : $s");
     }
 }
-function unique_id() {
+function unique_id($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+    $clen = strlen($x);
+    $randomString = '';
+    for ($i = 0; $i < $clen; $i++) {
+        $randomString .= $x[rand(0, $clen - 1)];
+    }
     mt_srand((double) microtime() * 1000000);
-    return md5(mt_rand(0, 9999999));
+    return md5(mt_rand(0, 9999999).$randomString);
 }
 function UpdateEmailError($cnx , $table_email , $list_id , $email , $status , $type , $categorie ,
                           $short_desc , $long_desc , $campaign_id , $table_email_deleted , $table_send , $hash){
@@ -1264,7 +1426,7 @@ function UpdateEmailError($cnx , $table_email , $list_id , $email , $status , $t
                                             AND email='".($cnx->CleanInput($email))."'
                                             AND hash='".($cnx->CleanInput($hash))."'
                                             ")->fetch());
-    if($hash==''){
+    if($hash!=''){
         if ($cnx->query("INSERT IGNORE INTO ".$table_email_deleted." (id,email,list_id,hash,error,status,type,categorie,short_desc,long_desc,campaign_id)
                             SELECT id,email,list_id,hash,'Y','".($cnx->CleanInput($status))."','".($cnx->CleanInput($type))."',
                                     '".($cnx->CleanInput($categorie))."','".($cnx->CleanInput($short_desc))."',
@@ -1275,7 +1437,7 @@ function UpdateEmailError($cnx , $table_email , $list_id , $email , $status , $t
             if ($cnx->query("DELETE FROM ".$table_email." 
                                 WHERE email='" . ($cnx->CleanInput($email)) . "'
                                    AND hash = '" . ($cnx->CleanInput($hash)) . "'")) {
-                if ($cnx->query("UPDATE $table_send 
+                if ($cnx->query("UPDATE ".$table_send ."
                                     SET error=error+1 
                                         WHERE id_mail='".($cnx->CleanInput($campaign_id))."'")){
                     return true;
@@ -1294,7 +1456,7 @@ function validEmailAddress($email) {
     $email = trim($email);
     $exp = "/^(.*)@(.*)$/";
     preg_match($exp, $email, $matches);
-    $domains_to_kick_off=array('voila.fr','bocps.biz');
+    $domains_to_kick_off=array('voila.fr','bocps.biz','yahoogroupes.fr','yahoogroupes.com');
     if (is_string($email) && !empty($matches[1]) && filter_var($email, FILTER_VALIDATE_EMAIL) && !in_array($matches[2],$domains_to_kick_off)) {
         return (checkdnsrr($matches[2],'MX'));
     } else {
@@ -1303,4 +1465,89 @@ function validEmailAddress($email) {
 }
 function msleep($time){
     usleep($time * 1000000);
+}
+function paginate($page = 1, $totalitems = 0, $limit = 15, $adjacents = 1, $targetpage = "/", $pagestring = "?page=", $suite_eventuelle = ""){
+    if (!$adjacents) $adjacents = 1;
+    if (!$limit) $limit = 15;
+    if (!$page) $page = 1;
+    if (!$targetpage) $targetpage = "/";
+    $prev       = $page - 1;
+    $next       = $page + 1;
+    $lastpage   = ceil($totalitems / $limit);
+    $lpm1       = $lastpage - 1;
+    $pagination = "";
+    if ($lastpage > 1) {
+        $pagination .= "<div class=\"pagenation clearfix\"><ul class=\"no-bullet\">";
+        if ($lastpage > 10) {
+            if ($page > 10) {
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . ($next - 11) . $suite_eventuelle . "\">« -10</a></li>";
+            } else {
+                $pagination .= "<li class=\"disabled\">« -10</li>";
+            }
+        }
+        if ($page > 1) {
+            $pagination .= "<li><a href=\"$targetpage$pagestring$prev$suite_eventuelle\">« précédente</a></li>";
+        } else {
+            $pagination .= "<li class=\"disabled\">« précédente</li>";
+        }
+        if ($lastpage < 7 + ($adjacents * 2)) {
+            for ($counter = 1; $counter <= $lastpage; $counter++) {
+                if ($counter == $page) {
+                    $pagination .= "<li class=\"active\">$counter</li>";
+                } else {
+                    $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $counter . $suite_eventuelle . "\">$counter</a></li>";
+                }
+            }
+        } elseif ($lastpage >= 7 + ($adjacents * 2)) {
+            if ($page < 1 + ($adjacents * 3)) {
+                for ($counter = 1; $counter < 4 + ($adjacents * 2); $counter++) {
+                    if ($counter == $page)
+                        $pagination .= "<li class=\"active\">$counter</b>&nbsp;";
+                    else
+                        $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $counter . $suite_eventuelle . "\">$counter</a></li>";
+                }
+                $pagination .= "<li class=\"disabled\">...</li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $lpm1 . $suite_eventuelle . "\">$lpm1</a></li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $lastpage . $suite_eventuelle . "\">$lastpage</a></li>";
+            } elseif ($lastpage - ($adjacents * 2) > $page && $page > ($adjacents * 2)) {
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . "1$suite_eventuelle\">1</a></li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . "2$suite_eventuelle\">2</a></li>";
+                $pagination .= "<li class=\"disabled\">...</li>";
+                for ($counter = $page - $adjacents; $counter <= $page + $adjacents; $counter++) {
+                if ($counter == $page)
+                    $pagination .= "<li class=\"active\">$counter</li>";
+                else
+                    $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $counter . $suite_eventuelle . "\">$counter</a></li>";
+                }
+                $pagination .= "<li class=\"disabled\">...</li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $lpm1 . $suite_eventuelle . "\">$lpm1</a></li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $lastpage . $suite_eventuelle . "\">$lastpage</a></li>";
+            } else {
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . "1$suite_eventuelle\">1</a></li>";
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . "2$suite_eventuelle\">2</a></li>";
+                $pagination .= "<li class=\"disabled\">...</li>";
+                for ($counter = $lastpage - (1 + ($adjacents * 3)); $counter <= $lastpage; $counter++) {
+                    if ($counter == $page) {
+                        $pagination .= "<li class=\"active\">$counter</li>";
+                    } else {
+                        $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $counter . $suite_eventuelle . "\">$counter</a></li>";
+                    }
+                }
+            }
+        }
+        if ($page < $counter - 1) {
+            $pagination .= "<li><a href=\"" . $targetpage . $pagestring . $next . $suite_eventuelle . "\">suivante »</a></li>";
+        } else {
+            $pagination .= "<li class=\"disabled\">suivante »</span></li>";
+        }
+        if ($lastpage > 10) {
+            if ($page < $lastpage - 10) {
+                $pagination .= "<li><a href=\"" . $targetpage . $pagestring . ($next + 9) . $suite_eventuelle . "\">+10 »</a></li>";
+            } else {
+                $pagination .= "<li class=\"disabled\">+10 »</li>";
+            }
+        }
+        $pagination .= "</div>\n";
+    }
+    return $pagination;
 }

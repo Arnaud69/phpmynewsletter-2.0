@@ -17,6 +17,12 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
     $browser          = $this_browser->getBrowser();
     $browser_version  = $this_browser->getVersion();
     $browser_platform = $this_browser->getPlatform();
+    if ( $browser_platform == 'iPhone' || $browser_platform == 'iPad' ) {
+        $browser_platform = 'iOS';
+    }
+    if ( $browser_platform == 'Apple' ) {
+        $browser_platform = 'macOS';
+    }
     $browser_user_agent=$this_browser->getUserAgent();
     require_once 'include/lib/class.mobile.php';
     $detect = new Mobile_Detect;
@@ -31,13 +37,21 @@ if(!empty($_GET['h'])&&!empty($_GET['i'])){
             )";
     $row_id = $cnx->query($sql)->fetchAll();
     $nb_result=count($row_id);
+    include("geoloc/geoipcity.inc");
+    include("geoloc/geoipregionvars.php");
+    $gi = geoip_open(realpath("geoloc/GeoLiteCity.dat"),GEOIP_STANDARD);
+    $record = geoip_record_by_addr($gi,$ip);
     if( $nb_result==0 ) {
         $cnx->query("INSERT INTO ".$row_config_globale['table_tracking']."
                          (hash,subject,date,open_count,ip,browser,
-                         version,platform,useragent,devicetype) 
+                         version,platform,useragent,devicetype,
+                         lat,lng,city,postal_code,region,country) 
                      VALUES 
                          ('".$_GET['h']."','".$_GET['i']."',NOW(),'1','".$ip."','".$browser."',
-                          '".$browser_version."','".$browser_platform."','".$browser_user_agent."','".$devicetype."')");
+                          '".@$browser_version."','".@$browser_platform."','".@$browser_user_agent."','".@$devicetype."',
+                          '".@$record->latitude ."','".@$record->longitude ."','".@addslashes(htmlspecialchars($record->city)) ."',
+                          '".@$record->postal_code ."','".@addslashes(htmlspecialchars($GEOIP_REGION_NAME[$record->country_code][$record->region]))."',
+                          '".@addslashes(htmlspecialchars($record->country_name))."')");
     } elseif( $nb_result==1 ) {
        $cnx->query("UPDATE ".$row_config_globale['table_tracking']." 
                         SET date = NOW(),

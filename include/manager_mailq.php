@@ -10,13 +10,12 @@ if($type_serveur=='dedicated'&&$exec_available){
     $pipe = popen($mailq_path, 'r');
     $path_postsuper=exec('locate postsuper | grep bin');
     while($pipe) {
-        $line = fgets($pipe);
-        
+        $line = @fgets($pipe);
         if(trim($line)=='Mail queue is empty'){
-            echo "<h4 class='alert_success'><b>".tr("NO_MAIL_IN_PROCESS")."</b></h4>";
+            echo "<div class='alert alert-success'><b>".tr("NO_MAIL_IN_PROCESS")."</b></div>";
             pclose($pipe);
             setlocale(LC_ALL, $old_locale);
-            exit(1);
+            //exit(1);
         } else {
             if ($line === false)
                 break;
@@ -43,18 +42,25 @@ if($type_serveur=='dedicated'&&$exec_available){
                            stripos($tab_failed,'Recipient address rejected: unverified address') ||
                            stripos($tab_failed,'431 Syntax error (in reply to end of DATA command)') ||
                            stripos($tab_failed,'Recipient address rejected') || /* 450 4.1.1, 450 4.2.0, 450 4.3.2 */
-                           stripos($tab_failed,'Recipient address rejected: MailBox quota excedeed') || /* 450 4.7.1 */
                            stripos($tab_failed,'Host or domain name not found') ||
                            stripos($tab_failed,'451 domain not found') ||
                            stripos($tab_failed,'451 Could not load DRD') ||
                            stripos($tab_failed,'451 Open relay not allowed') ||
                            stripos($tab_failed,'451 unable to verify user') ||
+                           stripos($tab_failed,'4.1.0 Recipient unknown') ||
                            stripos($tab_failed,'451 4.1.0 Recipient unknown') ||
+                           stripos($tab_failed,'451 4.2.1 mailbox temporarily disabled') ||
+                           stripos($tab_failed,'451 4.2.2 user over quota') ||
+                           stripos($tab_failed,'over quota') ||
                            stripos($tab_failed,'451 4.3.2 Please try again later') ||
                            stripos($tab_failed,'451 4.3.5 Server configuration problem') ||
                            stripos($tab_failed,'451 4.4.5 Mail queue for this domain is overloaded') ||
+                           stripos($tab_failed,'Recipient address rejected: MailBox quota excedeed') || /* 450 4.7.1 */
                            stripos($tab_failed,'451 4.5.1 Mailbox full') ||
+                           stripos($tab_failed,'Mailbox full') ||
                            stripos($tab_failed,'451 4.7.1 Service unavailable') ||
+                           stripos($tab_failed,'4.2.2 mailbox full') ||
+                           stripos($tab_failed,'452-4.2.2 The email account that you tried to reach is over quota') ||
                            stripos($tab_failed,': Relay access denied')
                        ) 
                            && 
@@ -90,15 +96,14 @@ if($type_serveur=='dedicated'&&$exec_available){
             }
         }
     }
-    pclose($pipe);
+    @pclose($pipe);
     setlocale(LC_ALL, $old_locale);
     $mails_en_cours = count($current_object);
     if($mails_en_cours>0){
         if(isset($alerte_purge_mailq)&&$alerte_purge_mailq!=''){
             echo $alerte_purge_mailq;
         }
-        echo '<article class="module width_3_quarter">
-        <header><h3 class="tabs_involved">'.tr("PENDING_MAILS").' :</h3></header>
+        echo '<header><h3 class="tabs_involved">'.tr("PENDING_MAILS").' :</h3></header>
         <table class="bndtable" cellspacing="0"> 
             <thead> 
                 <tr> 
@@ -119,9 +124,13 @@ if($type_serveur=='dedicated'&&$exec_available){
                     <td>'.$item['recipients'].'</td>
                     <td>';
                     if($item['IsDeleted']) {
-                        echo 'DELETED';
+                        echo tr("DELETED");
                     } else {
-                        echo '<a href="?page=manager_mailq&action=delete_id_from_mailq&token='.$token.'&id_mailq='.$item['id'].'&mail='.urlencode($item['recipients']).'&status='.urlencode($item['failed']).'" class="tooltip" title="'.tr("MAIL_DELETE_THIS").', ID : '.$item['id'].'" onclick="return confirm(\''.tr("MAIL_REMOVE_FROM_QUEUE").' ?\')"><input type="image" src="css/icn_trash.png"></a>';
+                        echo '<a href="?page=manager_mailq&action=delete_id_from_mailq&token=' 
+                        . $token . '&id_mailq=' . $item['id'] . '&mail=' . urlencode($item['recipients'])
+                        . '&status=' . urlencode($item['failed']) . '" data-toggle="tooltip" title="' 
+                        . tr("MAIL_DELETE_THIS") . ', ID : ' . $item['id'] . '" onclick="return confirm(\''
+                        .tr("MAIL_REMOVE_FROM_QUEUE") . ' ?\')"><span class="glyphicon glyphicon-trash"></span></a>';
                     }
                 echo '   </td>
                 </tr>
@@ -132,8 +141,7 @@ if($type_serveur=='dedicated'&&$exec_available){
             echo '</tbody>
             </table>';
             echo '<div class="spacer"></div>';
-            echo '</article>';
-            echo '<article class="module width_quarter"><div class="sticky-scroll-box">';
+            echo '<div class="sticky-scroll-box">';
             echo '<header><h3>'.tr("ACTION").', :</h3></header><div align="center">';
             echo "<br><form method='post' action=''>
                 <input type='submit' value='".tr("MAIL_PURGE_QUEUE")."' />
@@ -142,17 +150,11 @@ if($type_serveur=='dedicated'&&$exec_available){
                 <input type='hidden' name='page' value='manager_mailq' />
                 <input type='hidden' name='token' value='$token' />
                 <div class='spacer'></div>";
-            echo '</div></article></div>';
-    } else {
-        echo "<h4 class='alert_success'><b>".tr("NO_MAIL_IN_PROCESS")."</b></h4>";
+            echo '</div></div>';
     }
 }
 ?>
-<script>
-setTimeout(function() {
-  location.reload();
-}, 30000);
-</script>
+<script>setTimeout(function(){location.reload();},30000);</script>
 
 
 

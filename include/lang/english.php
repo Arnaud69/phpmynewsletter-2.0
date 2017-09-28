@@ -1,6 +1,6 @@
 <?php
 $lang_array=array (
-    "LN"=>"fr",
+    "LN"=>"en",
     "OK_BTN"=>"OK",
     "YES"=>"Yes",
     "NO"=>"No",
@@ -10,6 +10,7 @@ $lang_array=array (
     "SUBMIT"=>"Validate",
     "UPDATE"=>"Update",
     "DELETE"=>"Delete",
+    "DELETED"=>"Deleted",
     "FOUND"=>"Found",
     "NOT_FOUND"=>"Not found",
     "LIST"=>"List",
@@ -18,7 +19,21 @@ $lang_array=array (
     "OPEN_RATE"=>"Open-rate",
     "CTR"=>"CTR",
     "ACTR"=>"ACTR",
+    "ALL_LISTS"=>"all lists combined",
+    "DISPLAY"=>"display",
+    "DEFAULT"=>"default",
+    "BY_PAGE"=>"by page",
+    "ALPHA"=>"alpha",
+    "SORT"=>"sort",
+    "ABOUT"=>"&Agrave; propos",
+    "SUPPORT"=>"Support",
+    "LOST_PASSWORD"=>"Forgotten password ?",
+    "RESET_PASSWORD"=>"Send password",
+    "NEW_PASSWORD_SEND"=>"A new password has been sent to you, thank you to look your mail.",
+    "BACK_TOP"=>"Click to return on the top page",
     "ENVIRONMENT_ALL_LISTS"=>"Environment (all lists combined)",
+    "ENVIRONMENT_ALL_CAMPAIGNS"=>"Environment (all campaigns combined)",
+    "KEY_NUMBERS_ALL_CAMPAIGNS"=>"Key numbers (all campaigns combined)",
     "MAIL_CLIENT"=>"Mail clients",
     "RESTORE"=>"Restore",
     "IMPORT_IN_PROGRESS"=>"Import in progress, please wait...",
@@ -26,6 +41,10 @@ $lang_array=array (
     "DESCRIPTION_ERROR"=>"Description of error",
     "ERROR_ON_CAMPAIGN"=>"Error on campaign",
     "MAIL_IN_ERROR"=>"Mail with error",
+    "SEND_IN_PROCESS"=>"Sending in progress",
+    "MAIL_FOR_BOUNCE"=>"Eamil for bounce",
+    "ALERT_MAIL_BOUNCE"=>"<h4 class='alert_warning'>If you enter the email address for bounce, all bounce will return to this address.<br>(failing this, the bounce will return on the email address of the sender).
+    Don't forget to create an account for this address in your system.</h4>",
     // ARCHIVE
     "ARCHIVE_TITLE"=>"Archive",
     "ARCHIVE_CHOOSE"=>"Select an information letter",
@@ -101,6 +120,7 @@ $lang_array=array (
     "NEWSLETTER_UNSUB_DEFAULT_BODY"=>"Someone, probably you, requested you unsubscribe from this newsletter info, thank you to follow the following information.",
     // SUBSCRIBER
     "SUBSCRIBER_MANAGEMENT"=>"subscriber management",
+    "SUBSCRIBER_PROFILS"=>"subscriber profile",
     "SUBSCRIBER_ADD_TITLE"=>"Add a subscriber",
     "SUBSCRIBER_ADD_MAIL_FORMAT"=>"Add a subscriber (format : adress@domain.com)",
     "SUBSCRIBER_ADD_BTN"=>"Add this email address",
@@ -204,9 +224,14 @@ $lang_array=array (
     "GCONFIG_MESSAGE_ADMIN_NAME"=>"Name of the default sender (Field <i>From:</i>)",
     "GCONFIG_MESSAGE_ADMIN_MAIL"=>"Email the default sender",
     "GCONFIG_MESSAGE_CODE_MAILTESTER"=>"Code 'mail-tester.com', example : 'web-jeJbQ' (first part before '@mail-tester.com')",
-    "GCONFIG_MESSAGE_CHARSET"=>"Character encoding to use,",
+    "GCONFIG_MESSAGE_CHARSET"=>"Character encoding to use",
     "GCONFIG_MESSAGE_NUM_LOOP"=>"Number of messages sent to each send loop",
     "GCONFIG_MESSAGE_SEND_METHOD"=>"Shipping Method",
+    "GCONFIG_SECONDES"=>"seconds",
+    "GCONFIG_TIMER_AJAX"=>"Time for a loop",
+    "GCONFIG_TIME_FOR_EACH_LOOP"=>"In seconds. Recommended : 10",
+    "GCONFIG_TIMER_CRON"=>"Timer cron",
+    "GCONFIG_TIME_FOR_EACH_SEND"=>"Seconds between each mail. Recommended : 3",
     "GCONFIG_MESSAGE_SEND_METHOD_FUNCTION"=>"mail() PHP",
     "GCONFIG_MESSAGE_SMTP_HOST"=>"Host name of the SMTP server",
     "GCONFIG_MESSAGE_SMTP_PORT"=>"Connection port to the SMTP server",
@@ -225,7 +250,7 @@ $lang_array=array (
     "GCONFIG_MANAGE_ENVIRONMENT"=>"Environmental Management",
     "GCONFIG_MANAGE_BOUNCE"=>"Management of retained mail",
     "GCONFIG_TRY_CONNECT"=>"Login attempt",
-    "BOUNCE_WARNING"=>"<h4 class = 'alert_warning'>Don't fill this field if you don't know the settings !</H4>
+    "BOUNCE_WARNING"=>"<div class='alert alert-danger'>Don't fill this field if you don't know the settings !</div>
             <p>Note that these settings will allow you to manage the retained messages. <br>
             Don't complete this area if you use gmail for your shipments ! <br>
             PhpMyNewsLetter must connect to the email account of the sender and thus proceed:
@@ -240,12 +265,17 @@ $lang_array=array (
             Thank you ;-)
             </p>",
     "GCONFIG_HOST_MAIL"=>"Host Mail Server",
-    "GCONFIG_PORT"=>"<br>Port Default: 110",
-    "GCONFIG_SERVICE"=>"Service: pop3 or imap <br>Default: pop3",
-    "GCONFIG_SERVICE_OPTION"=>"Service Option: none, tls, notls, ssl, ssl/novalidate-cert. Default: notls",
+    "GCONFIG_PORT"=>"Port (Default: 110)",
+    "GCONFIG_SERVICE"=>"Service: pop3 or imap (Default: pop3)",
+    "GCONFIG_SERVICE_OPTION"=>"Service Option: none, tls, notls, ssl, ssl/novalidate-cert. (Default: notls)",
     "GCONFIG_TEST_BOUNCE"=>"Test those settings",
-    // SMTP CONFIGURATION:
     "GCONFIG_SMTP_LB_TITLE"=>"Load Balancing Management SMTP",
+    "GCONFIG_SOFTWARE_TITLE"=>"Software management",
+    "GCONFIG_SOFTWARE_NAME"=>"Software name",
+    "GCONFIG_SOFTWARE_LOCAL_VERSION"=>"Current local version",
+    "GCONFIG_SOFTWARE_DISTANT_VERSION"=>"Current version available",
+    "GCONFIG_ALERT_END_SCHEDUL_TASK"=>"Receive a mail at the end of a scheduled task",
+    "ALERT_UNSUB"=>"Be notified for an unsub",
     // ERROR
     "ERROR_SQL"=>"Error in database: %s <br><br>",
     "ERROR_SQL2"=>"SQL error: %s <br><br>",
@@ -405,7 +435,6 @@ $lang_array=array (
     "UNSAVED_MESSAGE"=>"Saving error !",
     "SAVE_PROCESS"=>"Saving",
     "SAVE_THIS_MESSAGE"=>"Save this message",
-    // INDEX :
     "ROOT_TO_FLUSH_MAIL_QUEUE"=>"You must enter root mode and call another command to flush the queue of mails in progress.",
     "MAIL_ADDED"=>"Email(s) added(s)",
     "MAIL_IMPORTED"=>"Email(s) imported",
@@ -454,12 +483,15 @@ $lang_array=array (
     "CLICKED_COUNT"=>"Number of clicks",
     "CLICKED_LINK_NO_LINK"=>"No link clicked in the letter",
     "CLICKED_LINK_REPORT_SUPPORT"=>"Support",
+    "CLICKED_DISTINCT_DOMAINS"=>"Domains in the lists",
+    "CLICKED_BY_DOMAINS"=>"Click by domain",
+    "CLICK_BY_HOURS"=>"Clicks by hour",
     // UPLOAD
     "ATTACHMENTS"=>"Attachments",
     "NO_ATTACHMENTS"=>"No attachments",
     "UPLOAD_ADD"=>"Add attachments",
     //add attachment
-    "ADD_ONE_OR_MORE_ATTACHMENT"=>"Add one or more attachments to this mail",
+    "ADD_ONE_OR_MORE_ATTACHMENT"=>"Add one or more<br>attachments to this mail",
     "UPLOAD_DROP_FILES"=>"Drag here to send files on the server,",
     "UPLOAD_EXPLAIN"=>"The documents are automatically added here attached to the email being drafted.<br>Be careful : don't to put too heavy attached documents (risk of discharges according limitations), not too many ! (10 records maximum, 4-5 MB is a reasonable limit !)",
     // ARCHIVES
@@ -488,15 +520,17 @@ $lang_array=array (
     "LIST_NUMBER"=>"List N°.",
     "LIST_NAME"=>"Name",
     "LIST_COUNT_SUSCRIBERS"=>"Subscribers",
+    "LIST_COUNT_ERRORS_ON_SUBSCRIBERS"=>"Emails wrong",
     "LIST_SELECTED"=>"Selected List",
     "CHOOSE_THIS_LIST"=>"Select list",
     "DELETE_THIS_LIST"=>"Delete this list",
     "LIST_LAST_CAMPAIGN"=>"Last campaign",
     "LIST_DUPLICATE"=>"Duplicate this list",
-    "LIST_MIX_TITLE"=>"MIXER",
-    "LIST_MIX_DETAIL"=>"Mixer this list with another list",
+    "LIST_MIX_TITLE"=>"Mix",
+    "LIST_MIX_DETAIL"=>"Mix this list with another list",
     "KEY_NUMBERS_ALL_LISTS"=>"Key numbers, all lists combined",
     "WARNING_DELETE_LIST"=>"Delete all information relating to this list (This action is irreversible)",
+    "WARNING_EMPTY_LIST"=>"Empty this list (This action is irreversible)",
     // Mailq
     "NO_MAIL_IN_PROCESS"=>"no email being sent",
     // MANAGERS (ALL)
@@ -572,6 +606,7 @@ $lang_array=array (
     "IMAP_OK"=>"Connection successful",
     "IMAP_DOWN"=>"No connection",
     // TRACKING
+    "GLOBAL_STATISTICS"=>"Global statitstics",
     "TRACKING_TITLE"=>"Tracking",
     "TRACKING_NO_DATA_AVAILABLE"=>"No statistics available, awaiting campaigns",
     "TRACKING_STATS_GRAPHICS_REPORT"=>"Graphs reporting by campaign ID",
@@ -603,6 +638,10 @@ $lang_array=array (
     "TRACKING_GOTO_LIST"=>"Go to list statistics",
     "CLICKED_LINK_REPORT_ENVIRONMENT"=>"Browsers",
     "CLICKED_LINK_REPORT_OS"=>"Operating Systems",
+    "BY_TOWN"=>"by town",
+    "BY_COUNTRY"=>"by country",
+    "OPEN_ALL_LIST"=>"Location of openings, all lists combined",
+    "GEOLOCALISATION"=>"Geolocation",
     "RESULTS"=>"Results",
     "UNDISTURBED_TITLE"=>"Processing of the last shipment errors",
     "UNDISTURBED_MSG_EXPLAIN"=>"Complete error message",
@@ -625,7 +664,10 @@ $lang_array=array (
     "F_BROWSER_IFRAME"=>" Oops ! Your Browser doesn't support iframes !",
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Use this message as draft to start a noew campaign with list ",
     /* tinymce */
-    "TINYMCE_LANGUAGE"=>"en_GB",
+    "TINYMCE_LANGUAGE"=>"en_US",
     /* SPAM */
-    "CHECK_SPAM_SCORE"=>"Check spam score"
+    "CHECK_SPAM_SCORE"=>"Check spam score",
+    /* users */
+    "USERS_RIGHTS"=>"Users rights",
+    "USERS_RIGHTS_MANAGEMENT"=>"Rights management",
     );

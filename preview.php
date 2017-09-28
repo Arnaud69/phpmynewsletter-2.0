@@ -41,6 +41,7 @@ if(empty($subject)){
 $_SESSION['message'] = $message;
 $_SESSION['subject'] = $subject;
 $_SESSION['format']  = $format;
+$_SESSION['sender_email'] = $msg['sender_email'];
 $subj                = htmlspecialchars($subject);
 if($format == "html"){
     $Vmsg = $message;

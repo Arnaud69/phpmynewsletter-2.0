@@ -1,6 +1,7 @@
 <?php
-$lang_array=array(
+$lang_array=array (
     "LN"=>"fr",
+    "I18N_LNG"=>"fr_FR", // https://cdnjs.com/libraries/bootstrap-select
     "OK_BTN"=>"OK",
     "YES"=>"Oui",
     "NO"=>"Non",
@@ -10,6 +11,7 @@ $lang_array=array(
     "SUBMIT"=>"Valider",
     "UPDATE"=>"Mettre à jour",
     "DELETE"=>"Supprimer",
+    "DELETED"=>"Supprimé",
     "FOUND"=>"Trouvé",
     "NOT_FOUND"=>"Non trouvé",
     "LIST"=>"Liste",
@@ -18,7 +20,22 @@ $lang_array=array(
     "OPEN_RATE"=>"Taux d'ouverture",
     "CTR"=>"CTR",
     "ACTR"=>"ACTR",
+    "ALL_LISTS"=>"toutes listes confondues",
+    "DISPLAY"=>"affichage",
+    "DEFAULT"=>"défaut",
+    "BY_PAGE"=>"par page",
+    "ALPHA"=>"alpha",
+    "SORT"=>"tri",
+    "ABOUT"=>"&Agrave; propos",
+    "SUPPORT"=>"Support",
+    "LOST_PASSWORD"=>"Mot de passe perdu ?",
+    "RESET_PASSWORD"=>"Envoyer le mot de passe",
+    "NEW_PASSWORD_SEND"=>"Un nouveau mot de passe vous a été envoyé, merci de relever votre messagerie.",
+    "BACK_TOP"=>"Retour en haut de page",
+    "NEXT"=>"suivant",
     "ENVIRONMENT_ALL_LISTS"=>"Environnement (toutes listes confondues)",
+    "ENVIRONMENT_ALL_CAMPAIGNS"=>"Environnements (toutes campagnes confondues)",
+    "KEY_NUMBERS_ALL_CAMPAIGNS"=>"Chiffres clés (toutes campagnes confondues)",
     "MAIL_CLIENT"=>"Clients mails",
     "RESTORE"=>"Restaurer",
     "IMPORT_IN_PROGRESS"=>"Import en cours, merci de patienter...",
@@ -26,6 +43,12 @@ $lang_array=array(
     "DESCRIPTION_ERROR"=>"Libellé erreur / motif",
     "ERROR_ON_CAMPAIGN"=>"Erreur sur la campagne",
     "MAIL_IN_ERROR"=>"Adresse en erreur",
+    "SEND_IN_PROCESS"=>"Envoi en cours",
+    "MAIL_FOR_BOUNCE"=>"Adresse mail de bounce",
+    "ALERT_MAIL_BOUNCE"=>"Si vous renseignez l'adresse mail de bounce, tous les emails en erreur reviendront sur cette adresse.<br>(A défaut, les mails en erreur reviendront sur l'adresse mail de l'expéditeur).<br>
+    Attention à bien créer un compte pour cette adresse dans votre système.",
+    // Gestion des expéditeurs :
+    "SENDERS_MANAGEMENT"=>"Gestion des expéditeurs",
     //ARCHIVE
     "ARCHIVE_TITLE"=>"Archives",
     "ARCHIVE_CHOOSE"=>"Sélectionnez une lettre d'info",
@@ -63,13 +86,14 @@ $lang_array=array(
     "SELECTED_NEWSLETTER"=>"Lettre d'info sélectionnée",
     "NEWSLETTER_TOTAL_SUBSCRIBER"=>"abonné",
     "NEWSLETTER_TOTAL_SUBSCRIBERS"=>"abonnés",
+    "MENU_BACKUP"=>"Sauvegardes",
     //ADMIN NEWSLETTER
     "NEWSLETTER_CHOOSE"=>"Sélectionnez la lettre d'info à configurer",
     "NEWSLETTER_ACTION"=>"Effectuer une action",
     "NEWSLETTER_NEW"=>"Créer une nouvelle lettre d'info",
     "NEWSLETTER_DEL"=>"Supprimer '%s'",
     "NEWSLETTER_SETTINGS"=>"Réglages de la lettre d'info",
-    "NEWSLETTER_CONFIGURATION"=>"Configuration de la newsletter",
+    "NEWSLETTER_CONFIGURATION"=>"Configuration newsletter",
     "NEWSLETTER_NAME"=>"Nom de la lettre d'info",
     "NEWSLETTER_FROM_ADDR"=>"Adresse électronique de l'expéditeur",
     "NEWSLETTER_FROM_NAME"=>"Nom de l'expéditeur",
@@ -91,7 +115,7 @@ $lang_array=array(
     "NEWSLETTER_DELETED"=>"Lettre d'info supprimée avec succès",
     "NEWSLETTER_DELETE_WARNING"=>"Supprimer toutes les informations relatives à cette lettre d'info",
     "NEWSLETTER_SETTINGS_CREATED"=>"Lettre d'info créée avec succès",
-    "NEWSLETTER_DEFAULT_HEADER"=>"========= ENTETE =========<br>Mettez ici ce que vous voulez.<br>Ce texte sera ajouté en tête de tous vos messages",
+    "NEWSLETTER_DEFAULT_HEADER"=>"========= ENTETE ========= Mettez ici ce que vous voulez.<br>Ce texte sera ajouté en tête de tous vos messages",
     "NEWSLETTER_DEFAULT_FOOTER"=>"======== PIED DE PAGE =======<br>Vous pouvez spécifier un message",  
     "NEWSLETTER_SUB_DEFAULT_SUBJECT"=>"Merci de confirmer votre inscription",
     "NEWSLETTER_SUB_DEFAULT_BODY"=>"Quelqu'un, certainement vous, a demandé votre inscription à cette lettre d'info, merci de suivre les informations qui suivent.", 
@@ -101,6 +125,7 @@ $lang_array=array(
     "NEWSLETTER_UNSUB_DEFAULT_BODY"=>"Quelqu'un, certainement vous, a demandé votre désinscription de cette lettre d'info, merci de suivre les informations qui suivent.", 
     //SUBSCRIBER
     "SUBSCRIBER_MANAGEMENT"=>"gestion des abonnés",
+    "SUBSCRIBER_PROFILS"=>"profils des abonnés",
     "SUBSCRIBER_ADD_TITLE"=>"Ajouter un abonné",
     "SUBSCRIBER_ADD_MAIL_FORMAT"=>"Ajouter un abonné au format adress@domain.com",
     "SUBSCRIBER_ADD_BTN"=>"Ajouter cette adresse électronique",
@@ -136,7 +161,7 @@ $lang_array=array(
     "SUBSCRIBER_WITH_MAIL_DELETED"=>"Adresse mail dans la liste des mails supprimés / désabonnés / en erreur !",
     "SUBSCRIBER_DELETE_BY_ADMIN"=>"supprimé par administrateur",
     "EMAIL_ON_DELETED_LIST"=>"%s : Cette adresse mail est présente sur la liste des mails supprimés !",
-    "SUBSCRIPTION_HTML_CODE"=>"Code HTML de souscription",
+    "SUBSCRIPTION_HTML_CODE"=>"Code de souscription",
     "MAIL_RESTORED"=>"Adresse e-mail restaurée",
     "MAIL_ERROR_TO_RESTORE"=>"Erreur en restaurant cet e-mail",
     "FORCE_CONFIRMATION"=>"Forcer la confirmation",
@@ -169,6 +194,7 @@ $lang_array=array(
     "TOTAL_TO_SEND"=>"Total à envoyer",
     "CHRONO"=>"Chrono",
     "LAST_TIME_SEND"=>"Dernier envoi (ms)",
+    "LAST_SEND_MAILS"=>"Derniers mails envoyés",
     "START_INITIALISATION"=>"Initialisation en cours",
     "COMPOSE_AND_PREVIEW"=>"Rédigez votre lettre d'information puis cliquez sur \"Aperçu du message\" pour la visualiser",
     "RFC_2822"=>"(Attention : selon la norme <a href='http://www.faqs.org/rfcs/rfc2822.htm' target='_blank'>RFC 2822</a> section 2.1.1, il convient de ne pas dépasser 78 caractères !)",
@@ -180,7 +206,7 @@ $lang_array=array(
     "GCONFIG_DB_TITLE"=> "Réglages de la base de données",
     "GCONFIG_DB_HOST"=>"Nom d'hôte",
     "GCONFIG_DB_LOGIN"=>"Nom d'utilisateur",
-    "GCONFIG_DB_DBNAME"=>"Nom de la base de donnée",
+    "GCONFIG_DB_DBNAME"=>"Nom de la base de données",
     "GCONFIG_DB_PASSWD"=>"Mot de passe",
     "GCONFIG_DB_CONFIG_TABLE"=>"Table de configuration",
     "GCONFIG_DB_TABLE_MAIL"=>"Les adresses électroniques des abonnés sont stockées dans",
@@ -206,6 +232,12 @@ $lang_array=array(
     "GCONFIG_MESSAGE_CODE_MAILTESTER"=>"Code 'mail-tester.com', exemple : 'web-jeJbQ' (la partie avant '@mail-tester.com')",
     "GCONFIG_MESSAGE_CHARSET"=>"Encodage des caractères à utiliser",
     "GCONFIG_MESSAGE_NUM_LOOP"=>"Nombre de messages expédiés à chaque boucle d'envoi",
+    "GCONFIG_SECONDES"=>"secondes",
+    "GCONFIG_TIMER_AJAX"=>"Durée d'une boucle",
+    "GCONFIG_TIME_FOR_EACH_LOOP"=>"En secondes. Recommandé : 10",
+    "GCONFIG_TIMER_CRON"=>"Timer cron",
+    "GCONFIG_TIMER_CROM_TIMER_AJAX"=>"Timer ajax et boucles planifiées",
+    "GCONFIG_TIME_FOR_EACH_SEND"=>"Secondes entre chaque mail. Recommandé : 3",
     "GCONFIG_MESSAGE_SEND_METHOD"=>"Méthode d'expédition",
     "GCONFIG_MESSAGE_SEND_METHOD_FUNCTION"=>"fonction mail() PHP",
     "GCONFIG_MESSAGE_SMTP_HOST"=>"Nom d'hôte du serveur SMTP",
@@ -217,7 +249,7 @@ $lang_array=array(
     "GCONFIF_SUBSCRIPTION_VALIDATION_TIMEOUT"=>"Nombre de jours pour confirmer les inscriptions",
     "GCONFIG_SUBSCRIPTION_CONFIRM_SUB"=>"Les abonnés doivent-ils confirmer leur inscription ?",
     "GCONFIG_SUBSCRIPTION_CONFIRM_UNSUB"=>"Les abonnés doivent-ils confirmer leur désinscription ?",
-    "ALERT_SUB"=>"Etre averti des nouvelles inscriptions ?",
+    "GCONFIG_ALERT_SUB"=>"Etre averti des nouvelles inscriptions ?",
     "GCONFIG_SUBSCRIPTION_MODERATE"=>"Les inscriptions sont modérées ?",
     "GCONFIG_SAVE_BTN"=>"Enregistrer ces réglages",
     "GCONFIG_SUCCESSFULLY_SAVED"=>"Configuration globale enregistrée avec succès",
@@ -225,7 +257,7 @@ $lang_array=array(
     "GCONFIG_MANAGE_ENVIRONMENT"=>"Gestion de l'environnement",
     "GCONFIG_MANAGE_BOUNCE"=>"Gestion des mails non distribués",
     "GCONFIG_TRY_CONNECT"=>"En cours de tentative de connexion",
-    "BOUNCE_WARNING"=>"<h4 class='alert_warning'>Ne remplissez pas cette zone si vous ne connaissez pas les paramètres !</h4>
+    "BOUNCE_WARNING"=>"<div class='alert alert-danger'>Ne remplissez pas cette zone si vous ne connaissez pas les paramètres !</div>
         <p>Notez bien que ces réglages vous permettront de gérer les mails non distribués.<br>
         Ne remplissez pas cette zone si vous utilisez gmail pour vos envois !<br>
         PhpMyNewsLetter doit se connecter au compte de messagerie de l'expéditeur et procédera ainsi :
@@ -240,12 +272,17 @@ $lang_array=array(
         Merci ;-)
         </p>",
     "GCONFIG_HOST_MAIL"=>"Host serveur mail",
-    "GCONFIG_PORT"=>"Port<br>Par défaut : 110",
-    "GCONFIG_SERVICE"=>"Service : pop3 ou imap<br> Par défaut : pop3",
-    "GCONFIG_SERVICE_OPTION"=>"Option du service : none, tls, notls, ssl, ssl/novalidate-cert. Par défaut : notls",
+    "GCONFIG_PORT"=>"Port (Par défaut : 110)",
+    "GCONFIG_SERVICE"=>"Service : pop3 ou imap (Par défaut : pop3)",
+    "GCONFIG_SERVICE_OPTION"=>"Option du service : none, tls, notls, ssl, ssl/novalidate-cert. (Par défaut : notls)",
     "GCONFIG_TEST_BOUNCE"=>"Tester ces paramètres",
-    // SMTP CONFIGURATION :
-    "GCONFIG_SMTP_LB_TITLE"=>"Gestion Load Balancing SMTP",
+    "GCONFIG_SMTP_LB_TITLE"=>"Gestion des SMTP",
+    "GCONFIG_SOFTWARE_TITLE"=>"Gestion des logiciels",
+    "GCONFIG_SOFTWARE_NAME"=>"Nom du logiciel",
+    "GCONFIG_SOFTWARE_LOCAL_VERSION"=>"Version logiciel installée",
+    "GCONFIG_SOFTWARE_DISTANT_VERSION"=>"Version logiciel disponible",
+    "GCONFIG_ALERT_END_SCHEDUL_TASK"=>"Recevoir un mail en fin de tâche planifiée",
+    "ALERT_UNSUB"=>"Etre averti d'une désinscription ?",
     //ERROR
     "ERROR_SQL"=>"Erreur de la base de donnée :<br>%s<br>",
     "ERROR_SQL2"=>"Erreur SQL :<br>%s<br>",
@@ -401,13 +438,10 @@ $lang_array=array(
     "SUBSCRIPTION_AGREE_UN_SUB"=>"Je confirme mon désabonnement",
     "SUBSCRIPTION_WAITING_MODERATION"=>"Votre demande d'abonnement est bien enregistrée et est en attente de validation",//Subscription requested recorded, waiting for moderation
     "CLOSE_WINDOW"=>"Vous pouvez fermer cette fenêtre",
-    // V2.0.4
-    // ADMIN_AUTOSVE
     "SAVED_MESSAGE_AT"=>"Message sauvegardé à ",
     "UNSAVED_MESSAGE"=>"Sauvegarde en erreur !",
     "SAVE_PROCESS"=>"Sauvegarde en cours",
     "SAVE_THIS_MESSAGE"=>"Enregistrer ce message",
-    // INDEX :
     "ROOT_TO_FLUSH_MAIL_QUEUE"=>"Vous devez passer en mode root et appeler une autre commande pour purger la file des mails en cours.",
     "MAIL_ADDED"=>"mail(s) ajouté(s)",
     "MAIL_IMPORTED"=>"Email(s) importé(s)",
@@ -427,19 +461,19 @@ $lang_array=array(
     "SCREEN_PREVIEW"=>"Prévisualisation à l'écran",
     "SENDING_TEST_MAIL"=>"Prévisualisation par envoi du mail de test",
     "TRACKING"=>"Tracking",
-    "STATS_NUMBER_AND GRAPHICS"=>"Données chiffrées et graphiques",
+    "STATS_NUMBER_AND GRAPHICS"=>"Statistiques",
     "TIME_SERVER"=>"Heure du serveur",
     "ANALYSIS_OF_RETURNS"=>"Analyse des retours",
     "MANAGEMENT_UNDISTRIBUTED"=>"Gestion des non-distribués",
     "MANAGEMENT_ARCHIVE"=>"Gestion des archives",
-    "MANAGEMENT_SCHEDULED_TASKS"=>"Gestion des tâches planifiées",
+    "MANAGEMENT_SCHEDULED_TASKS"=>"Envois planifiés",
     "SCHEDULED_TASKS"=>"Tâches planifiées",
     "PENDING_MAILS"=>"Mails en cours d'envoi",
     "PENDING_MAILS_MANAGEMENT"=>"Gestion des mails en cours d'envoi",
     "LOOKING_PROGRESS_MAILS"=>"Recherche des mails en cours d'envoi",
     "LISTS"=>"Listes",
     "WRITING"=>"Rédaction",
-    "WRITE_AND_SEND_A_MAIL"=>"Rédaction et envoi d'un message",
+    "WRITE_AND_SEND_A_MAIL"=>"Nouvelle campagne",
     "MANAGEMENT_ERROR_LAST_CAMPAIN"=>"Traitement des erreurs du dernier envoi",
     "MANAGEMENT_ERROR_NOT_CONFIGURED"=>"Traitement des mails en retour non configuré",
     "INVALID_MAIL"=>"Adresse mail invalide",
@@ -456,11 +490,14 @@ $lang_array=array(
     "CLICKED_COUNT"=>"Nombre de clics",
     "CLICKED_LINK_NO_LINK"=>"Aucun lien cliqué dans cette lettre",
     "CLICKED_LINK_REPORT_SUPPORT"=>"Support",
+    "CLICKED_DISTINCT_DOMAINS"=>"Domaines présents dans les listes",
+    "CLICKED_BY_DOMAINS"=>"Clics par domaines",
+    "CLICK_BY_HOURS"=>"Clics par tranches horaires",
     // UPLOAD
     "ATTACHMENTS"=>"Pièces jointes",
     "NO_ATTACHMENTS"=>"Pas de pièces jointes",
     "UPLOAD_ADD"=>"Ajout de pièces jointes",     // add attachment
-    "ADD_ONE_OR_MORE_ATTACHMENT"=>"Ajouter une ou plusieurs pièces jointes à ce mail",
+    "ADD_ONE_OR_MORE_ATTACHMENT"=>"Ajouter une ou plusieurs<br> pièces jointes à ce mail",
     "UPLOAD_DROP_FILES"=>"Glisser ici les fichiers à envoyer sur le serveur", //Drop files here to upload
     "UPLOAD_EXPLAIN"=>"Les documents ajoutés ici seront automatiquement jointes au mail en cours de rédaction.<br>Veillez à ne pas mettre de documents trop lourds en annexe (risques de rejets selon les limitations), ni trop nombreux ! (10 documents maximum, 4 à 5 Mo sont une limite raisonnable !)",
     // ARCHIVES
@@ -489,15 +526,17 @@ $lang_array=array(
     "LIST_NUMBER"=>"Liste N°",
     "LIST_NAME"=>"Nom",
     "LIST_COUNT_SUSCRIBERS"=>"Abonnés",
+    "LIST_COUNT_ERRORS_ON_SUBSCRIBERS"=>"Erreur(s)",
     "LIST_SELECTED"=>"Liste sélectionnée",
     "CHOOSE_THIS_LIST"=>"Choisir cette liste",
     "DELETE_THIS_LIST"=>"Supprimer cette liste",
     "LIST_LAST_CAMPAIGN"=>"Dernière campagne",
     "LIST_DUPLICATE"=>"Dupliquer cette liste",
-    "LIST_MIX_TITLE"=>"MIXER",
+    "LIST_MIX_TITLE"=>"Mixer",
     "LIST_MIX_DETAIL"=>"Mixer cette liste avec une autre liste",
     "KEY_NUMBERS_ALL_LISTS"=>"Chiffres clé, toutes listes confondues",
     "WARNING_DELETE_LIST"=>"Supprimer toutes les informations relatives à cette liste (Cette action est irréversible)",
+    "WARNING_EMPTY_LIST"=>"Vider cette liste (Cette action est iiréversible)",
     // MAILQ
     "NO_MAIL_IN_PROCESS"=>"pas de mail en cours d'envoi",
     // MANAGERS (ALL)
@@ -573,6 +612,7 @@ $lang_array=array(
     "IMAP_OK"=>"Connexion réussie",
     "IMAP_DOWN"=>"Pas de connexion",
     // TRACKING
+    "GLOBAL_STATISTICS"=>"Statitstiques globales",
     "TRACKING_TITLE"=>"Tracking, suivi des envois",
     "TRACKING_NO_DATA_AVAILABLE"=>"Pas de statistiques disponibles, en attente de campagnes",
     "TRACKING_STATS_GRAPHICS_REPORT"=>"Compte-rendu graphique",
@@ -604,6 +644,10 @@ $lang_array=array(
     "TRACKING_GOTO_LIST"=>"Accéder aux statistiques de la liste",
     "CLICKED_LINK_REPORT_ENVIRONMENT"=>"Navigateurs",
     "CLICKED_LINK_REPORT_OS"=>"Systèmes d'exploitation",
+    "BY_TOWN"=>"par ville",
+    "BY_COUNTRY"=>"par pays",
+    "OPEN_ALL_LIST"=>"Localisation des ouvertures, toutes listes confondues",
+    "GEOLOCALISATION"=>"Géolocalisation",
     "RESULTS"=>"Résultats",
     // UNDISTURBED
     "UNDISTURBED_TITLE"=>"Traitement des erreurs du dernier envoi",
@@ -628,9 +672,42 @@ $lang_array=array(
     "F_BROWSER_IFRAME"=>"Oups ! Votre navigateur ne supporte pas les iframes !", // Oups ! Your browser does not support iframes !.
     "F_USE_THIS_AS_NEW_TEMPLATE_WITH_LIST"=>"Utiliser ce message comme modèle pour nouvelle rédaction avec la liste ",
     /* tinymce */
-    "TINYMCE_LANGUAGE"=>"fr_FR",
+    "TINYMCE_LANGUAGE"=>"fr_FR", //https://www.tinymce.com/docs/configure/localization/
     /* SPAM */
-    "CHECK_SPAM_SCORE"=>"Calculer le score spam"
+    "CHECK_SPAM_SCORE"=>"Calculer le score spam",
+    /* users */
+    "USERS_RIGHTS"=>"Droits utilisateurs",
+    "USERS_RIGHTS_MANAGEMENT"=>"Gestion des droits",
+    /* PROFILS */
+    "ID"=>"ID",
+    "EMAIL"=>"adresse mail",
+    "FIRST_CAMPAIGN_SEND"=>"première campagne lue",
+    "LAST_CAMPAIGN_SEND"=>"dernière campagne envoyée",
+    "LAST_CAMPAIGN_OPEN"=>"dernière campagne lue",
+    "COUNT_CAMPAIGNS_OPEN"=>"campagnes lues",
+    "COUNT_CLICK"=>"clics total",
+    "PROFIL"=>"profil",
+    "NO_OPEN"=>"pas de lectures",
+    "OPENER_READER"=>"lecteur régulier",
+    "MIDDLE_READER"=>"lecteur occasionnel",
+    "SOME_READ"=>"quelques lectures",
+    "SMALL_READ"=>"rares lectures",
+    "OPENER_CLICKER"=>"cliqueur régulier",
+    "MIDDLE_CLICKER"=>"cliqueur occasionnel",
+    "SOME_CLICKS"=>"quelques clics",
+    "SMALL_CLICKS"=>"rares clics",
+    "RATIO_CLICKER"=>"% clics",
+    "RATIO_READER"=>"% lectures",
+    "WAITING_FOR_MORE_STATS"=>"en attente de campagnes",
+    "COUNT_CAMPAIGNS_TOTAL"=>"campagnes envoyées",
+    // editeur
+    "WYSIWYG_EDITOR"=>"Rédaction WYSIWYG",
+    "CLEAR"=>"NOUVEAU",
+    "SAVE"=>"Enregistrer",
+    "BACKGROUND"=>"Couleur de fond",
+    "CLEAR_AND_CREATE_NEW"=>"Effacer et créer un nouveau message",
+    "CONTINUE_TO_CREATE_YOUR_DOC"=>"Passer à l'étape suivante de création du mail",
+    "HELP_TO_CREATE"=>"Aide à la création WYSIWYG d'un message"
     );
 
 

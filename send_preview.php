@@ -26,7 +26,7 @@ if($r != 'SUCCESS') {
 }
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("include/lang/".$row_config_globale['language'].".php");
-require 'include/lib/PHPMailerAutoload.php';
+require('include/lib/PHPMailerAutoload.php');
 require('include/lib/Html2Text.php');
 $step    = (empty($_GET['step']) ? "" : $_GET['step']);
 $subject = (!empty($_POST['subject'])) ? $_POST['subject'] : '';
@@ -37,9 +37,19 @@ $list_id = (!empty($_GET['list_id']) && empty($list_id)) ? $_GET['list_id'] : $l
 $begin   = (!empty($_POST['begin'])) ? $_POST['begin'] : '';
 $begin   = (!empty($_GET['begin']) && empty($begin)) ? $_GET['begin'] : 0;
 $msg_id  = (!empty($_GET['msg_id'])) ? $_GET['msg_id'] : '';
-$sn      = (!empty($_GET['sn'])) ? $_GET['sn'] : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
 $encode  = (!empty($_GET['encode'])&&$_GET['encode']=='base64')  ? 'base64' : '8bit';
+$tPath = ($row_config_globale['path'] == '' ? '/' : $row_config_globale['path']);
+if($row_config_globale['sending_method']=='lbsmtp'){
+    $cnx->query("UPDATE ".$row_config_globale['table_smtp']." 
+        SET smtp_date_update=NOW(),smtp_used=0 
+            WHERE smtp_date_update < DATE_SUB(CURDATE(), INTERVAL 1 DAY)");
+    $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
+    $date    = date("Y-m-d H:i:s");
+    $daylogmsg=$date. " : RAZ compteurs load_balancing SMTP\n";
+    fwrite($daylog, $daylogmsg, strlen($daylogmsg));
+    fclose($daylog);
+}
 switch ($step) {
     case "sendpreview":
         $mail          = new PHPMailer;
@@ -114,12 +124,12 @@ switch ($step) {
         $mail->XMailer = ' ';
         $body = "";
         if ( $row_config_globale['active_tracking'] == '1' ) {
-            $trac = "<img style='border:0' src='".$row_config_globale['base_url'] . $row_config_globale['path'] . "trc.php?i=" .$msg_id. "&h=fake_hash' alt='' width='1'  height='1' />";
+            $trac = "<img style='border:0' src='".$row_config_globale['base_url'] . $tPath . "trc.php?i=" .$msg_id. "&h=fake_hash' alt='' width='1'  height='1' />";
         } else {
             $trac = "";
         }
         if ( $format == "html" ){
-            $new_url = 'href="' . $row_config_globale['base_url'] . $row_config_globale['path'] .'r.php?m='.$msg_id.'&h=fake_hash&l='.$list_id.'&r=';
+            $new_url = 'href="' . $row_config_globale['base_url'] . $tPath .'r.php?m='.$msg_id.'&h=fake_hash&l='.$list_id.'&r=';
             $message = preg_replace_callback(       
                 '/href="(http[s]?:\/\/)([^"]+)"/',
                 function($matches) {
@@ -128,15 +138,15 @@ switch ($step) {
                 },$message);
             $unsubLink = "<br /><div align='center' style='padding-top:10px;font-size:10pt;font-family:arial,helvetica,sans-serif;padding-bottom:10px;color:#878e83;'>
                         <hr noshade='' color='#D4D4D4' width='90%' size='1'>"
-                        . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $row_config_globale['path'] 
+                        . tr("UNSUBSCRIBE_LINK", "<a href='" . $row_config_globale['base_url'] . $tPath 
                         . "subscription.php?i=$msg_id&list_id=$list_id&op=leave&email_addr=" . $addr 
                         . "&h=fake_hash' style='' target='_blank'>")
-                        . "<br /><a href='http://www.phpmynewsletter.com/' style='' target='_blank'>Phpmynewsletter 2.0</a></div></body></html>";
+                        . "</div></body></html>";
         } else {
-            $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$row_config_globale['path']
+            $body .= tr("READ_ON_LINE", "<a href='".$row_config_globale['base_url'].$tPath
                   ."online.php?i=$msg_id&list_id=$list_id&email_addr=".$addr."&h=fake_hash'>")."<br />";
             $body .= tr("ADD_ADRESS_BOOK", $newsletter['from_addr'])."<br />";
-            $unsubLink = $row_config_globale['base_url'] . $row_config_globale['path'] . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr)."&h=fake_hash";
+            $unsubLink = $row_config_globale['base_url'] . $tPath . "subscription.php?i=" .$msg_id. "&list_id=$list_id&op=leave&email_addr=" . urlencode($addr)."&h=fake_hash";
         }
         $AltBody = new \Html2Text\Html2Text($body.$AltMessage.$unsubLink);
         $mail->AltBody = quoted_printable_encode($AltBody->getText());
@@ -144,8 +154,11 @@ switch ($step) {
         $body .= $message . $unsubLink . $trac ;
         $mail->Subject = $subject;
         $mail->Body    = $body;
-        $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $row_config_globale['path'] 
+        $mail->addCustomHeader('List-Unsubscribe: <'. $row_config_globale['base_url'] . $tPath 
               . 'subscription.php?i='.$msg_id.'&list_id='.$list_id.'&op=leave&email_addr='.$addr.'&h=fake_hash>');
+        if($_SESSION['dr_log']=='Y') {
+            loggit($_SESSION['dr_id_user'].'.log', $_SESSION['dr_id_user'] . ' a envoyé une preview de la campagne "'.$subject.'" à "'.$addr.'"');
+        }
         @set_time_limit(150);
         if (!$mail->Send()) {
             die(tr("ERROR_SENDING"));
@@ -156,7 +169,7 @@ switch ($step) {
         break;
     default:
         if(!isset($num)) $num='';
-        header("location:send_preview.php?step=sendpreview&begin=0&list_id=$list_id&msg_id=$msg_id&sn=$num&error=0&token=$token&encode=$encode");
+        header("location:send_preview.php?step=sendpreview&begin=0&list_id=$list_id&msg_id=$msg_id&error=0&token=$token&encode=$encode");
         break;
 }
 

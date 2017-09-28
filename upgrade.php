@@ -50,27 +50,25 @@ function unzip($src_file, $dest_dir=false, $create_zip_name_dir=true, $overwrite
     if ($zip = zip_open($src_file)) {
         if ($zip) {
             $splitter = ($create_zip_name_dir === true) ? "." : "/";
-            if ($dest_dir === false) {
-                $dest_dir = substr($src_file, 0, strrpos($src_file, $splitter))."/";
-            }
+        if ($dest_dir === false) $dest_dir = substr($src_file, 0, strrpos($src_file, $splitter))."/";
             create_dirs($dest_dir);
-            while ($zip_entry = zip_read($zip)) {
-                $pos_last_slash = strrpos(zip_entry_name($zip_entry), "/");
-                if ($pos_last_slash !== false) {
-                    create_dirs($dest_dir.substr(zip_entry_name($zip_entry), 0, $pos_last_slash+1));
-                }
-                if (zip_entry_open($zip,$zip_entry,"r")) {
-                    $file_name = $dest_dir.zip_entry_name($zip_entry);
-                    if ($overwrite === true || $overwrite === false && !is_file($file_name)){
-                        $fstream = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-                        file_put_contents($file_name, $fstream);
-                        // chmod($file_name, 0777);
-                        // echo "Extraction : ".$file_name." OK<br />";
-                    }
-                    zip_entry_close($zip_entry);
-                }       
+        while ($zip_entry = zip_read($zip)) {
+            $pos_last_slash = strrpos(zip_entry_name($zip_entry), "/");
+            if ($pos_last_slash !== false) {
+                create_dirs($dest_dir.substr(zip_entry_name($zip_entry), 0, $pos_last_slash+1));
             }
-            zip_close($zip);
+            if (zip_entry_open($zip,$zip_entry,"r")) {
+                $file_name = $dest_dir.zip_entry_name($zip_entry);
+                if ($overwrite === true || $overwrite === false && !is_file($file_name)){
+                    $fstream = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
+                    file_put_contents($file_name, $fstream);
+                    chmod($file_name, 0777);
+                    echo "Extraction : ".$file_name." OK<br />";
+                }
+                zip_entry_close($zip_entry);
+            }       
+        }
+        zip_close($zip);
         }
     } else {
         return false;
@@ -131,6 +129,7 @@ function checkVersionCurl(){
     $header['errno']   = $err;
     $header['errmsg']  = $errmsg;
     $header['content'] = $content;
+    var_dump($header);
     return $header;
 }
 class BackupMySQL extends mysqli {
@@ -255,13 +254,11 @@ echo '<h1>PhpMyNewsLetter</h1>';
 echo '<p>Pour mettre à jour PhpMyNewsLetter, cliquez sur le lien qui vous est proposé.<br>
     Chaque lien amènera à une action de mise à jour.<br>
     Ce script est fait pour vous aider, il a été testé et est fonctionnel.<br>
-    Toutefois, selon votre installation, des bugs peuvent survenir. Merci de passer par le forum pour support : 
-    <a href="https://www.phpmynewsletter.com/forum/">Forum</a>.</p>';
+    Toutefois, selon votre installation, des bugs peuvent survenir. Merci de passer par le forum pour support : <a href="https://www.phpmynewsletter.com/forum/">Forum</a>.</p>';
 echo '<p>To update PhpMyNewsLetter, please click the link that is offered<br>
     Each link will be an update step.<br>
     This script is done to help you, it has been tested and is fully functional.<br>
-    However, depending on your installation, bugs may occur. Thank you to pass through the support forum : 
-    <a href="https://www.phpmynewsletter.com/forum/">Forum</a>.</p>';
+    However, depending on your installation, bugs may occur. Thank you to pass through the support forum : <a href="https://www.phpmynewsletter.com/forum/">Forum</a>.</p>';
 echo '<hr/>';
 switch($op) {
     case 'init':
@@ -285,10 +282,10 @@ switch($op) {
             echo "<h4 class='alert_success'>config.php OK</h4>";
             $VERSION_TO_UPGRADE = $pmnl_version;
             echo "<h4 class='alert_info'>Version à upgrader / Version to upgrade : $VERSION_TO_UPGRADE </h4>";
-            if (version_compare($VERSION_TO_UPGRADE, '2.0.3', '>=')) {
+            if (version_compare($VERSION_TO_UPGRADE, '2.0.4', '>=')) {
                 echo "<h4 class='alert_success'>PhpMyNewsLetter : mise à jour possible / upgrade possible</h4>";
             } else {
-                echo "<h4 class='alert_error'>Version de PhpMyNewsLetter obsolète / obsolete version (2.0.3 min)</h4>";
+                echo "<h4 class='alert_error'>PhpMyNewsLetter obsolète / obsolete (2.0.4 min)</h4>";
             }
             checkVersion();
             $PREFIX=str_replace('config','',$table_global_config);
@@ -297,8 +294,7 @@ switch($op) {
             die("<h4 class='alert_error'>config.php non trouvé, merci de placer upgrade.php à la racine de votre installation PhpMyNewsLetter !<br>
             config.php not found, please move upgrade.php in the PhpMyNewsLetter installation path !</h4>");
         }
-        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=files' style='color:black'>
-			Cliquer pour continuer / click to continue : sauvegarde des fichiers / backup files</a></h4></div>";
+        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=files' style='color:black'>Cliquer pour continuer / click to continue : sauvegarde des fichiers / backup files</a></h4></div>";
     break;
     case 'files':
         include_once('include/config.php');
@@ -314,12 +310,10 @@ switch($op) {
                 echo "<h4 class='alert_success'>Sauvegarde des fichiers de la version courante OK !<br>
                 Backup current version OK !<br>
                 $PATH_BACKUP_CURRENT_VERSION/backup_$VERSION_TO_UPGRADE.zip</h4>";
-                echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=sql&p=$PATH_BACKUP_CURRENT_VERSION' 
-					style='color:black'>Cliquer pour continuer / click to continue : sauvegarde de la base de données / backup database</a></h4></div>";
+                echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=sql&p=$PATH_BACKUP_CURRENT_VERSION' style='color:black'>Cliquer pour continuer / click to continue : sauvegarde de la base de données / backup database</a></h4></div>";
             }
         } else {
-            die("<h4 class='alert_error'>Erreur à la création du répertoire de sauvegarde : $PATH_BACKUP_CURRENT_VERSION/ ! 
-            Vérifiez les droits et relancez la procédure d'upgrade uniquement par un F5 (rafraichissement de la page)<br>
+            die("<h4 class='alert_error'>Erreur à la création du répertoire de sauvegarde : $PATH_BACKUP_CURRENT_VERSION/ ! Vérifiez les droits et relancez la procédure d'upgrade uniquement par un F5 (rafraichissement de la page)<br>
             Error while create path for backup : $PATH_BACKUP_CURRENT_VERSION/ ! Check your config and restart upgrade only with F5 ! (refresh the page)</h4>");
         }
     break;
@@ -340,8 +334,7 @@ switch($op) {
             'dossier' => $PATH_BACKUP_CURRENT_VERSION.'/',
             'prefixe' => $PREFIX
         ));
-        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=wget&p=$PATH_BACKUP_CURRENT_VERSION' 
-			style='color:black'>Cliquer pour continuer / click to continue : téléchargement nouvelle version / Download new version</a></h4></div>";
+        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=wget&p=$PATH_BACKUP_CURRENT_VERSION' style='color:black'>Cliquer pour continuer / click to continue : téléchargement nouvelle version / Download new version</a></h4></div>";
     break;
     case 'wget':
         include_once('include/config.php');
@@ -365,8 +358,7 @@ switch($op) {
             die("<h4 class='alert_error'>Erreur sur téléchargement du nouveau fichier !<br>
             Error while downloading new file !</h4>");
         }
-        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=uncompress&p=$PATH_BACKUP_CURRENT_VERSION' 
-			style='color:black'>Cliquer pour continuer / click to continue : décompression de la nouvelle version / Uncompress new version</a></h4></div>";
+        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=uncompress&p=$PATH_BACKUP_CURRENT_VERSION' style='color:black'>Cliquer pour continuer / click to continue : décompression de la nouvelle version / Uncompress new version</a></h4></div>";
     break;
     case 'uncompress':
         include_once('include/config.php');
@@ -377,15 +369,14 @@ switch($op) {
             Error while checking for working path : $PATH_BACKUP_CURRENT_VERSION/ ! Bad path</h4>");
         }
         $FILE_TO_UNZIP = $PATH_BACKUP_CURRENT_VERSION.'/' . $PATH_BACKUP_CURRENT_VERSION . '.zip';
-        if (unzip($FILE_TO_UNZIP, __DIR__."/" /*$PATH_BACKUP_CURRENT_VERSION.'/t/'*/ )){
+        if (unzip($FILE_TO_UNZIP, $PATH_BACKUP_CURRENT_VERSION.'/t/')){
             echo "<h4 class='alert_success'>Unzip et installation nouvelle version OK !<br>
                 Unzip and install new version OK !</h4>";
         } else {
             die("<h4 class='alert_error'>Erreur sur décompression et installation de la nouvelle version !<br>
             Error while unzip and install new version !</h4>");
         }
-        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=upgradesql&p=$PATH_BACKUP_CURRENT_VERSION' 
-			style='color:black'>Cliquer pour continuer / click to continue : mise à jour de la base de données / Update database</a></h4></div>";
+        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=upgradesql&p=$PATH_BACKUP_CURRENT_VERSION' style='color:black'>Cliquer pour continuer / click to continue : mise à jour de la base de données / Update database</a></h4></div>";
     break;
     case 'upgradesql':
         include_once('include/config.php');
@@ -393,63 +384,56 @@ switch($op) {
         $PATH_BACKUP_CURRENT_VERSION =(empty($_GET['p'])?"":$_GET['p']);
         $PREFIX=str_replace('config','',$table_global_config);
         $link_create_db = mysqli_connect($hostname, $login, $pass,$database);
-        $sql_config_sending="ALTER TABLE `" . $PREFIX . "config` 
-            CHANGE  `sending_method` `sending_method` ENUM( 'smtp','lbsmtp','php_mail','php_mail_infomaniak','smtp_gmail_tls',
-					'smtp_gmail_ssl','smtp_mutu_ovh','smtp_mutu_1and1','smtp_mutu_gandi','smtp_mutu_online','smtp_mutu_infomaniak' )";
-        if(mysqli_query($link_create_db, $sql_config_sending)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " . $PREFIX . "config  sending_method OK !</h4>";
+        
+        $sql_config_sending="ALTER TABLE `" . $PREFIX . "_config` 
+            CHANGE  `sending_method` ENUM( 'smtp','lbsmtp','php_mail','php_mail_infomaniak','smtp_gmail_tls','smtp_gmail_ssl','smtp_mutu_ovh','smtp_mutu_1and1','smtp_mutu_gandi','smtp_mutu_online','smtp_mutu_infomaniak' )";
+        if(mysqli_query($sql_config_sending)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_config  sending_method OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " . $PREFIX . "config sending_method en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_config sending_method en erreur / failed !<br>
             $sql_config_sending</h4>");
         }
         
-        $sql_config_port="ALTER TABLE `" . $PREFIX . "config` ADD `smtp_port` VARCHAR(5) NOT NULL AFTER `smtp_host`";
-        if(mysqli_query($link_create_db, $sql_config_port)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " 
-				. $PREFIX . "config smtp_port OK !</h4>";
+        $sql_config_port="ALTER TABLE `" . $PREFIX . "_config` ADD `smtp_port` VARCHAR(5) NOT NULL AFTER `smtp_host`";
+        if(mysqli_query($sql_config_port)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_config smtp_port OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " 
-				. $PREFIX . "config smtp_port en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_config smtp_port en erreur / failed !<br>
             $sql_config_port</h4>");
         }
         
-        $sql_config_fields="ALTER TABLE `" . $PREFIX . "config` 
+        $sql_config_fields="ALTER TABLE `$PREFIX_config` 
             ADD  `table_email_deleted` VARCHAR( 255 ) NOT NULL DEFAULT '',
             ADD  `table_smtp` varchar(255) NOT NULL DEFAULT '',
             ADD  `alert_sub` ENUM(  '0',  '1' ) NOT NULL default '1',
             ADD  `active_tracking` enum('0','1') NOT NULL DEFAULT '1'";
-        if(mysqli_query($link_create_db, $sql_config_fields)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " 
-                . $PREFIX . "config table_email_deleted, table_smtp, alert_sub, active_tracking OK !</h4>";
+        if(mysqli_query($sql_config_fields)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_config table_email_deleted, table_smtp, alert_sub, active_tracking OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " . $PREFIX 
-                . "config table_email_deleted, table_smtp, alert_sub, active_tracking en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_config table_email_deleted, table_smtp, alert_sub, active_tracking en erreur / failed !<br>
             $sql_config_fields</h4>");
         }
         
-        $sql_update_config="UPDATE `" . $PREFIX . "config` SET table_email_deleted='" 
-			. $PREFIX . "email_deleted',table_smtp='" . $PREFIX . "smtp';";
-        if(mysqli_query($link_create_db, $sql_update_config)){
-            echo "<h4 class='alert_success'>Mise à jour nouvelles valeurs / update table new values " 
-				. $PREFIX . "config OK !</h4>";
+        $sql_update_config="UPDATE `$PREFIX_config` SET table_email_deleted='$PREFIX_email_deleted',table_smtp='$PREFIX_smtp';";
+        if(mysqli_query($sql_update_config)){
+            echo "<h4 class='alert_success'>Mise à jour nouvelles valeurs / update table new values $PREFIX_config OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour nouvelles valeurs / update table new values " 
-				. $PREFIX . "config en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour nouvelles valeurs / update table new values $PREFIX_config en erreur / failed !<br>
             $sql_update_config</h4>");
         }
         
-        $sql_email_fields="ALTER TABLE `" . $PREFIX . "email`
+        $sql_email_fields="ALTER TABLE `$PREFIX_email`
             ADD `campaign_id` INT(7) DEFAULT NULL,
             ADD KEY `categorie` (`categorie`),
             ADD KEY `campaign_id` (`campaign_id`)";
-        if(mysqli_query($link_create_db, $sql_email_fields)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " . $PREFIX . "email OK !</h4>";
+        if(mysqli_query($sql_email_fields)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_email OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " . $PREFIX . "email en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_email en erreur / failed !<br>
             $sql_email_fields</h4>");
         }
         
-        $sql_create_deleted="CREATE TABLE IF NOT EXISTS `" . $PREFIX . "email_deleted` (
+        $sql_create_deleted="CREATE TABLE IF NOT EXISTS `$PREFIX_email_deleted` (
             `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
             `email` varchar(255) NOT NULL DEFAULT '',
             `list_id` int(5) unsigned NOT NULL DEFAULT '0',
@@ -470,13 +454,14 @@ switch($op) {
             KEY `categorie` (`categorie`),
             KEY `campaign_id` (`campaign_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8";
-        if(mysqli_query($link_create_db, $sql_create_deleted)){
-            echo "<h4 class='alert_success'>Création / create table " . $PREFIX . "email_deleted OK !</h4>";
+        if(mysqli_query($sql_create_deleted)){
+            echo "<h4 class='alert_success'>Création / create table $PREFIX_email_deleted OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Création / create table " . $PREFIX . "email_deleted en erreur / failed !<br>
+            die("<h4 class='alert_success'>Création / create table $PREFIX_email_deleted en erreur / failed !<br>
             $sql_create_deleted</h4>");
         }
-        $sql_create_smtp="CREATE TABLE IF NOT EXISTS `" . $PREFIX . "smtp` (
+        
+        $sql_create_smtp="CREATE TABLE IF NOT EXISTS `test_smtp` (
             `smtp_id` int(7) NOT NULL AUTO_INCREMENT,
             `smtp_name` text NOT NULL,
             `smtp_url` varchar(255) NOT NULL,
@@ -494,13 +479,14 @@ switch($op) {
             KEY `smtp_used` (`smtp_used`),
             KEY `smtp_limite` (`smtp_limite`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8";
-        if(mysqli_query($link_create_db, $sql_create_smtp)){
-            echo "<h4 class='alert_success'>Création / create table " . $PREFIX . "smtp OK !</h4>";
+        if(mysqli_query($sql_create_smtp)){
+            echo "<h4 class='alert_success'>Création / create table $PREFIX_smtp OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Création / create table " . $PREFIX . "smtp en erreur / failed !<br>
+            die("<h4 class='alert_success'>Création / create table $PREFIX_smtp en erreur / failed !<br>
             $sql_create_smtp</h4>");
         }
-        $sql_track_fields="ALTER TABLE `" . $PREFIX . "track`
+        
+        $sql_track_fields="ALTER TABLE `$PREFIX_track`
             ADD `browser` varchar(150) NOT NULL,
             ADD `version` varchar(150) NOT NULL,
             ADD `platform` varchar(255) NOT NULL,
@@ -508,24 +494,26 @@ switch($op) {
             ADD `devicetype` varchar(10) NOT NULL,
             ADD KEY `ip` (`ip`),
             ADD KEY `browser` (`browser`),
-            ADD KEY `version` (`version`),
+            ADD KEY `version` (`version`)
             ADD KEY `platform` (`platform`),
             ADD KEY `devicetype` (`devicetype`)";
-        if(mysqli_query($link_create_db, $sql_track_fields)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " . $PREFIX . "track OK !</h4>";
+        if(mysqli_query($sql_track_fields)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_track OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " . $PREFIX . "track en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_track en erreur / failed !<br>
             $sql_track_fields</h4>");
         }
-        $sql_track_links_cpt="ALTER TABLE `" . $PREFIX . "track_links` CHANGE `cpt` `cpt` INT( 7 ) UNSIGNED NOT NULL DEFAULT  '0'";
-        if(mysqli_query($link_create_db, $sql_track_links_cpt)){
-            echo "<h4 class='alert_success'>Mise à jour / update table " . $PREFIX . "track_links OK !</h4>";
+        
+        $sql_track_links_cpt="ALTER TABLE `$PREFIX_track_links` CHANGE `cpt` `cpt` INT( 7 ) UNSIGNED NOT NULL DEFAULT  '0'";
+        if(mysqli_query($sql_track_links_cpt)){
+            echo "<h4 class='alert_success'>Mise à jour / update table $PREFIX_track_links OK !</h4>";
         } else {
-            die("<h4 class='alert_error'>Mise à jour / update table " . $PREFIX . "track_links en erreur / failed !<br>
+            die("<h4 class='alert_success'>Mise à jour / update table $PREFIX_track_links en erreur / failed !<br>
             $sql_track_links_cpt</h4>");
         }
-        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=thatsallfolks&p=$PATH_BACKUP_CURRENT_VERSION' 
-            style='color:black'>Cliquer pour continuer / click to continue : terminer la mise à jour / finish updating</a></h4></div>";
+        
+        echo "<div align='center'><h4 class='alert_info'><a href='upgrade.php?op=thatsallfolks&p=$PATH_BACKUP_CURRENT_VERSION' style='color:black'>Cliquer pour continuer / click to continue : terminer la mise à jour / finish updating</a></h4></div>";
+
     break;
     case 'thatsallfolks':
         include_once('include/config.php');
@@ -534,15 +522,13 @@ switch($op) {
         echo "<h4 class='alert_success'>Fin de la mise à jour / End of the update OK !</h4>";
         echo '<p>La mise à jour est terminée !<br>
             Vous devez vous connecter avec votre email administrateur et votre mot de passe.<br>
-            Les anciens fichiers de la version mise à jour ont été sauvegardés dans le répertoire '.$PATH_BACKUP_CURRENT_VERSION
-            .'/, fichiers et base de données.<br>
+            Les anciens fichiers de la version mise à jour ont été sauvegardés dans le répertoire '.$PATH_BACKUP_CURRENT_VERSION.'/, fichiers et base de données.<br>
             En cas de problèmes, le support est sur le forum : <a href="https://www.phpmynewsletter.com/forum/">Forum</a><br>
             Je souhaite sincèrement que vous apprécierez la nouvelle version de PhpMyNewsLetter !</p><br><br>
             Arnaud';
         echo '<p>Update is OK !<br>
             Now, you have to connect with your email admin and your password.<br>
-            Backup files and database are stored in '.$PATH_BACKUP_CURRENT_VERSION
-            .'/ directory.
+            Backup files and database are stored in '.$PATH_BACKUP_CURRENT_VERSION.'/ directory.
             If troubles, please feel free to ask for support on the official board : <a href="https://www.phpmynewsletter.com/forum/">Forum</a><br>
             I really hop you will enjoy to use this new version of PhpMyNewsLetter !<br><br>
             Arnaud</p>';

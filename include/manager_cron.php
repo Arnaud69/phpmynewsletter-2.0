@@ -87,16 +87,17 @@ if ( $continue ) {
                 return true;
             } elseif ( count( $detail_crontab ) == 1 && $detail_crontab[ 0 ][ 'etat' ] != 'done' ) {
                 $output = shell_exec( 'crontab -l' );
-                if ( strstr( $output, $detail_crontab[ 0 ][ 'command' ] ) ) {
+                if ( stristr( $output, $detail_crontab[ 0 ][ 'command' ] ) ) {
                     $newcron = str_replace( $detail_crontab[ 0 ][ 'command' ], '', $output );
                     file_put_contents( 'backup_crontab/' . $detail_crontab[ 0 ][ 'job_id' ] . '_delete', $newcron . PHP_EOL );
-                    exec( 'crontab backup_crontab/' . $detail_crontab[ 0 ][ 'job_id' ] . '_delete' );
+                    exec( 'crontab ' . __DIR__ . '/backup_crontab/' . $detail_crontab[ 0 ][ 'job_id' ] . '_delete' );
                 } else {
                     // echo tr("SCHEDULE_TASK_NOT_FOUND");
                 }
                 $cnx->query( 'DELETE FROM ' . $row_config_globale[ 'table_crontab' ] . '
                                     WHERE list_id=' . $list_id . '
                                         AND job_id="' . $_POST[ 'deltask' ] . '"' );
+                
                 return true;
                 exit( 0 );
             } elseif ( count( $detail_crontab ) != 1 ) {
@@ -111,36 +112,73 @@ if ( $continue ) {
                                         FROM ' . $row_config_globale[ 'table_crontab' ] . ' 
                                             WHERE list_id=' . $list_id . ' 
                                         ORDER BY date DESC' )->fetchAll( PDO::FETCH_ASSOC );
-        echo '<article class="module width_full"><header><h3>' . tr( "SCHEDULE_SEND_SCHEDULED" ) . ' : </h3></header>';
-        echo '<table cellspacing="0" class="tablesorter"> 
-                    <thead> 
-                        <tr> 
-                            ' . tr( "SCHEDULE_REPORT_HEAD" ) . '
-                        </tr> 
-                    </thead> 
-                    <tbody>';
+        echo '<header><h4>' . tr( "SCHEDULE_SEND_SCHEDULED" ) . ' : </h4></header>';
+        echo '<table class="tablesorter table table-striped" cellspacing="0">  
+            <thead> 
+                <tr> 
+                    ' . tr( "SCHEDULE_REPORT_HEAD" ) . '
+                </tr> 
+            </thead>
+            <tfoot> 
+                <tr> 
+                    ' . tr( "SCHEDULE_REPORT_HEAD" ) . '
+                </tr> 
+            </tfoot> 
+            <tbody>';
         $month_tab = tr( "MONTH_TAB" );
         $step_tab  = tr( "SCHEDULE_STATE" );
         if ( count( $list_crontab ) > 0 ) {
             foreach ( $list_crontab as $x ) {
                 echo '<tr';
-                if ( $x[ 'job_id' ] == $cronID )
-                    echo ' id="tog"';
+                if ( $x[ 'job_id' ] == $cronID ) {
+                    echo ' style="background:#B5E5EF"';
+                }
+                echo ' class="'.$x['job_id'].'"';
                 echo '>';
-                echo '  <td>' . $x[ 'job_id' ] . '</td>';
-                echo '  <td>' . $x[ 'list_id' ] . '</td>';
-                echo '  <td>' . stripslashes( $x[ 'mail_subject' ] ) . '</td>';
-                echo '  <td>' . sprintf( "%02d", $x[ 'day' ] ) . ' ' . $month_tab[ $x[ 'month' ] ] . ' à ' . sprintf( "%02d", $x[ 'hour' ] ) . 'h' . sprintf( "%02d", $x[ 'min' ] ) . '</td>';
-                echo '  <td>' . $x[ 'etat' ] . '</td>';
-                echo '  <td>' . tr( "SCHEDULE_NO_LOG" ) . '</td>';
-                echo '  <td><a title="' . tr( "SCHEDULE_DELETE_TASK" ) . '" class="tooltip"><input type="image" src="css/icn_trash.png"></a></td>';
+                echo '  <td style="padding-top:14px;">' . $x[ 'job_id' ] . '</td>';
+                echo '  <td style="padding-top:14px;">' . $x[ 'list_id' ] . '</td>';
+                echo '  <td style="padding-top:14px;">' . stripslashes( $x[ 'mail_subject' ] ) . '</td>';
+                echo '  <td style="padding-top:14px;">' . sprintf( "%02d", $x[ 'day' ] ) . ' ' . $month_tab[ $x[ 'month' ] ] . ' à ' . sprintf( "%02d", $x[ 'hour' ] ) . 'h' . sprintf( "%02d", $x[ 'min' ] ) . '</td>';
+                echo '  <td style="padding-top:14px;">' . $x[ 'etat' ] . '</td>';
+                if(is_file("logs/list".$x['list_id']."-msg".$x['msg_id'].".txt")){
+                    echo '<td><a data-toggle="modal" data-target="#modalPmnl" data-tooltip="tooltip" href="include/view_log.php?list_id='
+                        .$x['list_id'].'&id_mail='.$x['msg_id'].'&t=l&token='
+                        .$token.'" title="'. tr( "TRACKING_VIEW_LOG_SEND" ) .'">
+                        <button type="button" class="deltask btn btn-default btn-sm"><i class="glyphicon glyphicon-search"></i></button></a></td>';
+                } else {
+                    echo '<td style="padding-top:14px;">'.tr("SCHEDULE_NO_LOG").'.</td>';    
+                }
+                echo '<td><form id="'.$x['job_id'].'" method="post">';
+                if($x['etat']=='scheduled'){
+                    echo '<a title="'.tr("SCHEDULE_DELETE_TASK").'" data-toggle="tooltip">
+                        <button type="button" class="deltask btn btn-default btn-sm"><i class="glyphicon glyphicon-trash"></i></button></a>
+                        <input type="hidden" value="'.$x['job_id'].'" id="deltask">
+                        <input type="hidden" value="'.$token.'" id="token">
+                        <input type="hidden" value="'.$list_id.'" name="list_id">';
+                }
+                echo '</form></td>';
                 echo '</tr>';
             }
             echo '</table>';
-            echo '<script>$(document).ready(function(){ $("tr#tog").css("background","#B5E5EF"); }); </script>';
+            ?>
+            <script>
+                $(".deltask").click(function() {
+                    var task=$(this).closest("form").attr("id");
+                    var dt='.'+task;
+                    var ds="deltask="+task+"&token=<?php echo $token;?>&list_id=<?php echo $list_id;?>&action=delete";
+                    $.ajax({type:"POST",
+                        url:"include/manager_cron.php",
+                        data:ds,
+                        success: function(){
+                            $(dt).hide("slow");
+                        }
+                    });
+                });
+            </script>
+        <?php
         } else {
             echo '<tr>';
-            echo '  <td colspan="5" align="center">' . tr( "SCHEDULE_NO_SEND_SCHEDULED" ) . '</td>';
+            echo '<td colspan="5" align="center">' . tr( "SCHEDULE_NO_SEND_SCHEDULED" ) . '</td>';
             echo '</tr>';
             echo '</table>';
         }

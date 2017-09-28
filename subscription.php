@@ -158,7 +158,7 @@ require('include/lib/Html2Text.php');
                             sendEmail($row_config_globale['sending_method'], $email_addr, $news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                             if($row_config_globale['alert_sub']==1){
-							    $rapport_sujet = tr("SUBSCRIPTION_TITLE");
+                                $rapport_sujet = tr("SUBSCRIPTION_TITLE");
                                 $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
                                 $rapport = '<br /><br /><br /><br /><br />
                                 <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
@@ -173,6 +173,8 @@ require('include/lib/Html2Text.php');
                                 </table>';
                                 sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             }
+                            if( $sub_validation_sms == 1 )
+    	                        send_sms($free_id,$free_pass,"Un nouvel abonné sur la liste $list_id : $email_addr. Bonne journée ;-)");
                         } else {
                             echo "<h4 class='alert_error'>" . tr("ERROR_UNKNOWN") . "</h4>";
                         }
@@ -182,7 +184,11 @@ require('include/lib/Html2Text.php');
                     case "confirm_leave":
                         echo '<header><h3>'.tr("SUBSCRIPTION_TITLE").'</h3></header>';
                         $rm = removeSubscriber($cnx, $row_config_globale['table_email'], $row_config_globale['table_send'], $list_id, $email_addr, $hash, $i,$row_config_globale['table_email_deleted']);
-                        sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Désinscription', 'Liste : '.$list_id.'<b />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                        if (!$row_config_globale['unsub_validation']) {
+                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Désinscription', 'Liste : '.$list_id.'<br />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                        }
+                        if( $unsub_validation_sms == 1 )
+    	                    send_sms($free_id,$free_pass,"Une désinscription sur la liste $list_id : $email_addr. Bonne journée ;-)");
                         if ($rm == 1) {
                             echo "<h4 class='alert_success'>" . tr("UNSUBSCRIPTION_FINISHED") . ".</h4>";
                         } else if ($rm == -1) {
@@ -206,7 +212,7 @@ require('include/lib/Html2Text.php');
                                 sendEmail($row_config_globale['sending_method'],$email_addr,$news['from_addr'], $news['from_name'], $subj, $body, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                                 echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                                 if($row_config_globale['alert_sub']==1){
-							        $rapport_sujet = tr("SUBSCRIPTION_TITLE");
+                                    $rapport_sujet = tr("SUBSCRIPTION_TITLE");
                                     $subj = (strtoupper($row_config_globale['charset']) == "UTF-8" ? $rapport_sujet : iconv("UTF-8", $row_config_globale['charset'], $rapport_sujet));
                                     $rapport = '<br /><br /><br /><br /><br />
                                     <table style="height: 217px; margin-left: auto; margin-right: auto;" width="660">
@@ -221,6 +227,8 @@ require('include/lib/Html2Text.php');
                                     </table>';
                                     sendEmail($row_config_globale['sending_method'],$row_config_globale['admin_email'], $row_config_globale['admin_email'], $row_config_globale['admin_name'], $subj, $rapport, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                                 }
+                                if( $sub_validation_sms == 1 )
+    	                            send_sms($free_id,$free_pass,"Un nouvel abonné sur la liste $list_id : $email_addr. Bonne journée ;-)");
                                 echo "<h4 class='alert_success'>" . tr("SUBSCRIPTION_FINISHED") . "</h4>";
                             } else {
                                 echo "<h4 class='alert_error'>" . tr("SUBSCRIPTION_ALREADY_SUBSCRIBER") . "</h4>";
@@ -232,8 +240,10 @@ require('include/lib/Html2Text.php');
                     case "leave_direct":
                         echo '<header><h3>'.tr("UNSUBSCRIPTION_TITLE").'</h3></header>';
                         if (!$row_config_globale['unsub_validation']) {
-                            $rm = removeSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr, $row_config_globale['table_email_deleted']);
-                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 'Désinscription', 'Liste : '.$list_id.'<b />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
+                            $rm = removeSubscriberDirect($cnx, $row_config_globale['table_email'], $list_id, $email_addr, $h, $i, $row_config_globale['table_email_deleted']);
+                            sendEmail($row_config_globale['sending_method'],$news['from_addr'],$news['from_addr'], $news['from_name'], 
+                                     'Désinscription', 'Liste : '.$list_id.'<br />Désinscrit : '.$email_addr, $row_config_globale['smtp_auth'], 
+                                     $row_config_globale['smtp_host'], $row_config_globale['smtp_login'], $row_config_globale['smtp_pass'], $row_config_globale['charset']);
                             if ($rm) {
                                 echo "<h4 class='alert_success'>" . tr("UNSUBSCRIPTION_FINISHED") . ".</h4>";
                             } else if ($rm == -1) {
@@ -242,6 +252,8 @@ require('include/lib/Html2Text.php');
                                 echo "<h4 class='alert_error'>" . tr("ERROR_UNKNOWN") . "</h4>";
                             }
                         }
+                        if( $unsub_validation_sms == 1 )
+    	                    send_sms($free_id,$free_pass,"Une désinscription sur la liste $list_id : $email_addr. Bonne journée ;-)");
                         echo '<h4 class="alert_info">' . tr("CLOSE_WINDOW") . '</h4>';
                         echo '<div class="spacer"></div>';
                     break;

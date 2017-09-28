@@ -38,6 +38,7 @@ switch ($send_method) {
                 AND smtp_date_update > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
             ORDER BY id_use ASC LIMIT 1");
         $mail->IsSMTP();
+        $mail->SMTPDebug  = false;
         if($info_smtp_lb['smtp_user']!=''){
             $mail->SMTPAuth = true;
             $mail->Username = $info_smtp_lb['smtp_user'];
@@ -47,19 +48,48 @@ switch ($send_method) {
             $mail->SMTPSecure = $info_smtp_lb['smtp_secure'];
         }
         $mail->Host = $info_smtp_lb['smtp_url'];
+        if($info_smtp_lb['smtp_url']=='smtp.gmail.com'){
+            $mail->IsHTML(true);
+        }
         if($info_smtp_lb['smtp_port']!=''){
             $mail->Port = $info_smtp_lb['smtp_port'];
         }else{
             $mail->Port = 25;
         }
         $cnx->query('UPDATE '.$row_config_globale['table_smtp'].' 
-                         SET smtp_used=smtp_used+1, id_use=' . (intval($CURRENT_ID)+1) . '
+                         SET smtp_used=smtp_used+1, 
+                             id_use=' . (intval($CURRENT_ID)+1) . ',
+                             smtp_date_update=NOW()
                      WHERE smtp_id='.$info_smtp_lb['smtp_id']);
         $daylog = @fopen('logs/daylog-' . date("Y-m-d") . '.txt', 'a+');
-        $daylogmsg= date("Y-m-d H:i:s") . " : envoi à $dest_adresse sur serveur ".$info_smtp_lb['smtp_name']."\n";
+        $daylogmsg= date("Y-m-d H:i:s") . " : envoi à " . $addr[$i]['email'] . " sur serveur " . $info_smtp_lb['smtp_name'] . "\n";
         fwrite($daylog, $daylogmsg, strlen($daylogmsg));
         fclose($daylog);
+        $handler = @fopen('logs/list' . $list_id . '-msg' . $msg_id . '.txt', 'a+');
+        $daylogmsg= date("Y-m-d H:i:s") . " : envoi à " . $addr[$i]['email'] . " sur serveur " . $info_smtp_lb['smtp_name'] . "\n";
+        fwrite($handler, $daylogmsg, strlen($daylogmsg));
+        fclose($handler);
     break;
+    case "smtp_over_tls":
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = 'tls';
+        $mail->Host = $row_config_globale['smtp_host'];
+        $mail->Port = 587;
+        $mail->IsHTML(true);
+        $mail->Username = $row_config_globale['smtp_login'];
+        $mail->Password = $row_config_globale['smtp_pass'];
+        break;
+    case "smtp_over_ssl":
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = 'ssl';
+        $mail->Host = $row_config_globale['smtp_host'];
+        $mail->Port = 465;
+        $mail->IsHTML(true);
+        $mail->Username = $row_config_globale['smtp_login'];
+        $mail->Password = $row_config_globale['smtp_pass'];
+        break;
     case "smtp_gmail_tls":
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
@@ -97,7 +127,7 @@ switch ($send_method) {
     case "smtp_mutu_1and1":
         $mail->IsSMTP();
         $mail->SMTPAuth = true;
-        $mail->SMTPSecure = 'tls';
+        $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
         $mail->Host = 'auth.smtp.1and1.fr';
         if ($row_config_globale['smtp_auth']) {

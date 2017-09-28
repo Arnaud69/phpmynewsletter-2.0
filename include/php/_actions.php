@@ -83,6 +83,19 @@ if($action=='flush_and_force_mailq'&&$page=='manager_mailq'&&!empty($id_mailq)&&
 }
 if($page=='listes'){
     switch($action){
+        case 'stopsend':
+            var_dump($_GET);
+            if (file_exists("logs/__SEND_PROCESS__" . $_GET['list_id'] . ".pid" )){
+                if (unlink("logs/__SEND_PROCESS__" . $_GET['list_id'] . ".pid" )) {   
+                    echo "success";
+                } else {
+                    echo "fail";    
+                }   
+            } else {
+                echo "file does not exist";
+            }
+            die();
+        break;
         case 'delete':
             $deleted=deleteNewsletter($cnx,$row_config_globale['table_listsconfig'],$row_config_globale['table_archives'],
                                    $row_config_globale['table_email'],$row_config_globale['table_temp'],

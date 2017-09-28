@@ -23,7 +23,6 @@ if($r != 'SUCCESS') {
 }
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include("lang/".$row_config_globale['language'].".php");
-// http://www.sanwebe.com/2012/05/ajax-image-upload-and-resize-with-jquery-and-php
 @set_time_limit(300);
 $import_big_file = (!empty($_FILES['import_big_file']) ? $_FILES['import_big_file'] : "");
 if (!empty($import_big_file) && $import_big_file != "none" && $import_big_file['size'] > 0 && is_uploaded_file($import_big_file['tmp_name'])){
@@ -43,9 +42,6 @@ if (!empty($import_big_file) && $import_big_file != "none" && $import_big_file['
         $tx_error_sql = 0;
         $tx_error_deleted = 0;
         $tx_error_invalid = 0;
-        /*
-        On crée un table temporaire pour importer les mails :
-        */
         $cnx->query("CREATE TEMPORARY TABLE `TMP_MAIL` ( `mail` VARCHAR(255) NOT NULL, UNIQUE KEY (`mail`) )");
         $cnx->query("DESCRIBE `TMP_MAIL`"); 
         $list_id   = $_POST['list_id'] ;
@@ -70,24 +66,14 @@ if (!empty($import_big_file) && $import_big_file != "none" && $import_big_file['
                 }
             }
         }
-        /*
-        on supprime les mails qui sont déjà dans la liste des mails supprimés :
-        */
         $result = $cnx->query("DELETE FROM `TMP_MAIL` WHERE `MAIL` IN ( SELECT email FROM " . $row_config_globale['table_email_deleted'] . " )");
         $tx_error_deleted = $result->rowCount();
-        /*
-        suppression des mails qui sont dans la table normale des mails :
-        */
         $result = $cnx->query("DELETE FROM `TMP_MAIL` WHERE `MAIL` IN ( SELECT email FROM " . $row_config_globale['table_email'] . " )");
         $tx_error = $result->rowCount();
-        /*
-        la table est nettoyée, pour chaque mail, on va faire l'injection dans la table des mails avec les hash :
-        */
         $x = $cnx->query("SELECT `MAIL` FROM `TMP_MAIL`")->fetchAll(PDO::FETCH_ASSOC);
         foreach  ($x as $item) {
-            /*echo "INSERT IGNORE INTO ".$row_config_globale['table_email']." (`email`, `list_id`, `hash`) 
-                                VALUES ('".($cnx->CleanInput($item['MAIL']))."', '".($cnx->CleanInput($list_id))."', '".($cnx->CleanInput(unique_id()))."')";*/
-            if($cnx->query("INSERT IGNORE INTO " . $row_config_globale['table_email'] . " (`email`, `list_id`, `hash`) VALUES ('" . $item['MAIL'] . "', '" . $list_id . "', '" . unique_id() . "')")){
+            if($cnx->query("INSERT IGNORE INTO " . $row_config_globale['table_email'] 
+                . " (`email`, `list_id`, `hash`) VALUES ('" . $item['MAIL'] . "', '" . $list_id . "', '" . unique_id($item['MAIL']) . "')")){
                 $tx_final++;
             }
         }
