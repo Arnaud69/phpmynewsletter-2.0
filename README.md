@@ -88,7 +88,7 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 
 ![Menu horizontal et gestion des utilisateurs de Phpmynewsletter](https://www.phpmynewsletter.com/images/2.0.5/account_manager.png)
 
-![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/manager_senders.png)
+![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/1.jpg)
 
 ![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
 
