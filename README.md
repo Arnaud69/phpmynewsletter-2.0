@@ -82,12 +82,23 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 
 
 # SCREENSHOT, PREVIEW
+![Menu vertical](https://www.phpmynewsletter.com/images/2.0.5/vertical_menu.png)
 
-![Statistiques](--)
+![Editeur en mode WysiWyg](https://www.phpmynewsletter.com/images/2.0.5/wysiwyg.png)
 
-![Lists and stats quick view](--)
+![Menu horizontal et gestion des utilisateurs de Phpmynewsletter](https://www.phpmynewsletter.com/images/2.0.5/account_manager.png)
 
-![Bounces](--)
+![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/manager_senders.png)
+
+![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
+
+![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
+
+![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/smtp_manager.png)
+
+![Profils des utilisateurs](https://www.phpmynewsletter.com/images/2.0.5/users_profils.png)
+
+
 
 
 # SUPPORT
