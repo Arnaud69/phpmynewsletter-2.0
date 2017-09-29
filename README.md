@@ -80,26 +80,23 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 - Ajout du paramètre array('DISABLE_AUTHENTICATOR' => 'GSSAPI') à la connexion imap pour les accéder aux serveurs de messagerie de type Exchange
 - Amélioration du REGEXP pour récupération des mails en bounce sur serveurs de messagerie de type Exchange 
 
-
 # SCREENSHOT, PREVIEW
+## PRésentation en menu vertical
 ![Menu vertical](https://www.phpmynewsletter.com/images/2.0.5/vertical_menu.png)
-
+## Le nouvel éditeur en mode Wysiwyg : glisser et déposer des blocs, puis les personnaliser
 ![Editeur en mode WysiWyg](https://www.phpmynewsletter.com/images/2.0.5/wysiwyg.png)
-
+## Présentation en menu vertical et vue de la gestion des utilisateurs
 ![Menu horizontal et gestion des utilisateurs de Phpmynewsletter](https://www.phpmynewsletter.com/images/2.0.5/account_manager.png)
-
-![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/1.jpg)
-
+## La nouvelle gestion des comptes utilsateurs de PhpMyNewsLetter
+![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/account_manager.png)
+## La gestion détaillée des comptes utilisateurs
 ![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
-
-![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/smtp_manager.png)
-
+## La gestion des SMTPs pour le load balancing (plusieurs smtp = distribution plus rapide des mails
+![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/1.jpg)
+## Les statistiques globales
 ![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
-
+## L'accès au profil des utilsateurs
 ![Profils des utilisateurs](https://www.phpmynewsletter.com/images/2.0.5/users_profils.png)
-
-
-
 
 # SUPPORT
 Support sur forum : https://www.phpmynewsletter.com/forum/.
