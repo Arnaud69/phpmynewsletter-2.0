@@ -1,22 +1,23 @@
 phpmynewsletter 2.0
 ===================
 
-# CURRENT : 2.0.5
+# VERSION COURANTES : 2.0.5
  release 28/09/2017
  
 # INSTALLATION
-Download zip, unzip in a folder, go to install.php in your browser, complete fields and questions, enjoy !
-Actually writing upgrade.php for upgrade from 2.0.4 to 2.0.5
+Télécharger le fichier zip : https://github.com/Arnaud69/phpmynewsletter-2.0/archive/master.zip
+Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletetr, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
+Je suis actuellement en train d'écrire le script d'upgrade pour passer de 2.0.4 à 2.0.5.
 
 # SYNOPSIS
-Send mails, add attachment, manage bounce and track clicked links.
+Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), suivez les clics, les ouvertures, géolocalisation, etc...
 
-# Required
- - PHP 5.3 min with : imap, curl, openssl, module php exec
+# CONFIGURATION MINIMALE REQUISE :
+ - PHP 5.3 min avec : imap, curl, openssl, module php exec
  - Mysql 5.x min
- - VPS/linux or dedicated server/linux for crontab and bounce management
- - mails
- - And your hands to write your mails !
+ - VPS/linux ou dédié server/linux pour un accès à crontab et gestion des bounces
+ - les emails de vos correspondants
+ - Et vos petites mains pour écrire de jolis mails et faire de belles campagnes !
 
 # CHANGELOG :
 ## GENERAL :
@@ -89,9 +90,10 @@ Send mails, add attachment, manage bounce and track clicked links.
 
 
 # SUPPORT
-Official support on the forum, please go to https://www.phpmynewsletter.com/forum/ or tickets for bugs and support.
+Support sur forum : https://www.phpmynewsletter.com/forum/.
 
 # Roadmap for next version, TODO 2.0.6
+- Intégration d'un formulaire d'ajout des clés DKIM
 - Champs de personnalisation des emails
 - Compatibilité avec Postgresql et MsSQL
 - Mise à jour d'un simple clic
@@ -100,6 +102,6 @@ Official support on the forum, please go to https://www.phpmynewsletter.com/foru
 # LICENSE
 GNU GPL
 
-Please, star if you like ;-)
+Mettez une étoile si vous aimez  ;-)
 
 
