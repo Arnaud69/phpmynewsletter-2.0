@@ -92,9 +92,9 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 
 ![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
 
-![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
-
 ![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/smtp_manager.png)
+
+![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
 
 ![Profils des utilisateurs](https://www.phpmynewsletter.com/images/2.0.5/users_profils.png)
 
