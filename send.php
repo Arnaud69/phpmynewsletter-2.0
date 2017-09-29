@@ -134,6 +134,7 @@ switch ($step) {
         }
         $to_send = count($addr);
         $view_last_send_mails = "";
+        $mail->SMTPKeepAlive = true;
         for ($i = 0; $i < $to_send; $i++) {
             $last_id_send = $addr[$i]['id'];
             $cnx->query("UPDATE " . $row_config_globale['table_send_suivi']. " 
