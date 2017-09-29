@@ -1,3 +1,4 @@
+![PhpMyNewsLetter 2.0](https://www.phpmynewsletter.com/css/images/phpmynewsletter_v2.png) 
 phpmynewsletter 2.0
 ===================
 
@@ -93,11 +94,14 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 Support sur forum : https://www.phpmynewsletter.com/forum/.
 
 # Roadmap for next version, TODO 2.0.6
+- Gestion indépendate des templates
 - Intégration d'un formulaire d'ajout des clés DKIM
 - Champs de personnalisation des emails
 - Compatibilité avec Postgresql et MsSQL
 - Mise à jour d'un simple clic
 - Si vous pensez à quelque chose qui puisse améliorer le produit, demandez !
+- PHPMailer 6.x
+- Traduction complète en anglais
  
 # LICENSE
 GNU GPL
