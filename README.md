@@ -7,7 +7,7 @@ phpmynewsletter 2.0
  
 # INSTALLATION
 Télécharger le fichier zip : https://github.com/Arnaud69/phpmynewsletter-2.0/archive/master.zip
-Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletetr, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
+Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletter, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
 Je suis actuellement en train d'écrire le script d'upgrade pour passer de 2.0.4 à 2.0.5.
 
 # SYNOPSIS
@@ -66,8 +66,8 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 - Correction du décalage dans les colonnes lorsqu'il n'y a pas de fichier log présent
 - Affichage des logs en modal
 ## GESTIONS DES ABONNES :
-- calcul du profil des abonnés (rubrique Profils des abonnés)
-- pagination de la liste des abonnés en erreur en ajax
+- Calcul du profil des abonnés (rubrique Profils des abonnés)
+- Pagination de la liste des abonnés en erreur en ajax
 ## GESTIONS DES SMTPs :
 - Modification possible d'un smtp déclaré
 - Remise à 0 des compteurs (load balancing smtp) lors de la preview
@@ -81,7 +81,7 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 - Amélioration du REGEXP pour récupération des mails en bounce sur serveurs de messagerie de type Exchange 
 
 # SCREENSHOT, PREVIEW
-## PRésentation en menu vertical
+## Présentation en menu vertical
 ![Menu vertical](https://www.phpmynewsletter.com/images/2.0.5/vertical_menu.png)
 ## Le nouvel éditeur en mode Wysiwyg : glisser et déposer des blocs, puis les personnaliser
 ![Editeur en mode WysiWyg](https://www.phpmynewsletter.com/images/2.0.5/wysiwyg.png)
@@ -91,7 +91,7 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 ![Gestion des comptes expéditeurs](https://www.phpmynewsletter.com/images/2.0.5/account_manager.png)
 ## La gestion détaillée des comptes utilisateurs
 ![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
-## La gestion des SMTPs pour le load balancing (plusieurs smtp = distribution plus rapide des mails
+## La gestion des SMTPs pour le load balancing (plusieurs smtp = distribution plus rapide des mails)
 ![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/1.jpg)
 ## Les statistiques globales
 ![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
@@ -107,9 +107,9 @@ Support sur forum : https://www.phpmynewsletter.com/forum/.
 - Champs de personnalisation des emails
 - Compatibilité avec Postgresql et MsSQL
 - Mise à jour d'un simple clic
-- Si vous pensez à quelque chose qui puisse améliorer le produit, demandez !
 - PHPMailer 6.x
 - Traduction complète en anglais
+- Si vous pensez à quelque chose qui puisse améliorer le produit, demandez !
  
 # LICENSE
 GNU GPL
