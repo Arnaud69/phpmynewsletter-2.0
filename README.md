@@ -105,6 +105,7 @@ Support sur forum : https://www.phpmynewsletter.com/forum/.
 - Gestion indépendate des templates
 - Intégration d'un formulaire d'ajout des clés DKIM
 - Champs de personnalisation des emails
+- Champs de personnalisation des fonds d'écran
 - Compatibilité avec Postgresql et MsSQL
 - Mise à jour d'un simple clic
 - PHPMailer 6.x
