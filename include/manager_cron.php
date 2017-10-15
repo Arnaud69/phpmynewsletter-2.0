@@ -40,6 +40,7 @@ $list_id  = ( empty( $_POST[ 'list_id' ] ) ? ( empty( $_GET[ 'list_id' ] ) ? die
 $continue = true;
 if ( $continue ) {
     $cronID = cronID();
+    $cnx->query( "SET NAMES UTF8" );
     exec( "crontab -l > " . __DIR__ . "/backup_crontab/$cronID" );
     switch ( $action ) {
         case 'new':

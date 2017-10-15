@@ -1,8 +1,6 @@
 <?php
 $version        = '2.0.5';
 $timezone       = '';
-error_reporting(E_ALL);
-ini_set('display_errors',1);
 if(file_exists("include/config.php")) {
 	header("Location:index.php");
 	exit;
@@ -270,7 +268,7 @@ if (empty($langfile)) {
 									PRIMARY KEY (`id`),
 									KEY `list_id` (`list_id`),
 									KEY `sender_email` (`sender_email`)
-								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8   AUTO_INCREMENT=1;'';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "archives") .' '.tr("DONE").'</h4>';
 								}else{
@@ -378,7 +376,7 @@ if (empty($langfile)) {
 									KEY `list_id` (`list_id`),
 									KEY `msg_id` (`msg_id`),
 									KEY `date` (`date`)
-								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "crontab") .' '.tr("DONE").'</h4>';
 								}else{
@@ -405,7 +403,7 @@ if (empty($langfile)) {
 									KEY `type` (`type`),
 									KEY `categorie` (`categorie`),
 									KEY `campaign_id` (`campaign_id`)
-								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;'';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email") .' '.tr("DONE").'</h4>';
 								}else{
@@ -432,7 +430,7 @@ if (empty($langfile)) {
 									KEY `type` (`type`),
 									KEY `categorie` (`categorie`),
 									KEY `campaign_id` (`campaign_id`)
-								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;'';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "email_deleted") .' '.tr("DONE").'</h4>';
 								}else{
@@ -615,7 +613,7 @@ if (empty($langfile)) {
 									KEY `postal_code` (`postal_code`),
 									KEY `region` (`region`),
 									KEY `country` (`country`)
-								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track") .' '.tr("DONE").'</h4>';
 								}else{
@@ -635,7 +633,7 @@ if (empty($langfile)) {
 									KEY `hash` (`hash`),
 									KEY `cpt` (`cpt`),
 									KEY `link` (`link`(255))
-								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.' DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "track_links") .' '.tr("DONE").'</h4>';
 								}else{
@@ -653,7 +651,7 @@ if (empty($langfile)) {
 									KEY `msg_id` (`msg_id`),
 									KEY `name` (`name`(255)),
 									KEY `date` (`date`)
-								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "upload") .' '.tr("DONE").'</h4>';
 								}else{
@@ -673,7 +671,7 @@ if (empty($langfile)) {
 									`log` VARCHAR(1) NOT NULL DEFAULT "Y",
 									KEY `id_user` (`id_user`),
 									KEY `email` (`email`)
-								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;';
+								) ENGINE='.$storage_engine.'  DEFAULT CHARSET=utf8  AUTO_INCREMENT=1;';
 								if($cnx->Sql($sql)){
 									echo '<h4 class="alert alert-success">'.tr("INSTALL_SAVE_CREATE_TABLE", $table_prefix . "users") .' '.tr("DONE").'</h4>';
 								}else{

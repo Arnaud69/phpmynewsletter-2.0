@@ -23,11 +23,11 @@
                 </ul>
                 <div class="nav navbar-nav navbar-right">
                     <?php
-                        if($_SESSION['dr_is_admin']==true)
-                            checkVersion();
                         if($type_serveur=='dedicated'&&$exec_available&&($_SESSION['dr_envois']=='Y'||$_SESSION['dr_is_admin']==true)){
                             echo '<span id="mailq"><button type="button" class="btn btn-primary btn-sm"">'.tr("LOOKING_PROGRESS_MAILS").'...</button></span>';
                         }
+                        if($_SESSION['dr_is_admin']==true)
+                            checkVersion();
                         if ($_SESSION['dr_redaction']=='Y'||$_SESSION['dr_is_admin']==true) {
                             echo ($nbDraft['NB']==0 ? 
                                 '&nbsp;<button class="btn btn-primary btn-sm">' . tr("NO_CURRENT_DRAFT") . '</button>'

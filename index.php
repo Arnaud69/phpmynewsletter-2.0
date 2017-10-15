@@ -8,6 +8,7 @@ if(!file_exists("include/config.php")){
 } else{
     include("_loader.php");
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS'){
@@ -93,6 +94,7 @@ $nbDraft=getMsgDraft($cnx,$list_id,$row_config_globale['table_sauvegarde']);
         <script src="js/jquery.colorbox.js"></script>
         <script src="js/jsclock-0.8.min.js"></script>
         <script src="js/jquery.bootstrap.wizard.js"></script>
+        <!-- jQuery DataTable : https://www.datatables.net/ -->
         <link rel="stylesheet" href="//cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
         <script src="//cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
     </head>

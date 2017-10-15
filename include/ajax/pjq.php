@@ -11,6 +11,7 @@ if(!file_exists("../config.php")) {
         exit;
     }
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {

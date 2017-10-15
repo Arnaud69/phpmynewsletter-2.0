@@ -81,18 +81,20 @@
                     <?php 
                     }
                     ?>
+                    <!--https://codepen.io/bsngr/pen/frDqh
+                    https://codepen.io/bsngr/pen/frDqh
+                    https://codepen.io/bsngr/pen/frDqh-->
                     <li><a href="//www.phpmynewsletter.com/forum/" target="_blank" data-toggle="tooltip" data-placement="auto" title="Forum de support PhpMyNewsLetter"><i class="glyphicon glyphicon-plus-sign"></i> <?php echo tr("SUPPORT");?></a></li>
                     <li><a href="?page=about&token=<?php echo $token;?>&list_id=<?php echo @$list_id;?>" data-toggle="tooltip" data-placement="auto" title="Un peu plus à propos de PhpMyNewsLetter"><i class="glyphicon glyphicon-info-sign"></i> <?php echo tr("ABOUT");?></a></li>
                     <li><a href="logout.php" data-toggle="tooltip" data-placement="auto" title="quitter l'application"><i class="glyphicon glyphicon-log-out"></i><?php echo tr("MENU_LOGOUT");?></a></li>
                 </ul>
                 <div class="nav navbar-nav navbar-right">
                     <?php
-                        if($_SESSION['dr_is_admin']==true)
-                            checkVersion();
                         if($type_serveur=='dedicated'&&$exec_available&&($_SESSION['dr_envois']=='Y'||$_SESSION['dr_is_admin']==true)){
                             echo '<span id="mailq"><button type="button" class="btn btn-primary btn-sm"">'.tr("LOOKING_PROGRESS_MAILS").'...</button></span>';
                         }
-                        
+                        if($_SESSION['dr_is_admin']==true)
+                            checkVersion();
                         if ($_SESSION['dr_redaction']=='Y'||$_SESSION['dr_is_admin']==true) {
                             echo ($nbDraft['NB']==0 ? 
                                 '&nbsp;<button class="btn btn-primary btn-sm">' . tr("NO_CURRENT_DRAFT") . '</button>'

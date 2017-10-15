@@ -1,11 +1,11 @@
 <?php
 session_start();
 if(!file_exists("config.php")) {
-    header("Location:../install.php");
-    exit;
+    die("1");
 } else {
     include("../_loader.php");
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {

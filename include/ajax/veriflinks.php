@@ -7,6 +7,7 @@ if(file_exists("../config.php")){
 	if(!tok_val($token)){
 		header("Location:../../login.php?error=2");
 	}
+	$cnx->query("SET NAMES UTF8");
 	$row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 	$list_id  = $_POST['list_id'];
 	$nl = getConfig($cnx, $list_id, $row_config_globale['table_sauvegarde']);
@@ -16,7 +17,7 @@ if(file_exists("../config.php")){
 	$txSucces=0;
 	$error='';
 	if($num_found = preg_match_all($pattern, $textarea, $out)){
-		echo "<h4>".$num_found." liens testés.</h4><br>";
+		echo "<h4>$num_found liens testés.</h4><br>";
 		foreach ($out[0] as $url) {
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_URL, $url);

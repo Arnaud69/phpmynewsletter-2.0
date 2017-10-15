@@ -18,6 +18,7 @@ if(!file_exists("include/config.php")) {
         die();
     }
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
@@ -45,7 +46,8 @@ $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
 $encode  = (!empty($_GET['encode'])&&$_GET['encode']=='base64')  ? 'base64' : 'quoted-printable';
 $force   = (!empty($_POST['force'])) ? $_POST['force'] : '';
 $force   = (!empty($_GET['force']) && empty($force)) ? $_GET['force'] : '';
-$tPath = ($row_config_globale['path'] == '' ? '/' : '/'.$row_config_globale['path']);
+
+$tPath = ($row_config_globale['path'] == '' ? '/' : $row_config_globale['path']);
 switch ($step) {
     case "send":
         if ( isset($force) && $force == 'true' )
@@ -91,13 +93,11 @@ switch ($step) {
         $reply_email  = $newsletter['email_reply'];
         $bounce_email = $newsletter['bounce_email'];
         $mail->AddReplyTo($reply_email);
-        if ( $row_config_globale['sending_method'] != 'php_mail_infomaniak' ) {
-            if(isset($bounce_mail)&&$bounce_mail!=''){
-                $mail->Sender = $bounce_mail;
-            } else {
-                $mail->Sender = $sender_email;
-            }
-            $mail->SetFrom($sender_email,$sender_name);
+        $mail->SetFrom($sender_email,$sender_name);
+        if(isset($bounce_mail)&&$bounce_mail!=''){
+            $mail->Sender = $bounce_mail;
+        } else {
+            $mail->Sender = $sender_email;
         }
         $addr = getAddress($cnx, $row_config_globale['table_email'],$list_id,$begin,$limit,$msg_id);
         if ( $type_env == 'dev' ) {

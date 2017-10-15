@@ -9,15 +9,13 @@ if(!file_exists("include/config.php")) {
 } else {
     session_start();
     include("_loader.php");
-    if(file_exists("include/config_bounce.php")) {
-        include("include/config_bounce.php");
-    }
     if(isset($_POST['token'])){$token=$_POST['token'];}elseif(isset($_GET['token'])){$token=$_GET['token'];}else{$token='';}
     if(!tok_val($token)){
         quick_Exit();
         die();
     }
 }
+$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS') {
@@ -41,7 +39,7 @@ $begin   = (!empty($_GET['begin']) && empty($begin)) ? $_GET['begin'] : 0;
 $msg_id  = (!empty($_GET['msg_id'])) ? $_GET['msg_id'] : '';
 $error   = (!empty($_GET['error'])) ? $_GET['error'] : '';
 $encode  = (!empty($_GET['encode'])&&$_GET['encode']=='base64')  ? 'base64' : '8bit';
-$tPath = ($row_config_globale['path'] == '' ? '/' : '/'.$row_config_globale['path']);
+$tPath = ($row_config_globale['path'] == '' ? '/' : $row_config_globale['path']);
 if($row_config_globale['sending_method']=='lbsmtp'){
     $cnx->query("UPDATE ".$row_config_globale['table_smtp']." 
         SET smtp_date_update=NOW(),smtp_used=0 
@@ -74,14 +72,9 @@ switch ($step) {
         $addr = $dest_adresse = $newsletter['preview_addr'];
         include("include/lib/switch_smtp.php");
         if ( $row_config_globale['sending_method'] != 'php_mail_infomaniak' ) {
-            if(isset($bounce_mail)&&$bounce_mail!=''){
-                $mail->Sender = $bounce_mail;
-            } else {
-                $mail->Sender = $newsletter['from_addr'];
-            }
+            $mail->Sender = $newsletter['from_addr'];
             $mail->SetFrom($newsletter['from_addr'],$newsletter['from_name']);
         }
-        
         $msg            = getConfig($cnx,$list_id,$row_config_globale['table_sauvegarde']);
         $format         = $msg['type'];
         $list_pj = $cnx->query("SELECT *

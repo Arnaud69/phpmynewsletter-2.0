@@ -126,7 +126,7 @@
         echo '<td style="text-align:center"><h2><a data-toggle="tooltip" title="'. tr( "TRACKING_BULLE_OPEN_RATE" ) .'">'.($OPENRATE>0?'<b>'.$OPENRATE.'</b>':0).'%</a></h2></td>';
         $CTR = @round(($row[0]['CPT_CLICKED']/$row[0]['TMAILS']*100),1);//CTR
         echo '<td style="text-align:center"><h2><a data-toggle="tooltip" title="'. tr( "TRACKING_BULLE_CTR" ) .'">'.($CTR>0?'<b>'.$CTR.'</b>':0).'%</a></h2></td>';
-        $ACTR = @round(($row[0]['CPT_CLICKED']/$row[0]['TID']*100),1);//ACTR
+        $ACTR = @round(($row[0]['CPT_CLICKED']/$row[0]['TOPEN']*100),1);//ACTR
         echo '<td style="text-align:center"><h2><a data-toggle="tooltip" title="'. tr( "TRACKING_BULLE_ACTR" ) .'">'.($ACTR>0?'<b>'.$ACTR.'</b>':0).'%</a></h2></td>';
         echo '<td style="text-align:center"><h2>'. $row[0]['TERROR'].                           '</h2></td>';
         echo '<td style="text-align:center"><h2>'. $row[0]['TLEAVE'].                           '</h2></td>';

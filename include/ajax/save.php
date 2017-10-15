@@ -7,6 +7,7 @@ if(file_exists("../config.php")){
     if(!tok_val($token)){
         header("Location:../../login.php?error=2");
     }
+    $cnx->query("SET NAMES UTF8");
     $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
     $subject  = addslashes($_POST['subject']);
     $textarea = addslashes($_POST['html']);

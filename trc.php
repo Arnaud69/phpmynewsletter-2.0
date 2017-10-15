@@ -1,9 +1,9 @@
 <?php
 if(!empty($_GET['h'])&&!empty($_GET['i'])){
     include("_loader.php");
+    $cnx->query("SET NAMES UTF8");
     $row_config_globale = $cnx->SqlRow("SELECT * FROM ".$table_global_config);
-    $tPath = ($row_config_globale['path'] == '' ? '/' : '/'.$row_config_globale['path']);
-    $graphic_http=$row_config_globale['base_url'].$tPath.'blank.gif';
+    $graphic_http=$row_config_globale['base_url'].$row_config_globale['path'].'blank.gif';
     $filesize=filesize('blank.gif');
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
