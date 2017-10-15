@@ -3,13 +3,12 @@ session_start();
 ob_start();
 date_default_timezone_set('Europe/Berlin');
 if(!file_exists("include/config.php")){
-    header("Location:install.php");
-    exit;
+	header("Location:install.php");
+	exit;
 } else{
-    include("_loader.php");
+	include("_loader.php");
 }
 error_reporting(E_ALL);ini_set("display_errors",1);var_dump($_REQUEST);
-$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 (count($row_config_globale)>0)?$r='SUCCESS':$r='';
 if($r != 'SUCCESS'){

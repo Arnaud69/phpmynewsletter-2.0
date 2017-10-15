@@ -12,7 +12,6 @@ include(DOCROOT.'/include/db/db_connector.inc.php');
 include(DOCROOT.'/include/lib/pmn_fonctions.php');
 require(DOCROOT.'/include/lib/PHPMailerAutoload.php');
 require(DOCROOT.'/include/lib/Html2Text.php');
-$cnx->query("SET NAMES UTF8");
 $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
 if(empty($row_config_globale['language']))$row_config_globale['language']="english";
 include(DOCROOT.'/include/lang/'.$row_config_globale['language'].'.php');

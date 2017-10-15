@@ -64,15 +64,18 @@ switch ($op)
 					</div>
 				</div>
 			</div>
-			<div class="col-md-6">
-				<h4>Choix de l\'expéditeur</h4>
+			<div class="col-md-6">';
+			$senders = getSenders($cnx,$row_config_globale['table_senders'],$sender);
+			if($senders!=-1) {
+				echo '<h4>Choix de l\'expéditeur</h4>
 				Par défaut : <b>'. htmlspecialchars($row_config_globale['admin_email']) .'</b>, ou choisir :<br><br>
 				<div class="row">
 					<div class="col-md-11">
-						' . getSenders($cnx,$row_config_globale['table_senders'],$sender) . '
+						' . $senders . '
 					</div>
-				</div>
-			</div>
+				</div>';
+            }
+            echo ' 	</div>
                 </div>
                 <div class="row">
                 	<div class="col-md-12">

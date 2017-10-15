@@ -7,7 +7,6 @@ if(file_exists("../config.php")){
     if(!tok_val($token)){
         header("Location:../../login.php?error=2");
     }
-    $cnx->query("SET NAMES UTF8");
     $row_config_globale = $cnx->SqlRow("SELECT * FROM $table_global_config");
     if(empty($row_config_globale['language']))$row_config_globale['language']="english";
     include("../lang/".$row_config_globale['language'].".php");

@@ -302,7 +302,7 @@ echo '<header><h4 class="tabs_involved">' . tr("GCONFIG_TITLE") . '</h4></header
                     echo "</div>";
                     echo "<div class='col-md-4'>";
                     echo "<div class='form-group'><label>".tr("GCONFIG_MESSAGE_SMTP_PASSWORD")."</label>";
-                    echo "<input class='form-control' type='text' name='smtp_pass' value='".($row_config_globale['smtp_pass']!=''?$row_config_globale['smtp_pass']:'')."' /></div>";
+                    echo "<input class='form-control' type='password' name='smtp_pass' value='".($row_config_globale['smtp_pass']!=''?$row_config_globale['smtp_pass']:'')."' /></div>";
                     echo '</div>';
                     echo '</div>';
                     echo '</div>';
@@ -393,51 +393,59 @@ echo '<header><h4 class="tabs_involved">' . tr("GCONFIG_TITLE") . '</h4></header
                     if (!$row_config_globale['alert_sub']) echo "checked='checked'";
                     echo " > " . tr("NO");
                     echo "&nbsp;<input type='radio' name='alert_sub' value='1' ";
-                    if ($row_config_globale['alert_sub']) echo "checked='checked'";
+                    if ( $row_config_globale['alert_sub'] || !isset($row_config_globale['alert_sub']) || $row_config_globale['alert_sub']=='' ) 
+                    	echo "checked='checked'";
                     echo " > " . tr("YES") ."</div>" ;
                     echo "</div>";
                     echo "<div class='row'>";
                     echo "<div class='col-md-4'>";
                     echo "<div class='form-group'><label>".tr("GCONFIG_SUBSCRIPTION_CONFIRM_UNSUB")."</label><br>";
                     echo "<input type='radio' name='unsub_validation' value='0' ";
-                    if (!$row_config_globale['unsub_validation']) echo "checked='checked'";
+                    if (!$row_config_globale['unsub_validation']) 
+                        echo "checked='checked'";
                     echo " > " . tr("NO");
                     echo "&nbsp;<input type='radio' name='unsub_validation' value='1' ";
-                    if ($row_config_globale['unsub_validation']) echo "checked='checked'";
+                    if ($row_config_globale['unsub_validation']) 
+                        echo "checked='checked'";
                     echo " > " . tr("YES") ."</div>" ;
                     echo "</div>";
                     echo "<div class='col-md-4'>";
                     echo "<div class='form-group'><label>".tr("ALERT_UNSUB")."</label><br>";
                     echo "<input type='radio' name='alert_unsub' value='0' ";
-                    if (@$alert_unsub==0) echo "checked='checked'";
+                    if ( @$alert_unsub==0 ) 
+                        echo "checked='checked'";
                     echo " > " . tr("NO");
                     echo "&nbsp;<input type='radio' name='alert_unsub' value='1' ";
-                    if (@$alert_unsub==1) echo "checked='checked'";
+                    if ( @$alert_unsub==1 || !isset($alert_unsub) || $alert_unsub=='' ) 
+                        echo "checked='checked'";
                     echo " > " . tr("YES") ."</div>" ;
                     echo '</div></div>';
                     echo "</div>";
-                    if(@$free_id!=''&&$free_pass!=''){
+                    if( @$free_id!='' && $free_pass!='' ){
                         echo "<div class='row'>";
                         echo "<div class='col-md-4'>";
                         echo "<div class='form-group'><label>Etre averti des nouvelles inscriptions par FREE sms ?</label><br>";
                         echo "<input type='radio' name='sub_validation_sms' value='0' ";
-                        if (@$sub_validation_sms==0) echo "checked='checked'";
+                        if ( @$sub_validation_sms==0 ) 
+                            echo "checked='checked'";
                         echo " > " . tr("NO");
                         echo "&nbsp;<input type='radio' name='sub_validation_sms' value='1' ";
-                        if (@$sub_validation_sms==1) echo "checked='checked'";
+                        if ( @$sub_validation_sms==1 || !isset($sub_validation_sms) || $sub_validation_sms=='' ) 
+                            echo "checked='checked'";
                         echo " > " . tr("YES") ."</div>" ;
                         echo "</div>";
                         echo "<div class='col-md-4'>";
                         echo "<div class='form-group'><label>Etre averti d'une désinscription par FREE sms ?</label><br>";
                         echo "<input type='radio' name='unsub_validation_sms' value='0' ";
-                        if (@$unsub_validation_sms==0) echo "checked='checked'";
+                        if ( @$unsub_validation_sms==0 ) 
+                            echo "checked='checked'";
                         echo " > " . tr("NO");
                         echo "&nbsp;<input type='radio' name='unsub_validation_sms' value='1' ";
-                        if (@$unsub_validation_sms==1) echo "checked='checked'";
+                        if ( @$unsub_validation_sms==1 || !isset($unsub_validation_sms) || $unsub_validation_sms=='' ) 
+                            echo "checked='checked'";
                         echo " > " . tr("YES") ."</div>" ;
                         echo '</div>';
                         echo '</div>';
-                        
                     }
                     echo "</div>";
                     echo "</div>";
@@ -469,20 +477,24 @@ echo '<header><h4 class="tabs_involved">' . tr("GCONFIG_TITLE") . '</h4></header
                     echo "<div class='col-md-6'>";
                     echo "<div class='form-group'><label>Choix du menu :</label>";
                     echo " <input type='radio' name='menu' value='hz' ";
-                    if (@$menu=='hz') echo "checked='checked'";
+                    if (@$menu=='hz'||!isset($menu)||$menu=='') 
+                        echo "checked='checked'";
                     echo " > horizontal";
                     echo "&nbsp;<input type='radio' name='menu' value='vt' ";
-                    if (@$menu=='vt') echo "checked='checked'";
+                    if (@$menu=='vt') 
+                        echo "checked='checked'";
                     echo " > vertical";
                     echo "</div>";
                     echo "</div>";
                     echo "<div class='col-md-6'>";
                     echo "<div class='form-group'><label>Afficher le loader :</label>";
                     echo " <input type='radio' name='loader' value='1' ";
-                    if (@$loader==1) echo "checked='checked'";
+                    if (@$loader==1||!isset($loader)||$loader=='') 
+                        echo "checked='checked'";
                     echo " > " . tr("YES");
                     echo "&nbsp;<input type='radio' name='loader' value='0' ";
-                    if (@$loader==0) echo "checked='checked'";
+                    if (@$loader==0) 
+                        echo "checked='checked'";
                     echo " > " . tr("NO");
                     echo "</div>";
                     echo "</div>";

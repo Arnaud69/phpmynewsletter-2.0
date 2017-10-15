@@ -67,13 +67,13 @@ function addSubscriberMod($cnx, $table_email, $ref_sub_table, $list_id, $addr) {
 }
 function addSubscriberDirect($cnx, $table_email, $list_id, $addr) {
     $addr = trim(strtolower($addr));
-    $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
+    $x = $cnx->query("SELECT email FROM ".$table_email." WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
     if (count($x)>0) {
         return false;
     } else {
         $hash = unique_id($addr);
-        if ($cnx->query("INSERT INTO $table_email (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')")) {
-            $cnx->query("DELETE FROM $table_email_deleted WHERE email='$addr' AND list_id='$list_id'");
+        if ($cnx->query("INSERT INTO ".$table_email." (`email`, `list_id` , `hash`) VALUES ('$addr', '$list_id','$hash')")) {
+            $cnx->query("DELETE FROM ".$table_email."_deleted WHERE email='$addr' AND list_id='$list_id'");
             return $hash;
         } else
             return false;
@@ -81,11 +81,11 @@ function addSubscriberDirect($cnx, $table_email, $list_id, $addr) {
 }
 function addSubscriberTemp($cnx, $table_email, $table_temp, $list_id, $addr) {
     $addr = trim(strtolower($addr));
-    $x = $cnx->query("SELECT email FROM $table_email WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
+    $x = $cnx->query("SELECT email FROM ".$table_email." WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
        if (count($x)>0) {
        return false;
     }
-    $x = $cnx->query("SELECT email FROM $table_temp WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
+    $x = $cnx->query("SELECT email FROM ".$table_temp." WHERE list_id='$list_id' AND email='$addr'")->fetchAll();
     if (count($x)>0) {
         return false;
     }
@@ -131,12 +131,12 @@ function checkAdminAccess($cnx, $conf_pass, $admin_pass, $admin_mail) {
 function checkVersion(){
     $VL=file_get_contents('VERSION');
     if($VL===FALSE) {
-        echo '<span class="error">fichier version non détecté</span>';
+        echo '<button class="btn btn-warning btn-sm">fichier version non détecté</button>';
     } else {
         $header=checkVersionCurl();
         if(version_compare($header['content'],$VL,'>')) {
-            echo  '<li class="icn_alert"><a href="http://www.phpmynewsletter.com/telechargement.html" 
-                  target="_blank">Version '.$header['content'].' disponible !</a></li>';
+            echo  '<button class="btn btn-danger btn-sm"><a href="http://www.phpmynewsletter.com/telechargement.html" 
+                  target="_blank" style="color:#fff">Version '.$header['content'].' disponible !</a></button> ';
         }
     }
 }
@@ -517,8 +517,11 @@ function get_stats_send_global_by_list($cnx,$param_global,$list_id){
                                 SELECT SUM(cpt) FROM ".$param_global['table_send']." WHERE id_list=$list_id
                             ) AS TMAILS,
                             (
-                                SELECT COUNT(id) FROM ".$param_global['table_tracking']." WHERE subject IN
+                                SELECT COUNT(distinct(tr.hash)) 
+                                    FROM ".$param_global['table_tracking']." tr, ".$param_global['table_email']." em
+                                        WHERE subject IN
                                     (SELECT id FROM ".$param_global['table_archives']."  WHERE list_id=$list_id)
+                                          AND tr.hash=em.hash
                             ) AS TID,
                             (
                                 SELECT SUM(error) FROM ".$param_global['table_send']." WHERE id_list=$list_id
