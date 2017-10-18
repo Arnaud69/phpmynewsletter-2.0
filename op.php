@@ -48,18 +48,18 @@ if(in_array($op,$op_true)){
             $smtp_login=(isset($_POST['smtp_login'])?$_POST['smtp_login']:'');
             $smtp_pass =(isset($_POST['smtp_pass'])?$_POST['smtp_pass']:'');
             $mod_sub   =(isset($_POST['mod_sub'])?$_POST['mod_sub']:0);
-            $timezone  =(isset($_POST['timezone'])?$_POST['timezone']:'');
+            $timezone  =(isset($_POST['timezone'])?$_POST['timezone']:'Europe/Paris');
             $timer_ajax=(isset($_POST['timer_ajax'])?$_POST['timer_ajax']:10);
             $timer_cron=(isset($_POST['timer_cron'])?$_POST['timer_cron']:3);
             $free_id   =(isset($_POST['free_id'])?$_POST['free_id']:'');
             $free_pass =(isset($_POST['free_pass'])?$_POST['free_pass']:'');
             $key_dkim  =(isset($_POST['key_dkim'])?$_POST['key_dkim']:'');
             $nb_backup =(isset($_POST['nb_backup'])?$_POST['nb_backup']:5);
-            $end_task  =(isset($_POST['end_task'])?$_POST['end_task']:'');
-            $end_task_sms=(isset($_POST['end_task_sms'])?$_POST['end_task_sms']:'');
-            $sub_validation_sms=(isset($_POST['sub_validation_sms'])?$_POST['sub_validation_sms']:'');
-            $unsub_validation_sms=(isset($_POST['unsub_validation_sms'])?$_POST['unsub_validation_sms']:'');
-            $alert_unsub=(isset($_POST['alert_unsub'])?$_POST['alert_unsub']:'');
+            $end_task  =(isset($_POST['end_task'])?$_POST['end_task']:0);
+            $end_task_sms=(isset($_POST['end_task_sms'])?$_POST['end_task_sms']:0);
+            $sub_validation_sms=(isset($_POST['sub_validation_sms'])?$_POST['sub_validation_sms']:0);
+            $unsub_validation_sms=(isset($_POST['unsub_validation_sms'])?$_POST['unsub_validation_sms']:0);
+            $alert_unsub=(isset($_POST['alert_unsub'])?$_POST['alert_unsub']:0);
             $loader    =(isset($_POST['loader'])?$_POST['loader']:1);
             $menu      =(isset($_POST['menu'])?$_POST['menu']:'hz');
             if(saveConfig($cnx,$_POST['table_config'],$_POST['admin_pass'],50,$_POST['base_url'],$_POST['path'],$_POST['language'],
