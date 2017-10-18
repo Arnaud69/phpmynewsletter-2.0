@@ -2,7 +2,7 @@
 phpmynewsletter 2.0
 ===================
 
-# VERSION COURANTES : 2.0.5
+# VERSION COURANTE : 2.0.5
  release 28/09/2017
  
 # INSTALLATION
