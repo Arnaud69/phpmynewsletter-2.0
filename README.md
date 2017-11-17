@@ -91,7 +91,7 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 ## La gestion détaillée des comptes utilisateurs
 ![Gestion des utilisateurs de Phpmynewsletter, détail de la gestion des droits](https://www.phpmynewsletter.com/images/2.0.5/account_manager_detail.png)
 ## La gestion des SMTPs pour le load balancing (plusieurs smtp = distribution plus rapide des mails)
-![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/1.jpg)
+![Gestion des SMTPs pour load balancing SMTP](https://www.phpmynewsletter.com/images/2.0.5/smtp_manager.jpg)
 ## Les statistiques globales
 ![Statistiques](https://www.phpmynewsletter.com/images/2.0.5/full_stats.png)
 ## L'accès au profil des utilsateurs
