@@ -12,9 +12,9 @@ Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux news
 
 
 ![Attention](https://www.phpmynewsletter.com/images/attention.jpg)
-##===================================================================================================
+
 ##La version présente sur le dépôt GitHub n'est pas stable, ce dépôt ne sert que pour le développeur !
-## ===================================================================================================
+
 
 # SYNOPSIS
 Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), suivez les clics, les ouvertures, géolocalisation, etc...
