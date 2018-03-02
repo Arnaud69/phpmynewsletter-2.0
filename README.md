@@ -3,11 +3,18 @@ phpmynewsletter 2.0
 ===================
 
 # VERSION COURANTE : 2.0.5
- release 28/09/2017
+ release 28/02/2018
  
 # INSTALLATION
-Télécharger le fichier zip : https://github.com/Arnaud69/phpmynewsletter-2.0/archive/master.zip
+Télécharger le fichier zip depuis le portail officiel PhpMyNewsLetter :
+https://www.phpmynewsletter.com/telechargement/
 Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletter, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
+
+
+(https://www.phpmynewsletter.com/images/attention.jpg)
+##===================================================================================================
+##La version présente sur le dépôt GitHub n'est pas stable, ce dépôt ne sert que pour le développeur !
+## ===================================================================================================
 
 # SYNOPSIS
 Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), suivez les clics, les ouvertures, géolocalisation, etc...
