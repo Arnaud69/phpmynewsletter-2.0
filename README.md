@@ -11,7 +11,7 @@ https://www.phpmynewsletter.com/telechargement/
 Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletter, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
 
 
-(https://www.phpmynewsletter.com/images/attention.jpg)
+![Attention](https://www.phpmynewsletter.com/images/attention.jpg)
 ##===================================================================================================
 ##La version présente sur le dépôt GitHub n'est pas stable, ce dépôt ne sert que pour le développeur !
 ## ===================================================================================================
