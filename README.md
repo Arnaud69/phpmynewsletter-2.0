@@ -112,10 +112,11 @@ Support sur forum : https://www.phpmynewsletter.com/forum/.
 - Intégration d'un formulaire d'ajout des clés DKIM
 - Champs de personnalisation des emails
 - Champs de personnalisation des fonds d'écran
-- Compatibilité avec Postgresql et MsSQL
+- Compatibilité avec Postgresql, MsSQL, Oracle
 - Mise à jour d'un simple clic
 - PHPMailer 6.x
 - Traduction complète en anglais
+- Revue du système de gestion des liens cliqués et des compteurs
 - Si vous pensez à quelque chose qui puisse améliorer le produit, demandez !
  
 # LICENSE
