@@ -3,18 +3,10 @@ phpmynewsletter 2.0
 ===================
 
 # VERSION COURANTE : 2.0.5
- release 28/02/2018
  
 # INSTALLATION
-Télécharger le fichier zip depuis le portail officiel PhpMyNewsLetter :
-https://www.phpmynewsletter.com/telechargement/
+Télécharger le fichier zip : https://github.com/Arnaud69/phpmynewsletter-2.0/archive/master.zip
 Dézipper dans un répertoire ou à la racine d'un sous-domaine dédié aux newsletter, appelez le script install.php depuis votre navigateur, remplissez les champs, et suivez la procédure.
-
-
-![Attention](https://www.phpmynewsletter.com/images/attention.jpg)
-
-##La version présente sur le dépôt GitHub n'est pas stable, ce dépôt ne sert que pour le développeur !
-
 
 # SYNOPSIS
 Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), suivez les clics, les ouvertures, géolocalisation, etc...
@@ -43,7 +35,9 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 - Correction du traitement des mails en bounce
 - Ajout du calcul du prefix des tables (ex : "pmnl2_") dans la config pour gestion des tables plus fine
 ## NOUVEAUTES :
-- Choix du menu : horizontal avec menus déroulants ou vertical traditionnel (configuration globale > règlages divers)
+- Champs sujets passés en utf8mb4 pour permettre usage des Emojis
+- Gestion du Pre-Header
+- Choix du menu : horizontal avec menus déroulants ou vertical traditionnel (configuration globale > règlages divers). Préférez le menu horizontal !
 - Choix d'afficher ou ne pas afficher le loader (configuration globale > règlages divers)
 - Géolocalisation des ouvertures (amcharts)
 - Création de templates par un éditeur Wysiwyg (What You See Is What You Get)
@@ -55,7 +49,7 @@ Envoyez des emails, ajoutez des pièces jointes, gérez les retours (bounces), s
 - Utilisation des CDNs pour l'import des librairies JS et CSS (au maximum)
 - Vérification obligatoire des liens contenus dans un message avant preview
 ## OUTILS INTEGRES :
-- Phpmailer 5.2.24
+- Phpmailer 5.2.26
 ## AMELIORATIONS :
 - Meilleure gestion de la comparaison des versions pour mises à jour possibles de versions mineures
 - Affichage des mails en erreur par liste
@@ -112,11 +106,10 @@ Support sur forum : https://www.phpmynewsletter.com/forum/.
 - Intégration d'un formulaire d'ajout des clés DKIM
 - Champs de personnalisation des emails
 - Champs de personnalisation des fonds d'écran
-- Compatibilité avec Postgresql, MsSQL, Oracle
+- Compatibilité avec Postgresql et MsSQL
 - Mise à jour d'un simple clic
 - PHPMailer 6.x
 - Traduction complète en anglais
-- Revue du système de gestion des liens cliqués et des compteurs
 - Si vous pensez à quelque chose qui puisse améliorer le produit, demandez !
  
 # LICENSE
