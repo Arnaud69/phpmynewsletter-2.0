@@ -63,7 +63,7 @@ if(count($row)>0){
             HAVING COUNT(*)>'.($total/100).'
                 ORDER BY data DESC;'
         );
-        if (count($results_stat_browser)>0&&$total>0) {
+        if ($results_stat_browser && count($results_stat_browser)>0&&$total>0) {
             $databrowser = '';
             @(int)$cptbrowser;
             @(int)$totalAffiche;
@@ -89,7 +89,7 @@ if(count($row)>0){
             GROUP BY platform
                 ORDER BY data DESC;'
         );
-        if (count($results_stat_platform)>0&&$total>0) {
+        if ($results_stat_platform && count($results_stat_platform)>0&&$total>0) {
             $dataplatform = '';
             @(int)$cptplatform;
             foreach ($results_stat_platform as $tab) {
@@ -109,7 +109,7 @@ if(count($row)>0){
             GROUP BY devicetype
                 ORDER BY data DESC;'
         );
-        if (count($results_stat_devicetype)>0&&$total>0) {
+        if ($$results_stat_devicetype && count($results_stat_devicetype)>0&&$total>0) {
             $datadevicetype = '';
             (int)$cptdevicetype = '';
             foreach ($results_stat_devicetype as $tab) {
@@ -149,7 +149,7 @@ if(count($row)>0){
                 GROUP BY useragent
                     ORDER BY data DESC;'
         );
-        if (count($results_stat_ua)>0) {
+        if ($results_stat_ua && count($results_stat_ua)>0) {
             $tmpDataUa=array();
             foreach ($results_stat_ua as $tab) {
                 $str = $tab['useragent'];
@@ -198,7 +198,7 @@ if(count($row)>0){
             HAVING COUNT(*)>'.($total/100).'
                 ORDER BY DATA DESC;'
         );
-        if (count($results_stat_domaines)>0&&$total>0) {
+        if ($results_stat_domaines && count($results_stat_domaines)>0&&$total>0) {
             $datadomaines = '';
             (int)$cptdomaines = '';
             (int)$totalAffiche = 0;
@@ -223,7 +223,7 @@ if(count($row)>0){
             HAVING COUNT(T.id)>'.($total/100).'
                 ORDER BY DATA DESC;'
         );
-        if (count($results_stat_domaines_clk)>0&&$total>0) {
+        if ($results_stat_domaines_clk && count($results_stat_domaines_clk)>0&&$total>0) {
             $datadomainesclk = '';
             (int)$cptdomainesclk = '';
             (int)$totalAfficheclk = 0;
@@ -243,7 +243,7 @@ if(count($row)>0){
                         ORDER BY DTHR;');
         $labelsdthr='';
         (int)$datadthr = '';
-        if (count($results_dthr) >0) {
+        if ($results_dthr && count($results_dthr) >0) {
             foreach ($results_dthr as $tab) {
                 $labelsdthr.="'".sprintf("%02d",$tab['DTHR'])."H00',";
                 $datadthr.= (int)$tab['CPTDTHR'].',';
@@ -404,7 +404,7 @@ if(count($row)>0){
                             HAVING COUNT(*)>0
                                 ORDER BY data DESC;';
                     $results_stat_latlong = $cnx->query($sql);
-                    if (count($results_stat_latlong) >0) {
+                    if ($results_stat_latlong && count($results_stat_latlong) >0) {
                         $latlong='';
                         $mapData='';
                         foreach ($results_stat_latlong as $tab) {
